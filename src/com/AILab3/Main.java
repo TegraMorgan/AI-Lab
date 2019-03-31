@@ -11,12 +11,11 @@ public class Main
     public static final int GA_MAXITER = 16384;
     public static final float GA_ELITRATE = 0.10f;
     public static final float GA_MUTATIONRATE = 0.25f;
-    public static final int RAND_MAX = 2;
+    public static final int RAND_MAX = GA_POPSIZE;
     public static final float GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
     public static final String GA_TARGET = "Hello world!";
-    public static Vector<AlgoGene> _genes;
 
-    void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
+    public static void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
         int targetSize = GA_TARGET.length();
         Random r = new Random();
@@ -25,15 +24,16 @@ public class Main
         {
             AlgoGene citizen = new AlgoGene();
             for (int j = 0; j < targetSize; j++)
-                sb.append((char) ((r.nextInt() % 90) + 32));
+                sb.append((char) ((r.nextInt(RAND_MAX) % 90) + 32));
             citizen.str = sb.toString();
             population.add(citizen);
             sb.delete(0, sb.length());
         }
-        buffer.setSize(GA_POPSIZE);
+        //buffer.setSize(GA_POPSIZE);
+        buffer.addAll(population);
     }
 
-    void calc_fitness (Vector<AlgoGene> population)
+    public static void calc_fitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
@@ -51,7 +51,7 @@ public class Main
     boolean fitness_sort (AlgoGene x, AlgoGene y)
     { return (x.fitness < y.fitness); }
 
-    void sort_by_fitness (Vector<AlgoGene> population)
+    public static void sort_by_fitness (Vector<AlgoGene> population)
     {
         population.sort(AlgoGene.BY_FITNESS);
     }
@@ -63,31 +63,36 @@ public class Main
      * @param buffer     empty buffer
      * @param esize      size of the elite
      */
-    void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
+    public static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
     {
 
-        for (int i = 0; i < esize; i++)
-        {
+        for (int i = 0; i < esize; i++) buffer.set(i, population.get(i));
+            /*
             buffer.get(i).str = population.get(i).str;
             buffer.get(i).fitness = population.get(i).fitness;
-        }
+            */
     }
 
-    void mutate (AlgoGene member)
+    public static void mutate (AlgoGene member)
     {
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
         int tsize = GA_TARGET.length();
-        int ipos = r.nextInt() % tsize;
-        int delta = (r.nextInt() % 90) + 32;
+        int ipos = r.nextInt(RAND_MAX) % tsize;
+        int delta = (r.nextInt(RAND_MAX) % 90) + 32;
+        // Copy beginning
         if (ipos > 0)
-            sb.append(member.str, 0, ipos - 1);
+            sb.append(member.str, 0, ipos);
+        // Mutate one char
         sb.append((char) ((member.str.charAt(ipos) + delta) % 122));
-        if (ipos < member.str.length()) sb.append(member.str, ipos + 1, tsize);
+        // Copy end
+        if (ipos + 1 < member.str.length())
+            sb.append(member.str, ipos + 1, tsize);
+        // TODO perhaps later we will inline those three
         member.str = sb.toString();
     }
 
-    void mate (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
+    public static void mate (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
         int esize = (int) (GA_POPSIZE * GA_ELITRATE);
         int tsize = GA_TARGET.length(), spos, i1, i2;
@@ -97,19 +102,19 @@ public class Main
         // Mate the rest
         for (int i = esize; i < GA_POPSIZE; i++)
         {
-            i1 = r.nextInt() % (GA_POPSIZE / 2);
-            i2 = r.nextInt() % (GA_POPSIZE / 2);
-            spos = r.nextInt() % tsize;
-            buffer.get(i).str = population.get(i1).str.substring(0, spos) + population.get(i2).str.substring(spos, tsize - spos);
-            if (r.nextInt() < GA_MUTATION) mutate(buffer.get(i));
+            i1 = r.nextInt(RAND_MAX) % (GA_POPSIZE / 2);
+            i2 = r.nextInt(RAND_MAX) % (GA_POPSIZE / 2);
+            spos = (r.nextInt(RAND_MAX)) % tsize;
+            buffer.get(i).str = population.get(i1).str.substring(0, spos) + population.get(i2).str.substring(spos, tsize);
+            if (r.nextInt(RAND_MAX) < GA_MUTATION) mutate(buffer.get(i));
         }
     }
 
-    void print_best (Vector<AlgoGene> gav)
+    public static void print_best (Vector<AlgoGene> gav)
     { System.out.println("Best: " + gav.get(0).str + " (" + gav.get(0).fitness + ")"); }
 
-    void swap (Vector<AlgoGene> population,
-               Vector<AlgoGene> buffer)
+    public static void swap (Vector<AlgoGene> population,
+                             Vector<AlgoGene> buffer)
     {
         Vector<AlgoGene> temp = population;
         population = buffer;
@@ -118,6 +123,51 @@ public class Main
 
     public static void main (String[] args)
     {
-        Main._genes.add(new AlgoGene());
+        boolean testing = false;
+        if (testing)
+        {
+            // Create variables
+            Random r = new Random();
+            StringBuilder sb = new StringBuilder();
+            AlgoGene member = new AlgoGene();
+            // Initialize
+            int targetSize = GA_TARGET.length();
+            for (int j = 0; j < targetSize; j++)
+                sb.append((char) ((r.nextInt(RAND_MAX) % 90) + 32));
+            member.str = sb.toString();
+            int le = sb.length();
+            sb.delete(0, le);
+            // test
+            int tsize = GA_TARGET.length();
+            int ipos = 11;//r.nextInt(RAND_MAX) % tsize;
+            int delta = (r.nextInt(RAND_MAX) % 90) + 32;
+
+            if (ipos > 0)
+                sb.append(member.str, 0, ipos);
+            sb.append((char) ((member.str.charAt(ipos) + delta) % 122));
+            if (ipos + 1 < member.str.length()) sb.append(member.str, ipos + 1, tsize);
+            le = sb.length();
+            member.str = sb.toString();
+        } else
+        {
+            Vector<AlgoGene> pop_alpha = new Vector<>(), pop_beta = new Vector<>();
+            Vector<AlgoGene> population, buffer;
+
+            initPopulation(pop_alpha, pop_beta);
+            population = pop_alpha;
+            buffer = pop_beta;
+
+            for (int i = 0; i < GA_MAXITER; i++)
+            {
+                calc_fitness(population);        // calculate fitness
+                sort_by_fitness(population);     // sort them
+                print_best(population);          // print the best one
+
+                if ((population).get(0).fitness == 0) break;
+
+                mate(population, buffer);        // mate the population together
+                swap(population, buffer);        // swap buffers
+            }
+        }
     }
 }
