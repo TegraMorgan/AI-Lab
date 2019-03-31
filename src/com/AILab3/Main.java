@@ -14,9 +14,8 @@ public class Main
     public static final int RAND_MAX = 2;
     public static final float GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
     public static final String GA_TARGET = "Hello world!";
-    public static Vector<AlgoGene> _genes;
 
-    void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
+    public static void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
         int targetSize = GA_TARGET.length();
         Random r = new Random();
@@ -33,7 +32,7 @@ public class Main
         buffer.setSize(GA_POPSIZE);
     }
 
-    void calc_fitness (Vector<AlgoGene> population)
+    public static void calc_fitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
@@ -51,7 +50,7 @@ public class Main
     boolean fitness_sort (AlgoGene x, AlgoGene y)
     { return (x.fitness < y.fitness); }
 
-    void sort_by_fitness (Vector<AlgoGene> population)
+    public static void sort_by_fitness (Vector<AlgoGene> population)
     {
         population.sort(AlgoGene.BY_FITNESS);
     }
@@ -63,7 +62,7 @@ public class Main
      * @param buffer     empty buffer
      * @param esize      size of the elite
      */
-    void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
+    public static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
     {
 
         for (int i = 0; i < esize; i++)
@@ -73,7 +72,7 @@ public class Main
         }
     }
 
-    void mutate (AlgoGene member)
+    public static void mutate (AlgoGene member)
     {
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
@@ -87,7 +86,7 @@ public class Main
         member.str = sb.toString();
     }
 
-    void mate (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
+    public static void mate (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
         int esize = (int) (GA_POPSIZE * GA_ELITRATE);
         int tsize = GA_TARGET.length(), spos, i1, i2;
@@ -105,11 +104,11 @@ public class Main
         }
     }
 
-    void print_best (Vector<AlgoGene> gav)
+    public static void print_best (Vector<AlgoGene> gav)
     { System.out.println("Best: " + gav.get(0).str + " (" + gav.get(0).fitness + ")"); }
 
-    void swap (Vector<AlgoGene> population,
-               Vector<AlgoGene> buffer)
+    public static void swap (Vector<AlgoGene> population,
+                             Vector<AlgoGene> buffer)
     {
         Vector<AlgoGene> temp = population;
         population = buffer;
@@ -118,6 +117,23 @@ public class Main
 
     public static void main (String[] args)
     {
-        Main._genes.add(new AlgoGene());
+        Vector<AlgoGene> pop_alpha = new Vector<>(), pop_beta = new Vector<>();
+        Vector<AlgoGene> population, buffer;
+
+        initPopulation(pop_alpha, pop_beta);
+        population = pop_alpha;
+        buffer = pop_beta;
+
+        for (int i = 0; i < GA_MAXITER; i++)
+        {
+            calc_fitness(population);        // calculate fitness
+            sort_by_fitness(population);     // sort them
+            print_best(population);          // print the best one
+
+            if ((population).get(0).fitness == 0) break;
+
+            mate(population, buffer);        // mate the population together
+            swap(population, buffer);        // swap buffers
+        }
     }
 }
