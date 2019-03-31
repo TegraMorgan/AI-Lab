@@ -76,7 +76,7 @@ public class BoardBrain
         return next;
     }
 
-    public static BoardBrain crossover(BoardBrain a, BoardBrain b)
+    public static BoardBrain crossover (BoardBrain a, BoardBrain b)
     {
         //...
         return null;
