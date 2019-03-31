@@ -7,15 +7,12 @@ import java.util.Vector;
 
 public class Main
 {
-
     public static final int GA_POPSIZE = 2048;
     public static final int GA_MAXITER = 16384;
     public static final float GA_ELITRATE = 0.10f;
     public static final float GA_MUTATIONRATE = 0.25f;
     //public static final int GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
     public static final String GA_TARGET = "Hello world!";
-
-
     public static Vector<AlgoGene> _genes;
 
     void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
@@ -34,6 +31,23 @@ public class Main
         }
         buffer.setSize(GA_POPSIZE);
     }
+
+    void calc_fitness (Vector<AlgoGene> population)
+    {
+        String target = GA_TARGET;
+        int tsize = target.length();
+        for (int i = 0; i < GA_POPSIZE; i++)
+        {
+            int fitness = 0;
+            for (int j = 0; j < tsize; j++)
+            {
+                fitness += Math.abs((population.get(i).str.charAt(j) - target.charAt(j)));
+            }
+            population.get(i).fitness = fitness;
+        }
+    }
+
+
 
 
     public static void main (String[] args)
