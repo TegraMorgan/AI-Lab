@@ -105,6 +105,16 @@ public class Main
         }
     }
 
+    void print_best (Vector<AlgoGene> gav)
+    { System.out.println("Best: " + gav.get(0).str + " (" + gav.get(0).fitness + ")"); }
+
+    void swap (Vector<AlgoGene> population,
+               Vector<AlgoGene> buffer)
+    {
+        Vector<AlgoGene> temp = population;
+        population = buffer;
+        buffer = temp;
+    }
 
     public static void main (String[] args)
     {
