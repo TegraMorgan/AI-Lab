@@ -5,20 +5,22 @@ import com.AILab3.Entities.AlgoGene;
 import java.util.Random;
 import java.util.Vector;
 
+@SuppressWarnings("WeakerAccess")
 public class Main
 {
     public static final int GA_POPSIZE = 2048;
     public static final int GA_MAXITER = 16384;
     public static final float GA_ELITRATE = 0.10f;
     public static final float GA_MUTATIONRATE = 0.25f;
-    public static final int RAND_MAX = GA_POPSIZE;
+    public static final int RAND_MAX = GA_POPSIZE * 4;
     public static final float GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
     public static final String GA_TARGET = "Hello world!";
+    static Random r = new Random();
 
     public static void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
         int targetSize = GA_TARGET.length();
-        Random r = new Random();
+
         StringBuilder sb = new StringBuilder(targetSize);
         for (int i = 0; i < GA_POPSIZE; i++)
         {
@@ -48,9 +50,6 @@ public class Main
         }
     }
 
-    boolean fitness_sort (AlgoGene x, AlgoGene y)
-    { return (x.fitness < y.fitness); }
-
     public static void sort_by_fitness (Vector<AlgoGene> population)
     {
         population.sort(AlgoGene.BY_FITNESS);
@@ -75,7 +74,7 @@ public class Main
 
     public static void mutate (AlgoGene member)
     {
-        Random r = new Random();
+
         StringBuilder sb = new StringBuilder();
         int tsize = GA_TARGET.length();
         int ipos = r.nextInt(RAND_MAX) % tsize;
@@ -96,7 +95,7 @@ public class Main
     {
         int esize = (int) (GA_POPSIZE * GA_ELITRATE);
         int tsize = GA_TARGET.length(), spos, i1, i2;
-        Random r = new Random();
+
         elitism(population, buffer, esize);
 
         // Mate the rest
@@ -127,7 +126,7 @@ public class Main
         if (testing)
         {
             // Create variables
-            Random r = new Random();
+
             StringBuilder sb = new StringBuilder();
             AlgoGene member = new AlgoGene();
             // Initialize
