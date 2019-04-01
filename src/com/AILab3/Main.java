@@ -35,7 +35,7 @@ public class Main
         buffer.addAll(population);
     }
 
-    public static void calc_fitness (Vector<AlgoGene> population)
+    public static void calcFitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
@@ -50,7 +50,7 @@ public class Main
         }
     }
 
-    public static void sort_by_fitness (Vector<AlgoGene> population)
+    public static void sortByFitness (Vector<AlgoGene> population)
     {
         population.sort(AlgoGene.BY_FITNESS);
     }
@@ -64,7 +64,6 @@ public class Main
      */
     public static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
     {
-
         for (int i = 0; i < esize; i++) buffer.set(i, population.get(i));
             /*
             buffer.get(i).str = population.get(i).str;
@@ -74,7 +73,6 @@ public class Main
 
     public static void mutate (AlgoGene member)
     {
-
         StringBuilder sb = new StringBuilder();
         int tsize = GA_TARGET.length();
         int ipos = r.nextInt(RAND_MAX) % tsize;
@@ -95,9 +93,7 @@ public class Main
     {
         int esize = (int) (GA_POPSIZE * GA_ELITRATE);
         int tsize = GA_TARGET.length(), spos, i1, i2;
-
         elitism(population, buffer, esize);
-
         // Mate the rest
         for (int i = esize; i < GA_POPSIZE; i++)
         {
@@ -109,7 +105,7 @@ public class Main
         }
     }
 
-    public static void print_best (Vector<AlgoGene> gav)
+    public static void printBest (Vector<AlgoGene> gav)
     { System.out.println("Best: " + gav.get(0).str + " (" + gav.get(0).fitness + ")"); }
 
     public static void swap (Vector<AlgoGene> population,
@@ -118,6 +114,25 @@ public class Main
         Vector<AlgoGene> temp = population;
         population = buffer;
         buffer = temp;
+    }
+
+    private static float[] calcPopMeanVar (Vector<AlgoGene> population)
+    {
+        float[] res = new float[2];
+        int t;
+        float avgPopFit = 0;
+        float popFitVar = 0;
+        for (int i = 0; i < GA_POPSIZE; i++)
+        {
+            t = population.get(i).fitness;
+            avgPopFit += t;
+            popFitVar += t * t;
+        }
+        popFitVar = (popFitVar - ((avgPopFit * avgPopFit) / GA_POPSIZE)) / (GA_POPSIZE - 1);
+        avgPopFit /= GA_POPSIZE;
+        res[0] = avgPopFit;
+        res[1] = popFitVar;
+        return res;
     }
 
     public static void main (String[] args)
@@ -155,18 +170,27 @@ public class Main
             initPopulation(pop_alpha, pop_beta);
             population = pop_alpha;
             buffer = pop_beta;
+            float[] averages;
 
-            for (int i = 0; i < GA_MAXITER; i++)
+            int t;
+            for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
-                calc_fitness(population);        // calculate fitness
-                sort_by_fitness(population);     // sort them
-                print_best(population);          // print the best one
-
+                calcFitness(population);                        // calculate fitness
+                averages = calcPopMeanVar(population);          // Calculate mean and variance fitness
+                printMeanVariance(averages);                    // Print mean and variance fitness
+                sortByFitness(population);                      // sort them
+                printBest(population);                          // print the best one
                 if ((population).get(0).fitness == 0) break;
-
-                mate(population, buffer);        // mate the population together
-                swap(population, buffer);        // swap buffers
+                mate(population, buffer);                       // mate the population together
+                swap(population, buffer);                       // swap buffers
             }
         }
     }
+
+    private static void printMeanVariance (float[] averages)
+    {
+        System.out.println("Population average fitness: " + averages[0] + " | Population variance: " + averages[1]);
+    }
+
+
 }
