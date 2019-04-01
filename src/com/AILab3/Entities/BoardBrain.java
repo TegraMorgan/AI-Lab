@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Random;
 
+@SuppressWarnings("WeakerAccess")
 public class BoardBrain
 {
     public final static int MUTATE_RANGE = 100; //In average 1 out of MUTATE_RANGE positions would be mutated
