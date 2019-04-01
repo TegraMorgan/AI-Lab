@@ -1,6 +1,7 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
+import com.AILab3.Solution.Solution;
 
 import java.util.Random;
 import java.util.Vector;
@@ -50,6 +51,7 @@ public class Main
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void sortByFitness (Vector<AlgoGene> population)
     {
         population.sort(AlgoGene.BY_FITNESS);
@@ -116,25 +118,6 @@ public class Main
         buffer = temp;
     }
 
-    private static float[] calcPopMeanVar (Vector<AlgoGene> population)
-    {
-        float[] res = new float[2];
-        int t;
-        float avgPopFit = 0;
-        float popFitVar = 0;
-        for (int i = 0; i < GA_POPSIZE; i++)
-        {
-            t = population.get(i).fitness;
-            avgPopFit += t;
-            popFitVar += t * t;
-        }
-        popFitVar = (popFitVar - ((avgPopFit * avgPopFit) / GA_POPSIZE)) / (GA_POPSIZE - 1);
-        avgPopFit /= GA_POPSIZE;
-        res[0] = avgPopFit;
-        res[1] = popFitVar;
-        return res;
-    }
-
     public static void main (String[] args)
     {
         boolean testing = false;
@@ -172,24 +155,18 @@ public class Main
             buffer = pop_beta;
             float[] averages;
 
-            int t;
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
-                calcFitness(population);                        // calculate fitness
-                averages = calcPopMeanVar(population);          // Calculate mean and variance fitness
-                printMeanVariance(averages);                    // Print mean and variance fitness
-                sortByFitness(population);                      // sort them
-                printBest(population);                          // print the best one
+                calcFitness(population);                                // calculate fitness
+                averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
+                Solution.printMeanVariance(averages);                   // Print mean and variance fitness
+                sortByFitness(population);                              // sort them
+                printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
-                mate(population, buffer);                       // mate the population together
-                swap(population, buffer);                       // swap buffers
+                mate(population, buffer);                               // mate the population together
+                swap(population, buffer);                               // swap buffers
             }
         }
-    }
-
-    private static void printMeanVariance (float[] averages)
-    {
-        System.out.println("Population average fitness: " + averages[0] + " | Population variance: " + averages[1]);
     }
 
 
