@@ -1,26 +1,27 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.Entities.QueensBrain;
-import com.AILab3.Entities.QueensPopulation;
+import com.AILab3.Solution.Solution;
 
 import java.util.Random;
 import java.util.Vector;
 
+@SuppressWarnings("WeakerAccess")
 public class Main
 {
     public static final int GA_POPSIZE = 2048;
     public static final int GA_MAXITER = 16384;
     public static final float GA_ELITRATE = 0.10f;
     public static final float GA_MUTATIONRATE = 0.25f;
-    public static final int RAND_MAX = GA_POPSIZE;
+    public static final int RAND_MAX = GA_POPSIZE * 4;
     public static final float GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
     public static final String GA_TARGET = "Hello world!";
+    static Random r = new Random();
 
     public static void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
         int targetSize = GA_TARGET.length();
-        Random r = new Random();
+
         StringBuilder sb = new StringBuilder(targetSize);
         for (int i = 0; i < GA_POPSIZE; i++)
         {
@@ -35,7 +36,7 @@ public class Main
         buffer.addAll(population);
     }
 
-    public static void calc_fitness (Vector<AlgoGene> population)
+    public static void calcFitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
@@ -50,10 +51,8 @@ public class Main
         }
     }
 
-    boolean fitness_sort (AlgoGene x, AlgoGene y)
-    { return (x.fitness < y.fitness); }
-
-    public static void sort_by_fitness (Vector<AlgoGene> population)
+    @SuppressWarnings("unchecked")
+    public static void sortByFitness (Vector<AlgoGene> population)
     {
         population.sort(AlgoGene.BY_FITNESS);
     }
@@ -67,7 +66,6 @@ public class Main
      */
     public static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
     {
-
         for (int i = 0; i < esize; i++) buffer.set(i, population.get(i));
             /*
             buffer.get(i).str = population.get(i).str;
@@ -77,7 +75,6 @@ public class Main
 
     public static void mutate (AlgoGene member)
     {
-        Random r = new Random();
         StringBuilder sb = new StringBuilder();
         int tsize = GA_TARGET.length();
         int ipos = r.nextInt(RAND_MAX) % tsize;
@@ -98,9 +95,7 @@ public class Main
     {
         int esize = (int) (GA_POPSIZE * GA_ELITRATE);
         int tsize = GA_TARGET.length(), spos, i1, i2;
-        Random r = new Random();
         elitism(population, buffer, esize);
-
         // Mate the rest
         for (int i = esize; i < GA_POPSIZE; i++)
         {
@@ -112,7 +107,7 @@ public class Main
         }
     }
 
-    public static void print_best (Vector<AlgoGene> gav)
+    public static void printBest (Vector<AlgoGene> gav)
     { System.out.println("Best: " + gav.get(0).str + " (" + gav.get(0).fitness + ")"); }
 
     public static void swap (Vector<AlgoGene> population,
@@ -125,16 +120,11 @@ public class Main
 
     public static void main (String[] args)
     {
-        //Test NQueensProblem:
-        System.out.println("Start");
-        System.out.println(new QueensPopulation(8).repopulateTillSolution());
-        System.out.println("End");
-
         boolean testing = false;
         if (testing)
         {
             // Create variables
-            Random r = new Random();
+
             StringBuilder sb = new StringBuilder();
             AlgoGene member = new AlgoGene();
             // Initialize
@@ -163,18 +153,21 @@ public class Main
             initPopulation(pop_alpha, pop_beta);
             population = pop_alpha;
             buffer = pop_beta;
+            float[] averages;
 
-            for (int i = 0; i < GA_MAXITER; i++)
+            for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
-                calc_fitness(population);        // calculate fitness
-                sort_by_fitness(population);     // sort them
-                print_best(population);          // print the best one
-
+                calcFitness(population);                                // calculate fitness
+                averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
+                Solution.printMeanVariance(averages);                   // Print mean and variance fitness
+                sortByFitness(population);                              // sort them
+                printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
-
-                mate(population, buffer);        // mate the population together
-                swap(population, buffer);        // swap buffers
+                mate(population, buffer);                               // mate the population together
+                swap(population, buffer);                               // swap buffers
             }
         }
     }
+
+
 }
