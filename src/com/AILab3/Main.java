@@ -1,6 +1,8 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
+import com.AILab3.Entities.QueensBrain;
+import com.AILab3.Entities.QueensPopulation;
 
 import java.util.Random;
 import java.util.Vector;
@@ -123,6 +125,11 @@ public class Main
 
     public static void main (String[] args)
     {
+        //Test NQueensProblem:
+        System.out.println("Start");
+        System.out.println(new QueensPopulation(8).repopulateTillSolution());
+        System.out.println("End");
+
         boolean testing = false;
         if (testing)
         {
