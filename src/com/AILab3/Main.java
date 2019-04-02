@@ -5,6 +5,7 @@ import com.AILab3.Solution.Solution;
 
 import java.util.Random;
 import java.util.Vector;
+import java.time.Clock;
 
 @SuppressWarnings("WeakerAccess")
 public class Main
@@ -110,46 +111,42 @@ public class Main
     public static void printBest (Vector<AlgoGene> gav)
     { System.out.println("Best: " + gav.get(0).str + " (" + gav.get(0).fitness + ")"); }
 
-    public static void swap (Vector<AlgoGene> population,
-                             Vector<AlgoGene> buffer)
+    //#region Testing
+    public static void testing ()
     {
-        Vector<AlgoGene> temp = population;
-        population = buffer;
-        buffer = temp;
-    }
+        // Create variables
 
-    public static void main (String[] args)
+        StringBuilder sb = new StringBuilder();
+        AlgoGene member = new AlgoGene();
+        // Initialize
+        int targetSize = GA_TARGET.length();
+        for (int j = 0; j < targetSize; j++)
+            sb.append((char) ((r.nextInt(RAND_MAX) % 90) + 32));
+        member.str = sb.toString();
+        int le = sb.length();
+        sb.delete(0, le);
+        // test
+        int tsize = GA_TARGET.length();
+        int ipos = 11;//r.nextInt(RAND_MAX) % tsize;
+        int delta = (r.nextInt(RAND_MAX) % 90) + 32;
+        if (ipos > 0)
+            sb.append(member.str, 0, ipos);
+        sb.append((char) ((member.str.charAt(ipos) + delta) % 122));
+        if (ipos + 1 < member.str.length()) sb.append(member.str, ipos + 1, tsize);
+        le = sb.length();
+        member.str = sb.toString();
+    }
+    //#endregion
+
+    public static void main (String[] args) throws Exception
     {
         boolean testing = false;
-        if (testing)
-        {
-            // Create variables
-
-            StringBuilder sb = new StringBuilder();
-            AlgoGene member = new AlgoGene();
-            // Initialize
-            int targetSize = GA_TARGET.length();
-            for (int j = 0; j < targetSize; j++)
-                sb.append((char) ((r.nextInt(RAND_MAX) % 90) + 32));
-            member.str = sb.toString();
-            int le = sb.length();
-            sb.delete(0, le);
-            // test
-            int tsize = GA_TARGET.length();
-            int ipos = 11;//r.nextInt(RAND_MAX) % tsize;
-            int delta = (r.nextInt(RAND_MAX) % 90) + 32;
-
-            if (ipos > 0)
-                sb.append(member.str, 0, ipos);
-            sb.append((char) ((member.str.charAt(ipos) + delta) % 122));
-            if (ipos + 1 < member.str.length()) sb.append(member.str, ipos + 1, tsize);
-            le = sb.length();
-            member.str = sb.toString();
-        } else
+        if (testing) testing();
+        else
         {
             Vector<AlgoGene> pop_alpha = new Vector<>(), pop_beta = new Vector<>();
             Vector<AlgoGene> population, buffer;
-
+            Vector<AlgoGene> temp;
             initPopulation(pop_alpha, pop_beta);
             population = pop_alpha;
             buffer = pop_beta;
@@ -164,7 +161,12 @@ public class Main
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
                 mate(population, buffer);                               // mate the population together
-                swap(population, buffer);                               // swap buffers
+                //#region Swap(popupation,buffer)
+                // There is no pass by reference in Java. Thus the swapping will not be extracted to method but done in the main function instead
+                temp = population;
+                population = buffer;
+                buffer = temp;
+                //#endregion
             }
         }
     }
