@@ -5,7 +5,6 @@ import com.AILab3.Solution.Solution;
 
 import java.util.Random;
 import java.util.Vector;
-import java.time.Clock;
 
 @SuppressWarnings("WeakerAccess")
 public class Main
@@ -38,6 +37,11 @@ public class Main
     }
 
     public static void calcFitness (Vector<AlgoGene> population)
+    {
+        defaultFitness(population);
+    }
+
+    public static void defaultFitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
@@ -144,6 +148,9 @@ public class Main
         if (testing) testing();
         else
         {
+            long totalelapsed = System.nanoTime();
+            long generationElapsed = System.nanoTime();
+            long time = 0;
             Vector<AlgoGene> pop_alpha = new Vector<>(), pop_beta = new Vector<>();
             Vector<AlgoGene> population, buffer;
             Vector<AlgoGene> temp;
@@ -161,13 +168,18 @@ public class Main
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
                 mate(population, buffer);                               // mate the population together
-                //#region Swap(popupation,buffer)
-                // There is no pass by reference in Java. Thus the swapping will not be extracted to method but done in the main function instead
+                //#region Swap(population,buffer)
+                // There is no pass by reference in Java. Thus the swapping will not be
+                // extracted to method but done in the main function instead
                 temp = population;
                 population = buffer;
                 buffer = temp;
                 //#endregion
+                time = System.nanoTime();
+                System.out.println("Generation :" + generationNumber + " | " + ((time - generationElapsed) / 1000) + " microseconds");
+                generationElapsed = time;
             }
+            System.out.println("Total runtime: " + ((time - totalelapsed) / 1000) + " microseconds");
         }
     }
 
