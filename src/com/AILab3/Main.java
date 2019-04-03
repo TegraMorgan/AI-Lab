@@ -36,9 +36,49 @@ public class Main
         buffer.addAll(population);
     }
 
+    //#region Fitness
     public static void calcFitness (Vector<AlgoGene> population)
     {
-        defaultFitness(population);
+        bulPgiaFitness(population);
+    }
+
+    public static void bulPgiaFitness (Vector<AlgoGene> _p)
+    {
+        /*
+        One of the basic rules of the game is that the target word cannot contain
+        duplicate letters. This algorithm ranking suffers if target OR guess
+        contain duplicate letters
+         */
+        /* Target Length */
+        int _l = GA_TARGET.length();
+        /* Fitness */
+        int _f;
+        /* Gene */
+        String _g;
+        for (int i = 0; i < GA_POPSIZE; i++)
+        {
+            /*
+            Reset fitness
+            If we have a match fitness will become 0
+             */
+            _f = _l * 5;
+            _g = _p.get(i).str;
+            for (int k = 0; k < _l; k++)
+            {
+                if (GA_TARGET.charAt(k) == _g.charAt(k))
+                    _f -= 5;
+                else
+                    for (int j = 0; j < _l; j++)
+                    {
+                        if (_g.charAt(k) == GA_TARGET.charAt(j))
+                        {
+                            _f -= 2;
+                            break;
+                        }
+                    }
+            }
+            _p.get(i).fitness = _f;
+        }
     }
 
     public static void defaultFitness (Vector<AlgoGene> population)
@@ -55,6 +95,7 @@ public class Main
             population.get(i).fitness = fitness;
         }
     }
+    //#endregion
 
     @SuppressWarnings("unchecked")
     public static void sortByFitness (Vector<AlgoGene> population)
@@ -179,7 +220,7 @@ public class Main
                 System.out.println("Generation :" + generationNumber + " | " + ((time - generationElapsed) / 1000) + " microseconds");
                 generationElapsed = time;
             }
-            System.out.println("Total runtime: " + ((time - totalelapsed) / 1000) + " microseconds");
+            System.out.println("Total runtime: " + ((time - totalelapsed) / 1000000) + "." + (((time - totalelapsed) / 1000) % 1000) + " miliseconds");
         }
     }
 
