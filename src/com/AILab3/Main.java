@@ -3,7 +3,6 @@ package com.AILab3;
 import com.AILab3.Entities.AlgoGene;
 import com.AILab3.Solution.Solution;
 
-import java.util.OptionalInt;
 import java.util.Random;
 import java.util.Vector;
 
@@ -53,12 +52,25 @@ public class Main
     //#endregion
 
     //#region Fitness
-    public static void calcFitness (Vector<AlgoGene> population)
+
+    /**
+     * Function that calculates fitness of a given population
+     *
+     * @param population
+     * @return
+     */
+    public static int calcFitness (Vector<AlgoGene> population, String method)
     {
-        bulPgiaFitness(population);
+        switch (method)
+        {
+            case "bull":
+                return bulPgiaFitness(population);
+            default:
+                return defaultFitness(population);
+        }
     }
 
-    public static void bulPgiaFitness (Vector<AlgoGene> _p)
+    public static int bulPgiaFitness (Vector<AlgoGene> _p)
     {
         /*
         One of the basic rules of the game is that the target word cannot contain
@@ -95,21 +107,27 @@ public class Main
             }
             _p.get(i).fitness = _f;
         }
+        return 5 * _l;
     }
 
-    public static void defaultFitness (Vector<AlgoGene> population)
+    public static int defaultFitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
+        int worst = 0;
         for (int i = 0; i < GA_POPSIZE; i++)
         {
             int fitness = 0;
             for (int j = 0; j < tsize; j++)
             {
-                fitness += Math.abs((population.get(i).str.charAt(j) - target.charAt(j)));
+                int cf = Math.abs((population.get(i).str.charAt(j) - target.charAt(j)));
+                if (cf > worst)
+                    worst = cf;
+                fitness += cf;
             }
             population.get(i).fitness = fitness;
         }
+        return worst * tsize;
     }
     //#endregion
 
@@ -124,44 +142,40 @@ public class Main
      */
     public static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
     {
-        // sort Population
-        sortByFitness(population);
         for (int i = 0; i < esize; i++) buffer.set(i, population.get(i));
     }
 
     /**
      * Randomly select those who will stay
      *
-     * @param population
-     * @param buffer
-     * @param ssize
+     * @param population the population
+     * @param ark        the population that will be saved
+     * @param ssize      size of the population to be saved
      */
-    public static void sus (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int ssize)
+    public static void stochasticUniversalSampling (Vector<AlgoGene> population,
+                                                    Vector<AlgoGene> ark,
+                                                    int ssize,
+                                                    int worst)
     {
-        int[] aggregateFitness = new int[GA_POPSIZE];
-        int max = population.get(0).fitness;
+        int[] aggregateInvertFitness = new int[GA_POPSIZE];
+        // invert fitness value
+        aggregateInvertFitness[0] = worst - population.get(0).fitness;
         for (int i = 1; i < GA_POPSIZE; i++)
-        {
-            // find max
-            max = population.get(i).fitness > max ? population.get(i).fitness : max;
             // put all fitness values into array for future use
-            aggregateFitness[i] = population.get(i).fitness;
-        }
-        // invert fitness values
-        aggregateFitness[0] = max - aggregateFitness[0];
-        for (int i = 1; i < GA_POPSIZE; i++)
-        {
-            aggregateFitness[i] = aggregateFitness[i - 1] + (max - aggregateFitness[i]);
-        }
-        int sum = aggregateFitness[GA_POPSIZE - 1];
-        // distance between the pointers
-        int fitnessJump = (sum / ssize);
+            aggregateInvertFitness[i] = aggregateInvertFitness[i - 1] + (worst - population.get(i).fitness);
+        // distance between the drawn fitness values
+        // the last element of aggregate function will always contain the total sum
+        int fitnessJump = (aggregateInvertFitness[GA_POPSIZE - 1] / ssize);
+        // start randomly between 0 and the jump distance
         int start = r.nextInt(fitnessJump);
-        int k = 0;
-        for (int i = 0; i < ssize; i++)
+        int populationIterator = 0;
+        for (int arkIterator = 0; arkIterator < ssize; arkIterator++)
         {
-            //find who to save
-
+            // Find who to save
+            while (aggregateInvertFitness[populationIterator] < (arkIterator * fitnessJump) + start)
+                populationIterator++;
+            // Add the element to the ark
+            ark.set(arkIterator, population.get(populationIterator));
         }
     }
 
@@ -199,6 +213,7 @@ public class Main
 
     public static void selection (Vector<AlgoGene> population,
                                   Vector<AlgoGene> buffer,
+                                  int worst,
                                   String selectionMethod,
                                   String mutationMethod)
     {
@@ -210,7 +225,7 @@ public class Main
                 elitism(population, buffer, selection_size);
                 break;
             case "sus":
-                sus(population, buffer, selection_size);
+                stochasticUniversalSampling(population, buffer, selection_size, worst);
                 break;
             default:
                 elitism(population, buffer, selection_size);
@@ -274,17 +289,19 @@ public class Main
             population = pop_alpha;
             buffer = pop_beta;
             float[] averages;
+            int worst;
 
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
-                calcFitness(population);                                // calculate fitness
+                worst = calcFitness(population, "bull");          // calculate fitness and determine the worst possible score
                 averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
                 Solution.printMeanVariance(averages);                   // Print mean and variance fitness
-
+                // sort Population
+                sortByFitness(population);
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
                 // mate the population together
-                selection(population, buffer, "sus", "onePoint");
+                selection(population, buffer, worst, "sus", "onePoint");
                 //#region Swap(population,buffer)
                 // There is no pass by reference in Java. Thus the swapping will not be
                 // extracted to method but done in the main function instead
@@ -296,7 +313,7 @@ public class Main
                 System.out.println("Generation :" + generationNumber + " | " + ((time - generationElapsed) / 1000) + " microseconds");
                 generationElapsed = time;
             }
-            System.out.println("Total runtime: " + ((time - totalelapsed) / 1000000) + "." + (((time - totalelapsed) / 1000) % 1000) + " miliseconds");
+            System.out.println("Total runtime: " + ((time - totalelapsed) / 1000000) + "." + (((time - totalelapsed) / 1000) % 1000) + " milliseconds");
         }
     }
 
