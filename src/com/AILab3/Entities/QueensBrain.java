@@ -56,7 +56,7 @@ public class QueensBrain
 
     private boolean threaten (Point q1, Point q2)
     {
-        return q1 != q2 && (q1.x == q2.x || q1.y == q2.y || Math.abs(q1.x - q2.x) == Math.abs(q1.y - q2.y));
+        return q1.x == q2.x || q1.y == q2.y || Math.abs(q1.x - q2.x) == Math.abs(q1.y - q2.y);
     }
 
     @Override
@@ -83,17 +83,17 @@ public class QueensBrain
     private float calculateFitness ()
     {
         int count = 0;
-        for (Point q1 : queens)
+        for (int i = 0; i < queens.length; i++)
         {
-            for (Point q2 : queens)
+            for (int j = i + 1; j < queens.length; j++)
             {
-                if (threaten(q1, q2))
+                if (threaten(queens[i], queens[j]))
                 {
                     count++;
                 }
             }
         }
-        return 1f / (float)(count / 3 + 1);
+        return 1f / (float)(count + 1);
     }
 
     public boolean foundSolution ()
