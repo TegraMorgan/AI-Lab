@@ -3,6 +3,7 @@ package com.AILab3;
 import com.AILab3.Entities.AlgoGene;
 import com.AILab3.Solution.Solution;
 
+import java.util.OptionalInt;
 import java.util.Random;
 import java.util.Vector;
 
@@ -123,16 +124,45 @@ public class Main
      */
     public static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int esize)
     {
+        // sort Population
+        sortByFitness(population);
         for (int i = 0; i < esize; i++) buffer.set(i, population.get(i));
-            /*
-            buffer.get(i).str = population.get(i).str;
-            buffer.get(i).fitness = population.get(i).fitness;
-            */
     }
 
+    /**
+     * Randomly select those who will stay
+     *
+     * @param population
+     * @param buffer
+     * @param ssize
+     */
     public static void sus (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int ssize)
     {
-        // Randomly select those who will stay
+        int[] aggregateFitness = new int[GA_POPSIZE];
+        int max = population.get(0).fitness;
+        for (int i = 1; i < GA_POPSIZE; i++)
+        {
+            // find max
+            max = population.get(i).fitness > max ? population.get(i).fitness : max;
+            // put all fitness values into array for future use
+            aggregateFitness[i] = population.get(i).fitness;
+        }
+        // invert fitness values
+        aggregateFitness[0] = max - aggregateFitness[0];
+        for (int i = 1; i < GA_POPSIZE; i++)
+        {
+            aggregateFitness[i] = aggregateFitness[i - 1] + (max - aggregateFitness[i]);
+        }
+        int sum = aggregateFitness[GA_POPSIZE - 1];
+        // distance between the pointers
+        int fitnessJump = (sum / ssize);
+        int start = r.nextInt(fitnessJump);
+        int k = 0;
+        for (int i = 0; i < ssize; i++)
+        {
+            //find who to save
+
+        }
     }
 
     public static void onePointCrossover (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int selection_size)
@@ -163,18 +193,40 @@ public class Main
         // Copy end
         if (ipos + 1 < member.str.length())
             sb.append(member.str, ipos + 1, tsize);
-        // TODO perhaps later we will inline those three
         member.str = sb.toString();
     }
 
 
-    public static void selection (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
+    public static void selection (Vector<AlgoGene> population,
+                                  Vector<AlgoGene> buffer,
+                                  String selectionMethod,
+                                  String mutationMethod)
     {
         int selection_size = (int) (GA_POPSIZE * GA_ELITRATE);
-        //elitism(population, buffer, selection_size);
-        sus(population, buffer, selection_size);
+        // First select who will survive
+        switch (selectionMethod)
+        {
+            case "elitism":
+                elitism(population, buffer, selection_size);
+                break;
+            case "sus":
+                sus(population, buffer, selection_size);
+                break;
+            default:
+                elitism(population, buffer, selection_size);
+                break;
+        }
+        // The survivors are in top of the buffer
         // Mate the rest
-        onePointCrossover(population, buffer, selection_size);
+        switch (mutationMethod)
+        {
+            case "onePoint":
+                onePointCrossover(population, buffer, selection_size);
+                break;
+            default:
+                onePointCrossover(population, buffer, selection_size);
+                break;
+        }
     }
 
     //#endregion
@@ -228,10 +280,11 @@ public class Main
                 calcFitness(population);                                // calculate fitness
                 averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
                 Solution.printMeanVariance(averages);                   // Print mean and variance fitness
-                sortByFitness(population);                              // sort them
+
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
-                selection(population, buffer);                               // mate the population together
+                // mate the population together
+                selection(population, buffer, "sus", "onePoint");
                 //#region Swap(population,buffer)
                 // There is no pass by reference in Java. Thus the swapping will not be
                 // extracted to method but done in the main function instead
