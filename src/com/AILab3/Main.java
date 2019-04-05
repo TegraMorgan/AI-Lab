@@ -152,10 +152,10 @@ public class Main
      * @param ark        the population that will be saved
      * @param ssize      size of the population to be saved
      */
-    public static void stochasticUniversalSampling (Vector<AlgoGene> population,
-                                                    Vector<AlgoGene> ark,
+    public static void stochasticUniversalSampling (Vector<AlgoGene> population, Vector<AlgoGene> ark,
                                                     int ssize,
-                                                    int worst)
+                                                    int worst,
+                                                    String method)
     {
         int[] aggregateInvertFitness = new int[GA_POPSIZE];
         // invert fitness value
@@ -165,31 +165,64 @@ public class Main
             aggregateInvertFitness[i] = aggregateInvertFitness[i - 1] + (worst - population.get(i).fitness);
         // distance between the drawn fitness values
         // the last element of aggregate function will always contain the total sum
-        int fitnessJump = (aggregateInvertFitness[GA_POPSIZE - 1] / ssize);
+        int fitnessJump = (aggregateInvertFitness[GA_POPSIZE - 1] / (2 * (GA_POPSIZE - ssize)));
         // start randomly between 0 and the jump distance
         int start = r.nextInt(fitnessJump);
         int populationIterator = 0;
-        for (int arkIterator = 0; arkIterator < ssize; arkIterator++)
+        int one, two;
+        for (int childrenIterator = ssize; childrenIterator < GA_POPSIZE; childrenIterator++)
         {
-            // Find who to save
-            while (aggregateInvertFitness[populationIterator] < (arkIterator * fitnessJump) + start)
+            // Select first gene
+            while (aggregateInvertFitness[populationIterator] < (childrenIterator * fitnessJump) + start)
                 populationIterator++;
+            one = populationIterator;
+            // Select second gene
+            while (aggregateInvertFitness[populationIterator] < (childrenIterator * fitnessJump) + start)
+                populationIterator++;
+            two = populationIterator;
             // Add the element to the ark
-            ark.set(arkIterator, population.get(populationIterator));
+            switch (method)
+            {
+                case "onePoint":
+                    ark.setElementAt(onePointCrossover(population.get(one), population.get(two), true), childrenIterator);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    public static void onePointCrossover (Vector<AlgoGene> population, Vector<AlgoGene> buffer, int selection_size)
+    public static AlgoGene onePointCrossover (AlgoGene one, AlgoGene two, boolean mutation)
     {
+        AlgoGene ret = new AlgoGene();
         int tsize = GA_TARGET.length();
-        int spos, i1, i2;
+        int spos = (r.nextInt(tsize));
+        ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
+        if (r.nextInt(RAND_MAX) < GA_MUTATION && mutation) mutateOnePoint(ret);
+        return ret;
+    }
+
+    public static void randomSampling (Vector<AlgoGene> population,
+                                       Vector<AlgoGene> buffer,
+                                       String method,
+                                       int selection_size,
+                                       boolean mutation)
+    {
+        int i1, i2;
         for (int i = selection_size; i < GA_POPSIZE; i++)
         {
             i1 = r.nextInt(RAND_MAX) % (GA_POPSIZE / 2);
             i2 = r.nextInt(RAND_MAX) % (GA_POPSIZE / 2);
-            spos = (r.nextInt(RAND_MAX)) % tsize;
-            buffer.get(i).str = population.get(i1).str.substring(0, spos) + population.get(i2).str.substring(spos, tsize);
-            if (r.nextInt(RAND_MAX) < GA_MUTATION) mutateOnePoint(buffer.get(i));
+
+            switch (method)
+            {
+                case "onePoint":
+                    buffer.setElementAt(onePointCrossover(population.get(i1), population.get(i2), mutation), i);
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 
@@ -219,29 +252,18 @@ public class Main
     {
         int selection_size = (int) (GA_POPSIZE * GA_ELITRATE);
         // First select who will survive
+        elitism(population, buffer, selection_size);
         switch (selectionMethod)
         {
-            case "elitism":
-                elitism(population, buffer, selection_size);
-                break;
             case "sus":
-                stochasticUniversalSampling(population, buffer, selection_size, worst);
+                stochasticUniversalSampling(population, buffer, selection_size, worst, mutationMethod);
                 break;
             default:
-                elitism(population, buffer, selection_size);
-                break;
+                randomSampling(population, buffer, mutationMethod, selection_size, true);
+
         }
-        // The survivors are in top of the buffer
-        // Mate the rest
-        switch (mutationMethod)
-        {
-            case "onePoint":
-                onePointCrossover(population, buffer, selection_size);
-                break;
-            default:
-                onePointCrossover(population, buffer, selection_size);
-                break;
-        }
+
+
     }
 
     //#endregion
@@ -279,7 +301,7 @@ public class Main
         if (testing) testing();
         else
         {
-            long totalelapsed = System.nanoTime();
+            long totalElapsed = System.nanoTime();
             long generationElapsed = System.nanoTime();
             long time = 0;
             Vector<AlgoGene> pop_alpha = new Vector<>(), pop_beta = new Vector<>();
@@ -290,18 +312,19 @@ public class Main
             buffer = pop_beta;
             float[] averages;
             int worst;
-
+            // TODO tick() https://www.geeksforgeeks.org/clock-tick-method-in-java-with-examples/
+            // System.currentTimeMillis()
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
-                worst = calcFitness(population, "bull");          // calculate fitness and determine the worst possible score
+                worst = calcFitness(population, "bull");         // calculate fitness and determine the worst possible score
                 averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
                 Solution.printMeanVariance(averages);                   // Print mean and variance fitness
-                // sort Population
-                sortByFitness(population);
+
+                sortByFitness(population);                              // sort Population
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
                 // mate the population together
-                selection(population, buffer, worst, "sus", "onePoint");
+                selection(population, buffer, worst, "sus", "none");
                 //#region Swap(population,buffer)
                 // There is no pass by reference in Java. Thus the swapping will not be
                 // extracted to method but done in the main function instead
@@ -313,7 +336,7 @@ public class Main
                 System.out.println("Generation :" + generationNumber + " | " + ((time - generationElapsed) / 1000) + " microseconds");
                 generationElapsed = time;
             }
-            System.out.println("Total runtime: " + ((time - totalelapsed) / 1000000) + "." + (((time - totalelapsed) / 1000) % 1000) + " milliseconds");
+            System.out.println("Total runtime: " + ((time - totalElapsed) / 1000000) + "." + (((time - totalElapsed) / 1000) % 1000) + " milliseconds");
         }
     }
 
