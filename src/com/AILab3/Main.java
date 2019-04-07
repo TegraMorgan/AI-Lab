@@ -1,7 +1,6 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.Entities.QueensPopulation;
 import com.AILab3.Solution.Solution;
 
 import java.util.Random;
@@ -137,22 +136,26 @@ public class Main
      * @param eliteSize  size of the population to be saved
      */
     public static void stochasticUniversalSampling (Vector<AlgoGene> population, Vector<AlgoGene> ark,
-                                                    int eliteSize, int worst, String mutationMethod)
+                                                    int eliteSize, int worst, String mutationMethod,
+                                                    boolean aging)
     {
         int[] aggregateInvertFitness = new int[GA_POPSIZE];
+        int first = 0;
+        if (aging)
+            while (population.get(first).age < 1) first++;
         // invert fitness value
-        aggregateInvertFitness[0] = worst - population.get(0).fitness;
-        for (int i = 1; i < GA_POPSIZE; i++)
+        aggregateInvertFitness[first] = worst - population.get(first).fitness;
+        for (int i = first + 1; i < GA_POPSIZE; i++)
             // put all fitness values into array for future use
             aggregateInvertFitness[i] = aggregateInvertFitness[i - 1] + (worst - population.get(i).fitness);
         // distance between the drawn fitness values
         // the last element of aggregate function will always contain the total sum
-        int rouletteSize = eliteSize * 2;
+        int rouletteSize = aging ? (int) (eliteSize * 0.75d) : eliteSize * 2;
         Vector<AlgoGene> roulette = new Vector<>();
         int fitnessJump = (aggregateInvertFitness[GA_POPSIZE - 1] / rouletteSize);
         // start randomly between 0 and the jump distance
         int start = r.nextInt(fitnessJump);
-        int populationIterator = 0;
+        int populationIterator = first;
         // Fill the roulette
         for (int rouletteIterator = 0; rouletteIterator < rouletteSize; rouletteIterator++)
         {
@@ -191,13 +194,23 @@ public class Main
     }
 
     public static void randomSampling (Vector<AlgoGene> population, Vector<AlgoGene> buffer,
-                                       String method, int selection_size)
+                                       String method, int selection_size, boolean aging)
     {
-        int i1, i2;
+        int i1, i2, f = 0, l = GA_POPSIZE - 1, m = GA_POPSIZE;
+        if (aging)
+        {
+            while (population.get(f).age < 1) f++;
+            while (population.get(l).age > 3) l--;
+            m = l - f + 1;
+        }
         for (int i = selection_size; i < GA_POPSIZE; i++)
         {
-            i1 = r.nextInt(RAND_MAX) % (GA_POPSIZE / 2);
-            i2 = r.nextInt(RAND_MAX) % (GA_POPSIZE / 2);
+            do
+            {
+                i1 = r.nextInt(m) + f;
+                i2 = r.nextInt(m) + f;
+            } while (i1 == i2);
+
             switch (method)
             {
                 case "onePoint":
@@ -229,23 +242,36 @@ public class Main
 
 
     public static void selection (Vector<AlgoGene> population, Vector<AlgoGene> survivors,
-                                  int worstFitness, String selectionMethod, String mutationMethod)
+                                  int worstFitness, String selectionMethod, String mutationMethod, boolean aging)
     {
-        int selection_size = (int) (GA_POPSIZE * GA_ELITRATE);
-        elitism(population, survivors, selection_size);
+        int selection_size;
+        if (aging)
+        {
+            // Aging
+            selection_size = GA_POPSIZE - 1;
+            population.sort(AlgoGene.BY_AGE);
+            while (population.get(selection_size).age > 3) selection_size--;
+        } else
+            // Regular elitism
+            selection_size = (int) (GA_POPSIZE * GA_ELITRATE);
+        elitism(population, survivors, selection_size, aging);
         switch (selectionMethod)
         {
             case "sus":
-                stochasticUniversalSampling(population, survivors, selection_size, worstFitness, mutationMethod);
+                stochasticUniversalSampling(population, survivors, selection_size, worstFitness, mutationMethod, aging);
                 break;
             default:
-                randomSampling(population, survivors, mutationMethod, selection_size);
+                randomSampling(population, survivors, mutationMethod, selection_size, aging);
         }
     }
 
-    private static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> ark, int eliteSize)
+    private static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> ark, int eliteSize, boolean aging)
     {
-        for (int i = 0; i < eliteSize; i++) ark.set(i, population.get(i));
+        for (int i = 0; i < eliteSize; i++)
+        {
+            ark.set(i, population.get(i));
+            if (aging) ark.get(i).age++;
+        }
     }
 
     //#endregion
@@ -288,10 +314,12 @@ public class Main
             long time = 0;
             Vector<AlgoGene> population = new Vector<>(), buffer = new Vector<>();
             Vector<AlgoGene> temp;
-            initPopulation(population, buffer);
             float[] averages;
             int worst;
+            boolean aging = true;
 
+
+            initPopulation(population, buffer);
             // TODO tick() https://www.geeksforgeeks.org/clock-tick-method-in-java-with-examples/
             // System.currentTimeMillis()
 
@@ -304,7 +332,7 @@ public class Main
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
                 // mate the population together
-                selection(population, buffer, worst, "sus", "onePoint");
+                selection(population, buffer, worst, "sus", "onePoint", aging);
                 //#region Swap(population,buffer)
                 // There is no pass by reference in Java. Thus the swapping will not be
                 // extracted to method but done in the main function instead
