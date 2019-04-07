@@ -1,6 +1,7 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
+import com.AILab3.Entities.QueensPopulation;
 import com.AILab3.Solution.Solution;
 
 import java.util.Random;
