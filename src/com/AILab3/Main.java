@@ -110,20 +110,17 @@ public class Main
     {
         String target = GA_TARGET;
         int tsize = target.length();
-        int worst = 0;
+        int worst = 89 * tsize;
         for (int i = 0; i < GA_POPSIZE; i++)
         {
             int fitness = 0;
             for (int j = 0; j < tsize; j++)
             {
                 int cf = Math.abs((population.get(i).str.charAt(j) - target.charAt(j)));
-                if (cf > worst)
-                    worst = cf;
                 fitness += cf;
             }
             population.get(i).fitness = fitness;
         }
-        worst *= tsize;
         for (int i = 0; i < GA_POPSIZE; i++)
         {
             population.get(i).inverseFitness = worst - population.get(i).fitness;
@@ -218,11 +215,45 @@ public class Main
         }
     }
 
-    private static void tournamentSelection (Vector<AlgoGene> pop, Vector<AlgoGene> ark, int ssize, boolean elitism)
+    private static void tournamentSelection (Vector<AlgoGene> pop,
+                                             Vector<AlgoGene> ark,
+                                             int ssize,
+                                             String mutationMethod)
     {
-        Vector<AlgoGene> sample;
         int sampleSize = 10;
+        Vector<AlgoGene> sample = new Vector<>(sampleSize);
+        int _w = pop.get(GA_POPSIZE - 1).inverseFitness;
+        int _mf1, _mf2, i1, i2;
+        for (int i = ssize; i < GA_POPSIZE; i++)
+        {
+            _mf1 = _mf2 = _w;
+            i1 = i2 = 0;
+            for (int j = 0; j < sampleSize; j++)
+            {
+                // select random member from the top 50%
+                sample.setElementAt(pop.get(r.nextInt(GA_POPSIZE / 2)), j);
+                if (sample.get(j).fitness < _mf1)
+                {
+                    _mf2 = _mf1;
+                    i2 = i1;
+                    _mf1 = sample.get(j).fitness;
+                    i1 = j;
+                } else if (sample.get(j).fitness < _mf2)
+                {
+                    _mf2 = sample.get(j).fitness;
+                    i2 = j;
+                }
+            }
+            switch (mutationMethod)
+            {
+                case "onePoint":
+                    ark.setElementAt(onePointCrossover(sample.get(i1), sample.get(i2)), i);
+                    break;
+                default:
+                    break;
+            }
 
+        }
     }
 
     private static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> ark, int eliteSize, boolean aging)
@@ -339,7 +370,7 @@ public class Main
             Fitness - bull, default
             Selection - sus, default
             Mutation - onePoint
-            Aging - can be turned on/off by changing variable to true/false
+            Survivor Selection - True for aging, False for elitism
              */
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
