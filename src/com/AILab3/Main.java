@@ -20,7 +20,6 @@ public class Main
     static Random r = new Random();
     //#endregion
 
-
     //#region Utility functions
     public static void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
@@ -46,7 +45,7 @@ public class Main
 
     //#endregion
 
-    //#region Fitness
+    //#region Fitness functions
 
     /**
      * Function that calculates fitness of a given population
@@ -54,18 +53,20 @@ public class Main
      * @param population
      * @return
      */
-    public static int calcFitness (Vector<AlgoGene> population, String method)
+    public static void calcFitness (Vector<AlgoGene> population, String method)
     {
         switch (method)
         {
             case "bull":
-                return bulPgiaFitness(population);
+                bulPgiaFitness(population);
+                break;
             default:
-                return defaultFitness(population);
+                defaultFitness(population);
+                break;
         }
     }
 
-    public static int bulPgiaFitness (Vector<AlgoGene> _p)
+    public static void bulPgiaFitness (Vector<AlgoGene> _p)
     {
         /*
         One of the basic rules of the game is that the target word cannot contain
@@ -101,11 +102,11 @@ public class Main
                     }
             }
             _p.get(i).fitness = _f;
+            _p.get(i).inverseFitness = (5 * _l) - _f;
         }
-        return 5 * _l;
     }
 
-    public static int defaultFitness (Vector<AlgoGene> population)
+    public static void defaultFitness (Vector<AlgoGene> population)
     {
         String target = GA_TARGET;
         int tsize = target.length();
@@ -122,7 +123,11 @@ public class Main
             }
             population.get(i).fitness = fitness;
         }
-        return worst * tsize;
+        worst *= tsize;
+        for (int i = 0; i < GA_POPSIZE; i++)
+        {
+            population.get(i).inverseFitness = worst - population.get(i).fitness;
+        }
     }
     //#endregion
 
@@ -136,21 +141,22 @@ public class Main
      * @param eliteSize  size of the population to be saved
      */
     public static void stochasticUniversalSampling (Vector<AlgoGene> population, Vector<AlgoGene> ark,
-                                                    int eliteSize, int worst, String mutationMethod,
-                                                    boolean aging)
+                                                    int eliteSize, String mutationMethod, boolean aging)
     {
         int[] aggregateInvertFitness = new int[GA_POPSIZE];
         int first = 0;
         if (aging)
-            while (population.get(first).age < 1) first++;
+            // We don't want the children to reproduce, children have age on 1 now
+            // We sorted the population by age already
+            while (population.get(first).age < 2) first++;
         // invert fitness value
-        aggregateInvertFitness[first] = worst - population.get(first).fitness;
+        aggregateInvertFitness[first] = population.get(first).inverseFitness;
         for (int i = first + 1; i < GA_POPSIZE; i++)
             // put all fitness values into array for future use
-            aggregateInvertFitness[i] = aggregateInvertFitness[i - 1] + (worst - population.get(i).fitness);
+            aggregateInvertFitness[i] = aggregateInvertFitness[i - 1] + (population.get(i).inverseFitness);
         // distance between the drawn fitness values
         // the last element of aggregate function will always contain the total sum
-        int rouletteSize = aging ? (int) (eliteSize * 0.75d) : eliteSize * 2;
+        int rouletteSize = aging ? (int) ((GA_POPSIZE - eliteSize) * 0.5d) : eliteSize * 2;
         Vector<AlgoGene> roulette = new Vector<>();
         int fitnessJump = (aggregateInvertFitness[GA_POPSIZE - 1] / rouletteSize);
         // start randomly between 0 and the jump distance
@@ -183,16 +189,6 @@ public class Main
         }
     }
 
-    public static AlgoGene onePointCrossover (AlgoGene one, AlgoGene two)
-    {
-        AlgoGene ret = new AlgoGene();
-        int tsize = GA_TARGET.length();
-        int spos = (r.nextInt(tsize));
-        ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
-        if (r.nextInt(RAND_MAX) < GA_MUTATION) mutateOnePoint(ret);
-        return ret;
-    }
-
     public static void randomSampling (Vector<AlgoGene> population, Vector<AlgoGene> buffer,
                                        String method, int selection_size, boolean aging)
     {
@@ -219,8 +215,36 @@ public class Main
                 default:
                     break;
             }
-
         }
+    }
+
+    private static void tournamentSelection (Vector<AlgoGene> pop, Vector<AlgoGene> ark, int ssize, boolean elitism)
+    {
+        Vector<AlgoGene> sample;
+        int sampleSize = 10;
+
+    }
+
+    private static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> ark, int eliteSize, boolean aging)
+    {
+        for (int i = 0; i < eliteSize; i++)
+        {
+            ark.set(i, population.get(i));
+            if (aging) ark.get(i).age++;
+        }
+    }
+
+    //#endregion
+
+    //#region Crossover functions
+    public static AlgoGene onePointCrossover (AlgoGene one, AlgoGene two)
+    {
+        AlgoGene ret = new AlgoGene();
+        int tsize = GA_TARGET.length();
+        int spos = (r.nextInt(tsize));
+        ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
+        if (r.nextInt(RAND_MAX) < GA_MUTATION) mutateOnePoint(ret);
+        return ret;
     }
 
     public static void mutateOnePoint (AlgoGene member)
@@ -239,10 +263,11 @@ public class Main
             sb.append(member.str, ipos + 1, tsize);
         member.str = sb.toString();
     }
+    //#endregion
 
-
+    //#region GA main functions
     public static void selection (Vector<AlgoGene> population, Vector<AlgoGene> survivors,
-                                  int worstFitness, String selectionMethod, String mutationMethod, boolean aging)
+                                  String selectionMethod, String mutationMethod, boolean aging)
     {
         int selection_size;
         if (aging)
@@ -258,22 +283,12 @@ public class Main
         switch (selectionMethod)
         {
             case "sus":
-                stochasticUniversalSampling(population, survivors, selection_size, worstFitness, mutationMethod, aging);
+                stochasticUniversalSampling(population, survivors, selection_size, mutationMethod, aging);
                 break;
             default:
                 randomSampling(population, survivors, mutationMethod, selection_size, aging);
         }
     }
-
-    private static void elitism (Vector<AlgoGene> population, Vector<AlgoGene> ark, int eliteSize, boolean aging)
-    {
-        for (int i = 0; i < eliteSize; i++)
-        {
-            ark.set(i, population.get(i));
-            if (aging) ark.get(i).age++;
-        }
-    }
-
     //#endregion
 
     //#region Testing
@@ -315,24 +330,27 @@ public class Main
             Vector<AlgoGene> population = new Vector<>(), buffer = new Vector<>();
             Vector<AlgoGene> temp;
             float[] averages;
-            int worst;
             boolean aging = true;
-
-
             initPopulation(population, buffer);
             // TODO tick() https://www.geeksforgeeks.org/clock-tick-method-in-java-with-examples/
             // System.currentTimeMillis()
-
+            /*
+            Algorithm list:
+            Fitness - bull, default
+            Selection - sus, default
+            Mutation - onePoint
+            Aging - can be turned on/off by changing variable to true/false
+             */
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
-                worst = calcFitness(population, "bull");         // calculate fitness and determine the worst possible score
+                calcFitness(population, "bull");                 // calculate fitness and determine the worst possible score
                 averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
                 Solution.printMeanVariance(averages);                   // Print mean and variance fitness
                 population.sort(AlgoGene.BY_FITNESS);                   // sort Population
                 printBest(population);                                  // print the best one
                 if ((population).get(0).fitness == 0) break;
                 // mate the population together
-                selection(population, buffer, worst, "sus", "onePoint", aging);
+                selection(population, buffer, "sus", "onePoint", aging);
                 //#region Swap(population,buffer)
                 // There is no pass by reference in Java. Thus the swapping will not be
                 // extracted to method but done in the main function instead

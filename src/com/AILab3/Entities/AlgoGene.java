@@ -6,7 +6,8 @@ public class AlgoGene implements Comparable
 
 {
     public String str;         // String of the gene
-    public int fitness;        // Genetic fitness of the gene
+    public int fitness;        // Genetic fitness of the gene - less is better
+    public int inverseFitness; // Inverse value of fitness - greater is better
     public int age;
     public static final ByFitness BY_FITNESS = new ByFitness();
     public static final ByAge BY_AGE = new ByAge();
@@ -15,14 +16,16 @@ public class AlgoGene implements Comparable
     {
         str = "";
         fitness = 0;
+        inverseFitness = 0;
         age = 0;
     }
 
-    public AlgoGene (String s, int fit, int a)
+    public AlgoGene (String _str, int _fit, int _age, int _ifit)
     {
-        str = s;
-        fitness = fit;
-        age = a;
+        str = _str;
+        fitness = _fit;
+        age = _age;
+        inverseFitness = _ifit;
     }
 
     @Override
