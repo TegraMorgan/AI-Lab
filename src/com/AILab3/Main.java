@@ -40,7 +40,7 @@ public class Main
             Algorithm list:
             Fitness - bull, default
             Selection - sus, tournament, default
-            Mutation - onePoint
+            Mutation - onePoint, uniform
             Survivor Selection - True for aging, False for elitism
              */
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
@@ -55,7 +55,7 @@ public class Main
                 Selction.selection(population, buffer, "tournament", aging);
                 // Future Parents are now in population, survivors in buffer
                 // Amount of children to produce : GA_POP - buffer.size
-                Mutation.mutation(population, buffer, "onePoint");
+                Mutation.mutation(population, buffer, "uniform");
                 population = buffer;
                 buffer = new Vector<>();
                 time = System.nanoTime();

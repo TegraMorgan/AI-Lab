@@ -25,6 +25,9 @@ public class Mutation
                 case "onePoint":
                     ark.add(onePointCrossover(parents.get(i1), parents.get(i2)));
                     break;
+                case "uniform":
+                    ark.add(uniformCrossover(parents.get(i1), parents.get(i2)));
+                    break;
                 default:
                     break;
             }
@@ -39,6 +42,16 @@ public class Mutation
         ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
         if (Main.r.nextInt(Main.RAND_MAX) < Main.GA_MUTATION) mutateOnePoint(ret);
         return ret;
+    }
+
+    public static AlgoGene uniformCrossover (AlgoGene one, AlgoGene two)
+    {
+        StringBuilder sb = new StringBuilder();
+        AlgoGene[] pool = {one, two};
+        int _l = Main.GA_TARGET.length();
+        for (int i = 0; i < _l; i++)
+            sb.append(pool[Main.r.nextInt(2)].str.charAt(i));
+        return new AlgoGene(sb.toString(), 0, 0, 0);
     }
 
     public static void mutateOnePoint (AlgoGene member)
