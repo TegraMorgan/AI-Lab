@@ -1,6 +1,8 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
+import com.AILab3.Entities.QueensBrain;
+import com.AILab3.Entities.QueensPopulation;
 
 import static com.AILab3.GeneticAlgo.Constants.*;
 import static com.AILab3.GeneticAlgo.Fitness.calcFitness;
@@ -12,6 +14,8 @@ import static com.AILab3.GeneticAlgo.Utility.printBest;
 import static com.AILab3.Solution.Solution.calcPopMeanVar;
 import static com.AILab3.Solution.Solution.printMeanVariance;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Vector;
 
 
@@ -59,10 +63,16 @@ public class Main
         }
     }
 
-
     public static void queensMain ()
     {
-
+        QueensPopulation q1 = new QueensPopulation(80, 300, 0f);
+        int tests = 10;
+        int conflictsCount = 0;
+        for (int i = 0; i < tests; i++)
+        {
+            conflictsCount += q1.repopulate(10).minimalConflicts();
+        }
+        System.out.println("Average " + (float) conflictsCount / tests);
     }
 
     public static void main (String[] args)
