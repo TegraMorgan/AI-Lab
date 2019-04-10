@@ -65,12 +65,12 @@ public class Main
 
     public static void queensMain ()
     {
-        QueensPopulation q1 = new QueensPopulation(80, 300, 0f);
+        QueensPopulation q1 = new QueensPopulation(1000, 25, 0f);
         int tests = 10;
         int conflictsCount = 0;
         for (int i = 0; i < tests; i++)
         {
-            conflictsCount += q1.repopulate(10).minimalConflicts();
+            conflictsCount += q1.repopulate(15).minimalConflicts();
         }
         System.out.println("Average " + (float) conflictsCount / tests);
     }
