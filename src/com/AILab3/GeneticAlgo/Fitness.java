@@ -1,7 +1,6 @@
 package com.AILab3.GeneticAlgo;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.Main;
 
 import java.util.Vector;
 
@@ -34,12 +33,12 @@ public class Fitness
         contain duplicate letters
          */
         /* Target Length */
-        int _l = Main.GA_TARGET.length();
+        int _l = Constants.GA_TARGET.length();
         /* Fitness */
         int _f;
         /* Gene */
         String _g;
-        for (int i = 0; i < Main.GA_POPSIZE; i++)
+        for (int i = 0; i < Constants.GA_POPSIZE; i++)
         {
             /*
             Reset fitness
@@ -49,12 +48,12 @@ public class Fitness
             _g = _p.get(i).str;
             for (int k = 0; k < _l; k++)
             {
-                if (Main.GA_TARGET.charAt(k) == _g.charAt(k))
+                if (Constants.GA_TARGET.charAt(k) == _g.charAt(k))
                     _f -= 5;
                 else
                     for (int j = 0; j < _l; j++)
                     {
-                        if (_g.charAt(k) == Main.GA_TARGET.charAt(j))
+                        if (_g.charAt(k) == Constants.GA_TARGET.charAt(j))
                         {
                             _f -= 2;
                             break;
@@ -68,10 +67,10 @@ public class Fitness
 
     public static void defaultFitness (Vector<AlgoGene> population)
     {
-        String target = Main.GA_TARGET;
+        String target = Constants.GA_TARGET;
         int tsize = target.length();
         int worst = 89 * tsize;
-        for (int i = 0; i < Main.GA_POPSIZE; i++)
+        for (int i = 0; i < Constants.GA_POPSIZE; i++)
         {
             int fitness = 0;
             for (int j = 0; j < tsize; j++)
@@ -81,7 +80,7 @@ public class Fitness
             }
             population.get(i).fitness = fitness;
         }
-        for (int i = 0; i < Main.GA_POPSIZE; i++)
+        for (int i = 0; i < Constants.GA_POPSIZE; i++)
         {
             population.get(i).inverseFitness = worst - population.get(i).fitness;
         }

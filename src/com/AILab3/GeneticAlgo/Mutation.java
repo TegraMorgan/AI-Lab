@@ -1,7 +1,6 @@
 package com.AILab3.GeneticAlgo;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.Main;
 
 import java.util.Vector;
 
@@ -12,12 +11,12 @@ public class Mutation
         int start = ark.size();
         int psize = parents.size();
         int i1, i2;
-        for (int i = start; i < Main.GA_POPSIZE; i++)
+        for (int i = start; i < Constants.GA_POPSIZE; i++)
         {
             do
             {
-                i1 = Main.r.nextInt(psize);
-                i2 = Main.r.nextInt(psize);
+                i1 = Constants.r.nextInt(psize);
+                i2 = Constants.r.nextInt(psize);
             } while (i1 == i2);
 
             switch (method)
@@ -37,10 +36,10 @@ public class Mutation
     public static AlgoGene onePointCrossover (AlgoGene one, AlgoGene two)
     {
         AlgoGene ret = new AlgoGene();
-        int tsize = Main.GA_TARGET.length();
-        int spos = (Main.r.nextInt(tsize));
+        int tsize = Constants.GA_TARGET.length();
+        int spos = (Constants.r.nextInt(tsize));
         ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
-        if (Main.r.nextInt(Main.RAND_MAX) < Main.GA_MUTATION) mutateOnePoint(ret);
+        if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) mutateOnePoint(ret);
         return ret;
     }
 
@@ -48,18 +47,18 @@ public class Mutation
     {
         StringBuilder sb = new StringBuilder();
         AlgoGene[] pool = {one, two};
-        int _l = Main.GA_TARGET.length();
+        int _l = Constants.GA_TARGET.length();
         for (int i = 0; i < _l; i++)
-            sb.append(pool[Main.r.nextInt(2)].str.charAt(i));
+            sb.append(pool[Constants.r.nextInt(2)].str.charAt(i));
         return new AlgoGene(sb.toString(), 0, 0, 0);
     }
 
     public static void mutateOnePoint (AlgoGene member)
     {
         StringBuilder sb = new StringBuilder();
-        int tsize = Main.GA_TARGET.length();
-        int ipos = Main.r.nextInt(Main.RAND_MAX) % tsize;
-        int delta = (Main.r.nextInt(Main.RAND_MAX) % 90) + 32;
+        int tsize = Constants.GA_TARGET.length();
+        int ipos = Constants.r.nextInt(Constants.RAND_MAX) % tsize;
+        int delta = (Constants.r.nextInt(Constants.RAND_MAX) % 90) + 32;
         // Copy beginning
         if (ipos > 0)
             sb.append(member.str, 0, ipos);

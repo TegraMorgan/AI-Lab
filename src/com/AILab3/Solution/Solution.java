@@ -1,7 +1,7 @@
 package com.AILab3.Solution;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.Main;
+import com.AILab3.GeneticAlgo.Constants;
 
 import java.util.Vector;
 
@@ -13,14 +13,14 @@ public class Solution
         int t;
         float avgPopFit = 0;
         float popFitVar = 0;
-        for (int i = 0; i < Main.GA_POPSIZE; i++)
+        for (int i = 0; i < Constants.GA_POPSIZE; i++)
         {
             t = population.get(i).fitness;
             avgPopFit += t;
             popFitVar += t * t;
         }
-        popFitVar = (popFitVar - ((avgPopFit * avgPopFit) / Main.GA_POPSIZE)) / (Main.GA_POPSIZE - 1);
-        avgPopFit /= Main.GA_POPSIZE;
+        popFitVar = (popFitVar - ((avgPopFit * avgPopFit) / Constants.GA_POPSIZE)) / (Constants.GA_POPSIZE - 1);
+        avgPopFit /= Constants.GA_POPSIZE;
         res[0] = avgPopFit;
         res[1] = popFitVar;
         return res;

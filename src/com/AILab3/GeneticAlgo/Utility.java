@@ -1,7 +1,6 @@
 package com.AILab3.GeneticAlgo;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.Main;
 
 import java.util.Vector;
 
@@ -9,14 +8,14 @@ public class Utility
 {
     public static void initPopulation (Vector<AlgoGene> population, Vector<AlgoGene> buffer)
     {
-        int targetSize = Main.GA_TARGET.length();
-        int age_factor = Main.GA_POPSIZE / 5 + 1;
+        int targetSize = Constants.GA_TARGET.length();
+        int age_factor = Constants.GA_POPSIZE / 5 + 1;
         StringBuilder sb = new StringBuilder(targetSize);
-        for (int i = 0; i < Main.GA_POPSIZE; i++)
+        for (int i = 0; i < Constants.GA_POPSIZE; i++)
         {
             AlgoGene citizen = new AlgoGene();
             for (int j = 0; j < targetSize; j++)
-                sb.append((char) ((Main.r.nextInt(Main.RAND_MAX) % 90) + 32));
+                sb.append((char) ((Constants.r.nextInt(Constants.RAND_MAX) % 90) + 32));
             citizen.str = sb.toString();
             citizen.age = i / age_factor;
             population.add(citizen);
