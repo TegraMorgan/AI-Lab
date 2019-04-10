@@ -4,7 +4,7 @@ import com.AILab3.Entities.AlgoGene;
 
 import java.util.Vector;
 
-public class Selction
+public class Selection
 {
     public static void selection (Vector<AlgoGene> population, Vector<AlgoGene> ark,
                                   String selectionMethod, boolean aging)

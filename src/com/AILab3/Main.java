@@ -1,10 +1,19 @@
 package com.AILab3;
 
 import com.AILab3.Entities.AlgoGene;
-import com.AILab3.GeneticAlgo.*;
-import com.AILab3.Solution.Solution;
+
+import static com.AILab3.GeneticAlgo.Constants.*;
+import static com.AILab3.GeneticAlgo.Fitness.calcFitness;
+import static com.AILab3.GeneticAlgo.Mutation.mutation;
+import static com.AILab3.GeneticAlgo.Selection.selection;
+import static com.AILab3.GeneticAlgo.Tests.testing;
+import static com.AILab3.GeneticAlgo.Utility.initPopulation;
+import static com.AILab3.GeneticAlgo.Utility.printBest;
+import static com.AILab3.Solution.Solution.calcPopMeanVar;
+import static com.AILab3.Solution.Solution.printMeanVariance;
 
 import java.util.Vector;
+
 
 @SuppressWarnings("WeakerAccess")
 public class Main
@@ -18,7 +27,7 @@ public class Main
         Vector<AlgoGene> population = new Vector<>(), buffer = new Vector<>();
         float[] averages;
         boolean aging = false;
-        Utility.initPopulation(population, buffer);
+        initPopulation(population, buffer);
         // TODO tick() https://www.geeksforgeeks.org/clock-tick-method-in-java-with-examples/
         // System.currentTimeMillis()
             /*
@@ -28,19 +37,19 @@ public class Main
             Mutation - onePoint, uniform
             Survivor Selection - True for aging, False for elitism
              */
-        for (int generationNumber = 0; generationNumber < Constants.GA_MAXITER; generationNumber++)
+        for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
         {
-            Fitness.calcFitness(population, "bull");                 // calculate fitness and determine the worst possible score
-            averages = Solution.calcPopMeanVar(population);         // Calculate mean and variance fitness
-            Solution.printMeanVariance(averages);                   // Print mean and variance fitness
+            calcFitness(population, "bull");                 // calculate fitness and determine the worst possible score
+            averages = calcPopMeanVar(population);         // Calculate mean and variance fitness
+            printMeanVariance(averages);                   // Print mean and variance fitness
             population.sort(AlgoGene.BY_FITNESS);                   // sort Population
-            Utility.printBest(population);                                  // print the best one
+            printBest(population);                                  // print the best one
             if ((population).get(0).fitness == 0) break;
             // Select parents and survivors
-            Selction.selection(population, buffer, "tournament", aging);
+            selection(population, buffer, "tournament", aging);
             // Future Parents are now in population, survivors in buffer
             // Amount of children to produce : GA_POP - buffer.size
-            Mutation.mutation(population, buffer, "uniform");
+            mutation(population, buffer, "uniform");
             population = buffer;
             buffer = new Vector<>();
             time = System.nanoTime();
@@ -58,8 +67,6 @@ public class Main
 
     public static void main (String[] args)
     {
-        boolean testing = false;
-        boolean queens = true;
         String mode = "queens";
         switch (mode)
         {
@@ -67,7 +74,7 @@ public class Main
                 textMain();
                 break;
             case "test":
-                Tests.testing();
+                testing();
                 break;
             case "queens":
                 queensMain();
