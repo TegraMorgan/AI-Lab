@@ -91,6 +91,7 @@ public class QueensPopulation
     public QueensBrain repopulate (int maxGen)
     {
         Arrays.setAll(gen, i -> new QueensBrain(N));
+        Arrays.sort(gen, QueensBrain.BY_FITNESS);
         solution = null;
         genCount = 1;
         QueensBrain[] newGen = new QueensBrain[GEN_SIZE];

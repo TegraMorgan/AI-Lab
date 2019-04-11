@@ -71,16 +71,11 @@ public class Main
 
     public static void queensMain (String[] args)
     {
-        QueensPopulation q1 = new QueensPopulation(1000, 25, 0f);
-        int tests = 10;
-        int conflictsCount = 0;
-        for (int i = 0; i < tests; i++)
-        {
-            conflictsCount += q1.repopulate(5).minimalConflicts();
-        }
-        System.out.println("Average " + (float) conflictsCount / tests);
+        QueensPopulation q1 = new QueensPopulation(8, 25, 0.1f);
+        q1.repopulate(Integer.MAX_VALUE);
+        System.out.println("Solved in " + q1.getGenerationCount() + " generations");
+        System.out.println(q1.getSolution());
     }
-
 
     public static void knapsackMain (String[] args)
     {
@@ -148,7 +143,7 @@ public class Main
 
     public static void main (String[] args)
     {
-        args = new String[]{"queens"};
+        //args = new String[]{"queens"};
         String[] param = Utility.extractUserParameters(args);
         if (param == null) return;
         String mode = param[0];

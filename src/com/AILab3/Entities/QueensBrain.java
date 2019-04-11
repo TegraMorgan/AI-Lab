@@ -15,10 +15,10 @@ public class QueensBrain implements Comparable
     public static final ByFitness BY_FITNESS = new ByFitness();
 
     //On average on each mutate() call n * MUTATION_PROBABILITY queens would be mutated
-    public static final float MUTATION_PROBABILITY = 0.01f;
+    public static final float MUTATION_PROBABILITY = 0.2f;
 
     //On average on each crossover() call n * MUTATION_PROBABILITY queens would be PMX swapped
-    public static final float CROSSOVER_PROBABILITY = 0.5f;
+    public static final float CROSSOVER_PROBABILITY = 0.25f;
 
     public QueensBrain (int n)
     {
@@ -237,9 +237,5 @@ public class QueensBrain implements Comparable
             b1.swap(c, b1.indexOf(b2.queens[c]));
         }
         return b1;
-    }
-    public static QueensBrain crossover2(QueensBrain b1, QueensBrain b2)
-    {
-        return null;
     }
 }
