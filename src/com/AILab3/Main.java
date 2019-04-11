@@ -1,13 +1,17 @@
 package com.AILab3;
 
+
 import com.AILab3.Entities.Gene;
 import com.AILab3.Entities.KnapsackGene;
+import com.AILab3.Entities.QueensPopulation;
 import com.AILab3.Entities.StringGene;
 import com.AILab3.GeneticAlgo.Utility;
 
-import static com.AILab3.GeneticAlgo.Constants.*;
-import static com.AILab3.GeneticAlgo.Tests.testing;
 import java.util.Vector;
+
+import static com.AILab3.GeneticAlgo.Constants.GA_MAXITER;
+import static com.AILab3.GeneticAlgo.Constants.GA_TARGET;
+import static com.AILab3.GeneticAlgo.Tests.testing;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -59,7 +63,14 @@ public class Main
 
     public static void queensMain ()
     {
-
+        QueensPopulation q1 = new QueensPopulation(1000, 25, 0f);
+        int tests = 10;
+        int conflictsCount = 0;
+        for (int i = 0; i < tests; i++)
+        {
+            conflictsCount += q1.repopulate(15).minimalConflicts();
+        }
+        System.out.println("Average " + (float) conflictsCount / tests);
     }
 
 
@@ -112,7 +123,7 @@ public class Main
 
     public static void main (String[] args)
     {
-        String mode = "knapsack";
+        String mode = "queens";
         switch (mode)
         {
             case "string":
