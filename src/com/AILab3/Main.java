@@ -79,6 +79,7 @@ public class Main
         QueensPopulation q1 = new QueensPopulation(8, 25, 0.1f);
         q1.repopulate(Integer.MAX_VALUE);
         System.out.println("Solved in " + q1.getGenerationCount() + " generations");
+
         System.out.println(q1.getSolution());
     }
 
