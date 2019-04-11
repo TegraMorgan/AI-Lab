@@ -1,7 +1,6 @@
 package com.AILab3.GeneticAlgo;
 
 import com.AILab3.Entities.Gene;
-import com.AILab3.Entities.StringGene;
 
 import java.util.Vector;
 
@@ -64,7 +63,7 @@ public class Selection
             while (population.get(l).age > 3) l--;
             m = l - f + 1;
         }
-        for (int i = childrenToGenerate; i < GA_POPSIZE; i++)
+        for (int i = 0; i < childrenToGenerate; i++)
         {
             do
             {

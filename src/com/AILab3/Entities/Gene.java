@@ -9,22 +9,17 @@ import static com.AILab3.GeneticAlgo.Selection.*;
 
 public abstract class Gene
 {
-    public int fitness;        // Genetic fitness of the gene - less is better
-    public int inverseFitness; // Inverse value of fitness - greater is better
-    public int age;
     public static final ByFitness BY_FITNESS = new ByFitness();
-    public static final ByAge BY_AGE = new ByAge();
+    private static final ByAge BY_AGE = new ByAge();
     public static String fitnessAlgo = "";
     public static String selectionAlgo = "";
     public static String mutationAlgo = "";
     public static boolean aging = false;
+    public int fitness;        // Genetic fitness of the gene - less is better
+    public int inverseFitness; // Inverse value of fitness - greater is better
+    public int age;
 
-    public Gene ()
-    {
-        this(0, 0, 0);
-    }
-
-    public Gene (int _f, int _a, int _if)
+    Gene (int _f, int _a, int _if)
     {
         fitness = _f;
         age = _a;
@@ -65,6 +60,8 @@ public abstract class Gene
 
     public abstract boolean isSolution ();
 
+    public abstract void updateFitness ();
+
     public static class ByAge implements Comparator<Gene>
     {
         @Override
@@ -82,7 +79,5 @@ public abstract class Gene
             return Integer.compare((o1).fitness, (o2).fitness);
         }
     }
-
-    public abstract void updateFitness ();
 
 }

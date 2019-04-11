@@ -7,26 +7,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 
-
-import static com.AILab3.GeneticAlgo.Constants.*;
+import static com.AILab3.GeneticAlgo.Constants.GA_POPSIZE;
+import static com.AILab3.GeneticAlgo.Constants.r;
 
 public class KnapsackGene extends Gene
 {
-    public int[] gene;
-    public static int capacity;
-    public static int[] weights;
-    public static int[] prices;
-    public static int[] solution;
-    public static int priceSum;
+    private static int capacity;
+    private static int[] weights;
+    private static int[] prices;
+    private static int[] solution;
+    private static int priceSum;
     public static int count;
-
-
-    public KnapsackGene ()
-    {
-        super(0, 0, 0);
-        if (weights == null) gene = null;
-        else gene = new int[weights.length];
-    }
+    public int[] gene;
 
     public KnapsackGene (int[] _g)
     {
@@ -39,7 +31,7 @@ public class KnapsackGene extends Gene
         gene = _g;
     }
 
-    public static void loadData (int _c, int[] _w, int[] _p, int[] _so)
+    private static void loadData (int _c, int[] _w, int[] _p, int[] _so)
     {
         capacity = _c;
         weights = _w;
@@ -49,8 +41,6 @@ public class KnapsackGene extends Gene
         for (int price : prices) priceSum += price;
         count = _w.length;
     }
-
-
     /*
     c - Capacity
     w - Weights

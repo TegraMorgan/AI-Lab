@@ -1,6 +1,5 @@
 package com.AILab3.GeneticAlgo;
 
-import com.AILab3.Entities.Gene;
 import com.AILab3.Entities.KnapsackGene;
 import com.AILab3.Entities.StringGene;
 
@@ -27,7 +26,7 @@ public class Mutation
         return new StringGene(sb.toString(), 0, 0, 0);
     }
 
-    public static void mutateOnePoint (StringGene member)
+    private static void mutateOnePoint (StringGene member)
     {
         StringBuilder sb = new StringBuilder();
         int tsize = Constants.GA_TARGET.length();
