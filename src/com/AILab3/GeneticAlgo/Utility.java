@@ -69,6 +69,13 @@ public class Utility
             switch (args[1])
             {
                 case "bull":
+                    if (param[0].equals("string")) param[1] = args[1];
+                    else
+                    {
+                        System.out.println("Only string problem can work with bull. Opting to default.");
+                        param[1] = "default";
+                    }
+                    break;
                 case "default":
                     param[1] = args[1];
                     break;

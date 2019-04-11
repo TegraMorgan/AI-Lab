@@ -50,8 +50,13 @@ public class Main
             Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             population.sort(Gene.BY_FITNESS);                       // sort Population
             StringGene.printBest(population);                       // print the best one
-            if ((population).get(0).fitness == 0) break;            // if solution found - exit
-
+            if ((population).get(0).fitness == 0)
+            {
+                System.out.println("Solved in " + generationNumber);
+                break;            // if solution found - exit
+            }
+            if (generationNumber == GA_MAXITER - 1)
+                System.out.println("Not solved");
             Gene.selection(population, buffer); // Select parents and survivors
             // Future Parents are now in population, survivors in buffer
 
@@ -107,7 +112,6 @@ public class Main
             long generationElapsed = System.nanoTime();
             long time = 0;
             int numOfItems = KnapsackGene.parseProblem(p);
-            System.out.println("Problem " + p);
             KnapsackGene.initPopulation(numOfItems, population);
             for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
             {
@@ -120,9 +124,11 @@ public class Main
                 KnapsackGene.PrintBest(population);
                 if (population.get(0).isSolution())
                 {
-                    System.out.println("Problem " + p + " solved");
+                    System.out.println("Problem " + p + " solved in " + generationNumber);
                     break;
                 }
+                if (generationNumber == GA_MAXITER - 1)
+                    System.out.println("Problem " + p + " not solved");
 
                 // Selection
                 Gene.selection(population, buffer);
@@ -148,7 +154,6 @@ public class Main
 
     public static void main (String[] args)
     {
-        args = new String[]{"queens"};
         String[] param = Utility.extractUserParameters(args);
         if (param == null) return;
         String mode = param[0];
