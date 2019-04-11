@@ -143,7 +143,7 @@ public class QueensBrain implements Comparable
     @Override
     public int compareTo (Object o)
     {
-        return Float.compare(this.fitness, ((QueensBrain) o).fitness);
+        return Float.compare(((QueensBrain) o).fitness, this.fitness);
     }
 
     public static class ByFitness implements Comparator<QueensBrain>
@@ -151,7 +151,7 @@ public class QueensBrain implements Comparable
         @Override
         public int compare (QueensBrain o1, QueensBrain o2)
         {
-            return Float.compare(o1.fitness, o2.fitness);
+            return Float.compare(o2.fitness, o1.fitness);
         }
     }
 
@@ -237,5 +237,9 @@ public class QueensBrain implements Comparable
             b1.swap(c, b1.indexOf(b2.queens[c]));
         }
         return b1;
+    }
+    public static QueensBrain crossover2(QueensBrain b1, QueensBrain b2)
+    {
+        return null;
     }
 }

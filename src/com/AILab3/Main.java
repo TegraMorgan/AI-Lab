@@ -76,7 +76,7 @@ public class Main
         int conflictsCount = 0;
         for (int i = 0; i < tests; i++)
         {
-            conflictsCount += q1.repopulate(15).minimalConflicts();
+            conflictsCount += q1.repopulate(5).minimalConflicts();
         }
         System.out.println("Average " + (float) conflictsCount / tests);
     }
@@ -148,6 +148,7 @@ public class Main
 
     public static void main (String[] args)
     {
+        args = new String[]{"queens"};
         String[] param = Utility.extractUserParameters(args);
         if (param == null) return;
         String mode = param[0];
