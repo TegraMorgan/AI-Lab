@@ -1,41 +1,15 @@
 package com.AILab3.GeneticAlgo;
 
-import com.AILab3.Entities.AlgoGene;
-
-import java.util.Vector;
+import com.AILab3.Entities.Gene;
+import com.AILab3.Entities.KnapsackGene;
+import com.AILab3.Entities.StringGene;
 
 public class Mutation
 {
-    public static void mutation (Vector<AlgoGene> parents, Vector<AlgoGene> ark, String method)
-    {
-        int start = ark.size();
-        int psize = parents.size();
-        int i1, i2;
-        for (int i = start; i < Constants.GA_POPSIZE; i++)
-        {
-            do
-            {
-                i1 = Constants.r.nextInt(psize);
-                i2 = Constants.r.nextInt(psize);
-            } while (i1 == i2);
 
-            switch (method)
-            {
-                case "onePoint":
-                    ark.add(onePointCrossover(parents.get(i1), parents.get(i2)));
-                    break;
-                case "uniform":
-                    ark.add(uniformCrossover(parents.get(i1), parents.get(i2)));
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    public static AlgoGene onePointCrossover (AlgoGene one, AlgoGene two)
+    public static StringGene onePointCrossover (StringGene one, StringGene two)
     {
-        AlgoGene ret = new AlgoGene();
+        StringGene ret = new StringGene();
         int tsize = Constants.GA_TARGET.length();
         int spos = (Constants.r.nextInt(tsize));
         ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
@@ -43,17 +17,17 @@ public class Mutation
         return ret;
     }
 
-    public static AlgoGene uniformCrossover (AlgoGene one, AlgoGene two)
+    public static StringGene uniformCrossover (StringGene one, StringGene two)
     {
         StringBuilder sb = new StringBuilder();
-        AlgoGene[] pool = {one, two};
+        StringGene[] pool = {one, two};
         int _l = Constants.GA_TARGET.length();
         for (int i = 0; i < _l; i++)
             sb.append(pool[Constants.r.nextInt(2)].str.charAt(i));
-        return new AlgoGene(sb.toString(), 0, 0, 0);
+        return new StringGene(sb.toString(), 0, 0, 0);
     }
 
-    public static void mutateOnePoint (AlgoGene member)
+    public static void mutateOnePoint (StringGene member)
     {
         StringBuilder sb = new StringBuilder();
         int tsize = Constants.GA_TARGET.length();
@@ -68,5 +42,30 @@ public class Mutation
         if (ipos + 1 < member.str.length())
             sb.append(member.str, ipos + 1, tsize);
         member.str = sb.toString();
+    }
+
+    public static KnapsackGene onePointCrossover (KnapsackGene one, KnapsackGene two)
+    {
+        int spos = (Constants.r.nextInt(KnapsackGene.count));
+        int[] g = one.gene.clone();
+        if (KnapsackGene.count - spos >= 0) System.arraycopy(two.gene, spos, g, spos, KnapsackGene.count - spos);
+        if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) mutateOnePoint(g);
+        return new KnapsackGene(g);
+    }
+
+    private static void mutateOnePoint (int[] g)
+    {
+        // Mutate one char
+        g[Constants.r.nextInt(KnapsackGene.count)] = (Constants.r.nextInt(2));
+    }
+
+    public static KnapsackGene uniformCrossover (KnapsackGene one, KnapsackGene two)
+    {
+        int[] g = one.gene.clone();
+        int _l = KnapsackGene.count;
+        for (int i = 0; i < _l; i++)
+            if (Constants.r.nextInt(2) == 1) g[i] = two.gene[i];
+        if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) mutateOnePoint(g);
+        return new KnapsackGene(g, 0, 0, 0);
     }
 }
