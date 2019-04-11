@@ -86,10 +86,10 @@ public class Main
         // Select algorithms
         KnapsackGene.aging = false;                             // Survivor Selection - True for aging, False for elitism
         KnapsackGene.fitnessAlgo = "default";                   // Fitness - default
-        KnapsackGene.selectionAlgo = "sus";                     // Selection - sus, tournament, default
+        KnapsackGene.selectionAlgo = "tournament";              // Selection - sus, tournament, default
         KnapsackGene.mutationAlgo = "uniform";                  // Mutation - onePoint, uniform
 
-        int numOfItems = KnapsackGene.parseProblem(1);
+        int numOfItems = KnapsackGene.parseProblem(8);
         KnapsackGene.initPopulation(numOfItems, population);
         for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
         {
@@ -100,7 +100,7 @@ public class Main
             // Sort
             population.sort(Gene.BY_FITNESS);
             KnapsackGene.PrintBest(population);
-            if ((population).get(0).fitness <= 370) break;
+            if (population.get(0).isSolution()) break;
 
             // Selection
             Gene.selection(population, buffer);
@@ -123,7 +123,7 @@ public class Main
 
     public static void main (String[] args)
     {
-        String mode = "queens";
+        String mode = "knapsack";
         switch (mode)
         {
             case "string":

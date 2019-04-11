@@ -20,6 +20,12 @@ public class StringGene extends Gene
         this("", 0, 0, 0);
     }
 
+    @Override
+    public boolean isSolution ()
+    {
+        return this.fitness == 0;
+    }
+
     public StringGene (String _str, int _fit, int _age, int _invFit)
     {
         super(_fit, _age, _invFit);

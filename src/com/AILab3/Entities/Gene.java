@@ -63,6 +63,8 @@ public abstract class Gene
         population.addAll(parents);
     }
 
+    public abstract boolean isSolution ();
+
     public static class ByAge implements Comparator<Gene>
     {
         @Override

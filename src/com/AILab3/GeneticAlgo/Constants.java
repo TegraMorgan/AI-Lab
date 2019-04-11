@@ -7,7 +7,7 @@ public class Constants
 {
 
     //#region Constants and static members
-    public static final int GA_MAXITER = 16384;
+    public static final int GA_MAXITER = 1000;
     public static final int GA_POPSIZE = 2048;
     public static final float GA_ELITRATE = 0.10f;
     public static final float GA_MUTATIONRATE = 0.25f;

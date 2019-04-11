@@ -26,7 +26,7 @@ public class Selection
                                                     boolean aging)
     {
         parentsRoulette.clear();
-        int[] aggregateInvertFitness = new int[GA_POPSIZE];
+        long[] aggregateInvertFitness = new long[GA_POPSIZE];
         int first = 0;
         if (aging)
             // We don't want the children to reproduce, children have age of 1 now
@@ -40,7 +40,7 @@ public class Selection
         // distance between the drawn fitness values
         // the last element of aggregate function will always contain the total sum
         int rouletteSize = aging ? amountOfChildrenToGenerate * 2 : GA_POPSIZE / 4;
-        int fitnessJump = (aggregateInvertFitness[GA_POPSIZE - 1] / rouletteSize);
+        int fitnessJump = (int) (aggregateInvertFitness[GA_POPSIZE - 1] / rouletteSize);
         // start randomly between 0 and the jump distance
         int start = r.nextInt(fitnessJump);
         int populationIterator = first;

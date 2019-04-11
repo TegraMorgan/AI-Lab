@@ -16,6 +16,7 @@ public class KnapsackGene extends Gene
     public static int capacity;
     public static int[] weights;
     public static int[] prices;
+    public static int[] solution;
     public static int priceSum;
     public static int count;
 
@@ -38,14 +39,14 @@ public class KnapsackGene extends Gene
         gene = _g;
     }
 
-    public static void loadData (int _c, int[] _w, int[] _p)
+    public static void loadData (int _c, int[] _w, int[] _p, int[] _so)
     {
         capacity = _c;
         weights = _w;
         prices = _p;
+        solution = _so;
         priceSum = 0;
-        for (int i = 0; i < prices.length; i++)
-            priceSum += prices[i];
+        for (int price : prices) priceSum += price;
         count = _w.length;
     }
 
@@ -58,11 +59,11 @@ public class KnapsackGene extends Gene
      */
     public static int parseProblem (int probNo)
     {
-        char[] dataType = {'c', 'w', 'p'};
+        char[] dataType = {'c', 'w', 'p', 's'};
         String[] fileNameConstants = {"data\\p0", "_", ".txt"};
         FileInputStream openFile;
-        String[] receivedData = new String[3];
-        for (int i = 0; i < 3; i++)
+        String[] receivedData = new String[4];
+        for (int i = 0; i < 4; i++)
         {
             StringBuilder fileNameToOpen = new StringBuilder();
             StringBuilder dataFromFile = new StringBuilder();
@@ -87,23 +88,27 @@ public class KnapsackGene extends Gene
         int capacity = 0;
         int[] weights = new int[0];
         int[] profits = new int[0];
+        int[] solution = new int[0];
         try
         {
             capacity = Integer.parseInt(receivedData[0].replace("\n", ""));
             String[] w = receivedData[1].replace(" ", "").split("\n");
             String[] p = receivedData[2].replace(" ", "").split("\n");
+            String[] so = receivedData[3].replace(" ", "").split("\n");
             weights = new int[w.length];
             profits = new int[p.length];
+            solution = new int[so.length];
             for (int i = 0; i < w.length; i++)
             {
                 weights[i] = Integer.parseInt(w[i]);
                 profits[i] = Integer.parseInt(p[i]);
+                solution[i] = Integer.parseInt(so[i]);
             }
         } catch (NumberFormatException e)
         {
             e.printStackTrace();
         }
-        loadData(capacity, weights, profits);
+        loadData(capacity, weights, profits, solution);
         return weights.length;
     }
 
@@ -145,6 +150,15 @@ public class KnapsackGene extends Gene
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean isSolution ()
+    {
+        boolean ret = true;
+        for (int i = 0; i < count; i++)
+            if (this.gene[i] != solution[i]) ret = false;
+        return ret;
     }
 
     @Override
