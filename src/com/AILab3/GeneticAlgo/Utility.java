@@ -39,8 +39,9 @@ public class Utility
         {
             switch (args[0])
             {
-                case "string":
                 case "queens":
+                    return args;
+                case "string":
                 case "knapsack":
                     System.out.println("Insufficient parameters. All parameters will be default");
                     param[0] = args[0];
@@ -57,8 +58,9 @@ public class Utility
         {
             switch (args[0])
             {
-                case "string":
                 case "queens":
+                    return args;
+                case "string":
                 case "knapsack":
                     param[0] = args[0];
                     break;
