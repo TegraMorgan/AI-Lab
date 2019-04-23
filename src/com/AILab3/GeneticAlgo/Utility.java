@@ -1,6 +1,17 @@
 package com.AILab3.GeneticAlgo;
 
-import com.AILab3.Entities.Gene;
+import com.AILab3.Entities.Fitness.BullPgiaStringFitness;
+import com.AILab3.Entities.Fitness.KnapsackDefaultFitness;
+import com.AILab3.Entities.Fitness.QueensThreatFitness;
+import com.AILab3.Entities.Fitness.StringDefaultFitness;
+import com.AILab3.Entities.Genes.Gene;
+import com.AILab3.Entities.Interfaces.IFitnessAlgo;
+import com.AILab3.Entities.Interfaces.IMutationAlgo;
+import com.AILab3.Entities.Interfaces.ISelectionAlgo;
+import com.AILab3.Entities.Mutations.*;
+import com.AILab3.Entities.Selections.RandomSampling;
+import com.AILab3.Entities.Selections.StochasticUniversalSampling;
+import com.AILab3.Entities.Selections.TournamentSelection;
 
 import java.util.Vector;
 
@@ -31,7 +42,7 @@ public class Utility
         return res;
     }
 
-    public static String[] extractUserParameters (String[] args)
+    public static String[] checkUserParameters (String[] args)
     {
         String[] param = new String[5];
         boolean argsOK = true;
@@ -59,7 +70,6 @@ public class Utility
             switch (args[0])
             {
                 case "queens":
-                    return args;
                 case "string":
                 case "knapsack":
                     param[0] = args[0];
@@ -127,12 +137,110 @@ public class Utility
         else return param;
     }
 
-    static long[] aggregateInvertFitness (int popsize, int f, Vector<Gene> p)
+    public static long[] aggregateInvertFitness (int popsize, int f, Vector<Gene> p)
     {
         long[] result = new long[popsize];
         for (int i = f + 1; i < popsize; i++)
             // put all fitness values into array for future use
             result[i] = result[i - 1] + (p.get(i).inverseFitness);
         return result;
+    }
+
+    public static void copyTop (Vector<Gene> population, Vector<Gene> ark, int eliteSize, boolean aging)
+    {
+        ark.clear();
+        for (int i = 0; i < eliteSize; i++)
+        {
+            ark.add(population.get(i));
+            if (aging) ark.get(i).age++;
+        }
+    }
+
+    public static ISelectionAlgo ExtractSelectionAlgo (String[] args)
+    {
+        ISelectionAlgo sa;
+        switch (args[2])
+        {
+            case "sus":
+                sa = new StochasticUniversalSampling();
+                break;
+            case "tournament":
+                sa = new TournamentSelection();
+                break;
+            case "default":
+            default:
+                sa = new RandomSampling();
+                break;
+        }
+        return sa;
+    }
+
+    public static IFitnessAlgo ExtractFitnessAlgo (String[] args)
+    {
+        IFitnessAlgo fa;
+        switch (args[0])
+        {
+            case "string":
+                switch (args[1])
+                {
+                    case "bull":
+                        fa = new BullPgiaStringFitness();
+                        break;
+                    case "default":
+                    default:
+                        fa = new StringDefaultFitness();
+                        break;
+                }
+                break;
+            case "queens":
+                fa = new QueensThreatFitness();
+                break;
+            case "knapsack":
+                fa = new KnapsackDefaultFitness();
+                break;
+            default:
+                fa = null;
+                break;
+        }
+        return fa;
+    }
+
+    public static IMutationAlgo ExtractMutationAlgo (String[] args)
+    {
+        IMutationAlgo ma;
+        switch (args[0])
+        {
+            case "string":
+                switch (args[3])
+                {
+                    case "onePoint":
+                        ma = new StringOnePointCrossover();
+                        break;
+                    case "uniform":
+                    default:
+                        ma = new StringUniformCrossover();
+                        break;
+                }
+                break;
+            case "queens":
+                ma = new QueensUniformShuffle();
+                break;
+            case "knapsack":
+                switch (args[3])
+                {
+                    case "onePoint":
+                        ma = new KnapsackOnePointCrossover();
+                        break;
+                    case "uniform":
+                    default:
+                        ma = new KnapsackUniformCrossover();
+                        break;
+                }
+                break;
+            default:
+                ma = null;
+                break;
+        }
+        return ma;
     }
 }

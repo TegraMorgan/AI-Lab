@@ -1,14 +1,11 @@
-package com.AILab3.Entities;
+package com.AILab3.Entities.Genes;
 
-
-import com.AILab3.GeneticAlgo.Mutation;
 
 import java.util.Arrays;
 import java.util.Vector;
 
 import static com.AILab3.GeneticAlgo.Constants.GA_POPSIZE;
 import static com.AILab3.GeneticAlgo.Constants.r;
-import static org.apache.commons.math3.util.CombinatoricsUtils.binomialCoefficient;
 
 
 public class QueensGene extends Gene
@@ -21,7 +18,7 @@ public class QueensGene extends Gene
         this(_n, 0, 0, 0);
     }
 
-    public QueensGene (int _n, int _f, int _a, int _if)
+    private QueensGene (int _n, int _f, int _a, int _if)
     {
         super(_f, _a, _if);
         queens = new int[_n];
@@ -33,7 +30,7 @@ public class QueensGene extends Gene
 
     public QueensGene (QueensGene _qg)
     {
-        super(_qg.fitness, _qg.age, _qg.inverseFitness);
+        super(_qg.fitness, 0, _qg.inverseFitness);
         this.queens = _qg.queens.clone();
     }
 
@@ -55,6 +52,18 @@ public class QueensGene extends Gene
         System.out.println("Best: " + s + " (" + best.fitness + ")");
     }
 
+    public static void mutation (Vector<Gene> parents, Vector<Gene> ark)
+    {
+        int size = parents.size();
+        int j = 0, i1, i2;
+        for (int i = ark.size(); i < GA_POPSIZE; i++, j += 2)
+        {
+            i1 = j % size;
+            i2 = (j + 1) % size;
+            ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
+        }
+    }
+
     @Override
     public boolean isSolution ()
     {
@@ -64,39 +73,7 @@ public class QueensGene extends Gene
     @Override
     public void updateFitness ()
     {
-        int count = 0;
-        for (int i = 0; i < queens.length; i++)
-            for (int j = i + 1; j < queens.length; j++)
-                if (threaten(i, j))
-                    count++;
-        fitness = count;
-        // This is the worst fitness can get 👇🏻
-        inverseFitness = (int) (binomialCoefficient(queens.length, 2) - fitness);
-    }
-
-    public static void mutation (Vector<Gene> parents, Vector<Gene> ark)
-    {
-        int size = parents.size();
-        int j = 0, i1, i2;
-        for (int i = ark.size(); i < GA_POPSIZE; i++, j += 2)
-        {
-            i1 = j % size;
-            i2 = (j + 1) % size;
-            switch (mutationAlgo)
-            {
-                case "shuffle":
-                    ark.add(Mutation.queenUniformShuffle((QueensGene) parents.get(i1), (QueensGene) parents.get(i2)));
-                    break;
-                default:
-                    ark.add(Mutation.queenUniformShuffle((QueensGene) parents.get(i1), (QueensGene) parents.get(i2)));
-                    break;
-            }
-        }
-    }
-
-    private boolean threaten (int i1, int i2)
-    {
-        return queens[i1] == queens[i2] || Math.abs(i1 - i2) == Math.abs(queens[i1] - queens[i2]);
+        Gene.fitnessAlgo.updateFitness(this);
     }
 
     public void swap (int q1, int q2)

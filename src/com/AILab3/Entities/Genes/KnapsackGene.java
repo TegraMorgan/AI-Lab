@@ -1,6 +1,4 @@
-package com.AILab3.Entities;
-
-import com.AILab3.GeneticAlgo.Mutation;
+package com.AILab3.Entities.Genes;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,12 +10,12 @@ import static com.AILab3.GeneticAlgo.Constants.r;
 
 public class KnapsackGene extends Gene
 {
-    private static int capacity;
-    private static int[] weights;
-    private static int[] prices;
-    private static int[] solution;
-    private static int priceSum;
+    public static int capacity;
+    public static int[] weights;
+    public static int[] prices;
+    public static int priceSum;
     public static int count;
+    private static int[] solution;
     public int[] gene;
 
     public KnapsackGene (int[] _g)
@@ -41,6 +39,7 @@ public class KnapsackGene extends Gene
         for (int price : prices) priceSum += price;
         count = _w.length;
     }
+
     /*
     c - Capacity
     w - Weights
@@ -128,17 +127,7 @@ public class KnapsackGene extends Gene
         {
             i1 = j % size;
             i2 = (j + 1) % size;
-            switch (mutationAlgo)
-            {
-                case "onePoint":
-                    ark.add(Mutation.onePointCrossover((KnapsackGene) parents.get(i1), (KnapsackGene) parents.get(i2)));
-                    break;
-                case "uniform":
-                    ark.add(Mutation.uniformCrossover((KnapsackGene) parents.get(i1), (KnapsackGene) parents.get(i2)));
-                    break;
-                default:
-                    break;
-            }
+            ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
         }
     }
 
@@ -154,21 +143,6 @@ public class KnapsackGene extends Gene
     @Override
     public void updateFitness ()
     {
-        if (gene == null || prices == null || gene.length != prices.length)
-        {
-            System.out.println("CANNOT CALCULATE FITNESS!");
-        } else
-        {
-            int sackValue = 0;
-            int sackWeight = 0;
-            for (int i = 0; i < prices.length; i++)
-            {
-                sackValue += prices[i] * gene[i];
-                sackWeight += weights[i] * gene[i];
-            }
-            if (sackWeight > capacity) fitness = priceSum + (sackWeight - capacity);
-            else fitness = priceSum - sackValue;
-            inverseFitness = priceSum - fitness;
-        }
+        Gene.fitnessAlgo.updateFitness(this);
     }
 }
