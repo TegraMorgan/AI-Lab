@@ -1,7 +1,11 @@
 package com.AILab3.GeneticAlgo;
 
 import com.AILab3.Entities.KnapsackGene;
+import com.AILab3.Entities.QueensGene;
 import com.AILab3.Entities.StringGene;
+import org.apache.commons.math3.util.CombinatoricsUtils;
+
+import java.util.Vector;
 
 public class Mutation
 {
@@ -66,5 +70,36 @@ public class Mutation
             if (Constants.r.nextInt(2) == 1) g[i] = two.gene[i];
         if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) mutateOnePoint(g);
         return new KnapsackGene(g, 0, 0, 0);
+    }
+
+    public static QueensGene queenUniformShuffle (QueensGene b1, QueensGene b2)
+    {
+        b1 = new QueensGene(b1);
+        Vector<Integer> crossovers = new Vector<>();
+        for (int i = 0; i < b1.queens.length; i++)
+            if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION)
+                crossovers.add(i);
+        for (int c : crossovers)
+            b1.swap(c, b1.indexOf(b2.queens[c]));
+        if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION)
+            queenMutate(b1);
+        return b1;
+    }
+
+    public static QueensGene queenMutate (QueensGene b1)
+    {
+        Vector<Integer> shuffledIndices = new Vector<>();
+        for (int i = 0; i < b1.queens.length; i++)
+            if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION)
+                shuffledIndices.add(i);
+        for (int i = 0; i < shuffledIndices.size(); i++)
+        {
+            int r = i + Constants.r.nextInt((shuffledIndices.size() - i));
+            b1.swap(shuffledIndices.elementAt(i), shuffledIndices.elementAt(r));
+            int temp = shuffledIndices.elementAt(i);
+            shuffledIndices.setElementAt(shuffledIndices.elementAt(r), i);
+            shuffledIndices.setElementAt(temp, r);
+        }
+        return b1;
     }
 }

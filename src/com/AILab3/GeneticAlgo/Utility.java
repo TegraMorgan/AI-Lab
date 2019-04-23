@@ -126,4 +126,13 @@ public class Utility
         if (!argsOK) return null;
         else return param;
     }
+
+    static long[] aggregateInvertFitness (int popsize, int f, Vector<Gene> p)
+    {
+        long[] result = new long[popsize];
+        for (int i = f + 1; i < popsize; i++)
+            // put all fitness values into array for future use
+            result[i] = result[i - 1] + (p.get(i).inverseFitness);
+        return result;
+    }
 }

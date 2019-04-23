@@ -1,10 +1,7 @@
 package com.AILab3;
 
 
-import com.AILab3.Entities.Gene;
-import com.AILab3.Entities.KnapsackGene;
-import com.AILab3.Entities.QueensPopulation;
-import com.AILab3.Entities.StringGene;
+import com.AILab3.Entities.*;
 import com.AILab3.GeneticAlgo.Utility;
 
 import java.util.Vector;
@@ -44,8 +41,7 @@ public class Main
 
         for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
         {
-            population.forEach(Gene::updateFitness);
-
+            population.forEach(Gene::updateFitness);                // Fitness
             averages = Utility.calcPopMeanVarGeneric(population);   // Calculate mean and variance fitness
             Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             population.sort(Gene.BY_FITNESS);                       // sort Population
@@ -76,11 +72,57 @@ public class Main
 
     public static void queensMain (String[] args)
     {
-        QueensPopulation q1 = new QueensPopulation(8, 25, 0.1f);
-        q1.repopulate(Integer.MAX_VALUE);
-        System.out.println("Solved in " + q1.getGenerationCount() + " generations");
+        // Select algorithms
+        if (args.length == 5)
+        {
+            StringGene.fitnessAlgo = args[1];
+            StringGene.selectionAlgo = args[2];
+            StringGene.mutationAlgo = args[3];
+            StringGene.aging = args[4].equals("aging");
+        } else
+        {
+            StringGene.fitnessAlgo = "single";              // Fitness - single, square
+            StringGene.selectionAlgo = "sus";               // Selection - sus, tournament, default
+            StringGene.mutationAlgo = "shuffle";            // Mutation - shuffle
+            StringGene.aging = false;                       // Survivor Selection - True for aging, False for elitism
+        }
+        int boardSize = 100;
+        long totalElapsed = System.nanoTime();
+        long generationElapsed = System.nanoTime();
+        long time = 0;
+        Vector<Gene> population = new Vector<>(), buffer = new Vector<>();
+        float[] averages;
+        QueensGene.initPopulation(boardSize, population);
+        for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
+        {
+            // Fitness
+            population.forEach(Gene::updateFitness);
+            averages = Utility.calcPopMeanVarGeneric(population);   // Calculate mean and variance fitness
+            Utility.printMeanVariance(averages);                    // Print mean and variance fitness
+            population.sort(Gene.BY_FITNESS);                       // sort Population
+            QueensGene.printBest(population);                       // print the best one
 
-        System.out.println(q1.getSolution());
+            if ((population).get(0).fitness == 0)
+            {
+                System.out.println("Solved in " + generationNumber);
+                break;            // if solution found - exit
+            }
+            if (generationNumber == GA_MAXITER - 1)
+                System.out.println("Not solved");
+
+            Gene.selection(population, buffer); // Select parents and survivors
+            // Future Parents are now in population, survivors in buffer
+            QueensGene.mutation(population, buffer);
+
+            population = buffer;
+            buffer = new Vector<>();
+
+            time = System.nanoTime();
+            System.out.println("Generation :" + generationNumber + " | " + ((time - generationElapsed) / 1000) + " microseconds");
+            generationElapsed = time;
+
+        }
+        System.out.println("Total runtime: " + ((time - totalElapsed) / 1000000) + "." + (((time - totalElapsed) / 1000) % 1000) + " milliseconds");
     }
 
 

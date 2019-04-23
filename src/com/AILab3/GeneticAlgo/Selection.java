@@ -25,17 +25,13 @@ public class Selection
                                                     boolean aging)
     {
         parentsRoulette.clear();
-        long[] aggregateInvertFitness = new long[GA_POPSIZE];
         int first = 0;
         if (aging)
             // We don't want the children to reproduce, children have age of 1 now
             // We sorted the population by age already
             while (population.get(first).age < 2) first++;
         // invert fitness value
-        aggregateInvertFitness[first] = population.get(first).inverseFitness;
-        for (int i = first + 1; i < GA_POPSIZE; i++)
-            // put all fitness values into array for future use
-            aggregateInvertFitness[i] = aggregateInvertFitness[i - 1] + (population.get(i).inverseFitness);
+        long[] aggregateInvertFitness = Utility.aggregateInvertFitness(GA_POPSIZE, first, population);
         // distance between the drawn fitness values
         // the last element of aggregate function will always contain the total sum
         int rouletteSize = aging ? amountOfChildrenToGenerate * 2 : GA_POPSIZE / 4;
