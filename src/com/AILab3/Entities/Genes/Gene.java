@@ -1,19 +1,23 @@
-package com.AILab3.Entities;
+package com.AILab3.Entities.Genes;
+
+import com.AILab3.Entities.Interfaces.IFitnessAlgo;
+import com.AILab3.Entities.Interfaces.IMutationAlgo;
+import com.AILab3.Entities.Interfaces.ISelectionAlgo;
+import com.AILab3.GeneticAlgo.Utility;
 
 import java.util.Comparator;
 import java.util.Vector;
 
 import static com.AILab3.GeneticAlgo.Constants.GA_ELITRATE;
 import static com.AILab3.GeneticAlgo.Constants.GA_POPSIZE;
-import static com.AILab3.GeneticAlgo.Selection.*;
 
 public abstract class Gene
 {
     public static final ByFitness BY_FITNESS = new ByFitness();
     private static final ByAge BY_AGE = new ByAge();
-    public static String fitnessAlgo = "";
-    public static String selectionAlgo = "";
-    public static String mutationAlgo = "";
+    public static IFitnessAlgo fitnessAlgo;
+    public static ISelectionAlgo selectionAlgo;
+    public static IMutationAlgo mutationAlgo;
     public static boolean aging = false;
     public int fitness;        // Genetic fitness of the gene - less is better
     public int inverseFitness; // Inverse value of fitness - greater is better
@@ -39,20 +43,10 @@ public abstract class Gene
         } else
             // Regular elitism
             selection_size = (int) (GA_POPSIZE * GA_ELITRATE);
-        copyTop(population, ark, selection_size, aging);
+        Utility.copyTop(population, ark, selection_size, aging);
 
         // Select parents
-        switch (selectionAlgo)
-        {
-            case "sus":
-                stochasticUniversalSampling(population, parents, GA_POPSIZE - selection_size, aging);
-                break;
-            case "tournament":
-                tournamentSelection(population, parents, GA_POPSIZE - selection_size);
-                break;
-            default:
-                randomSampling(population, parents, GA_POPSIZE - selection_size, aging);
-        }
+        selectionAlgo.selectParents(population, parents, GA_POPSIZE - selection_size, aging);
         // Replace population with potential parents
         population.clear();
         population.addAll(parents);

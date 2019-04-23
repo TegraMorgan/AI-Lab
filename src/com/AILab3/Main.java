@@ -1,10 +1,21 @@
 package com.AILab3;
 
 
-import com.AILab3.Entities.Gene;
-import com.AILab3.Entities.KnapsackGene;
-import com.AILab3.Entities.QueensPopulation;
-import com.AILab3.Entities.StringGene;
+import com.AILab3.Entities.Fitness.BullPgiaStringFitness;
+import com.AILab3.Entities.Fitness.KnapsackDefaultFitness;
+import com.AILab3.Entities.Fitness.QueensThreatFitness;
+import com.AILab3.Entities.Genes.Gene;
+import com.AILab3.Entities.Genes.KnapsackGene;
+import com.AILab3.Entities.Genes.QueensGene;
+import com.AILab3.Entities.Genes.StringGene;
+import com.AILab3.Entities.Interfaces.IFitnessAlgo;
+import com.AILab3.Entities.Interfaces.IMutationAlgo;
+import com.AILab3.Entities.Interfaces.ISelectionAlgo;
+import com.AILab3.Entities.Mutations.KnapsackUniformCrossover;
+import com.AILab3.Entities.Mutations.QueensUniformShuffle;
+import com.AILab3.Entities.Mutations.StringUniformCrossover;
+import com.AILab3.Entities.Selections.StochasticUniversalSampling;
+import com.AILab3.Entities.Selections.TournamentSelection;
 import com.AILab3.GeneticAlgo.Utility;
 
 import java.util.Vector;
@@ -18,7 +29,7 @@ import static com.AILab3.GeneticAlgo.Tests.testing;
 public class Main
 {
 
-    public static void textMain (String[] args)
+    public static void textMain (String[] args, IFitnessAlgo fa, ISelectionAlgo sa, IMutationAlgo ma)
     {
         long totalElapsed = System.nanoTime();
         long generationElapsed = System.nanoTime();
@@ -29,23 +40,22 @@ public class Main
         // Select algorithms
         if (args.length == 5)
         {
-            StringGene.fitnessAlgo = args[1];
-            StringGene.selectionAlgo = args[2];
-            StringGene.mutationAlgo = args[3];
+            StringGene.fitnessAlgo = fa;
+            StringGene.selectionAlgo = sa;
+            StringGene.mutationAlgo = ma;
             StringGene.aging = args[4].equals("aging");
         } else
         {
-            StringGene.fitnessAlgo = "bull";                // Fitness - bull, default
-            StringGene.selectionAlgo = "tournament";        // Selection - sus, tournament, default
-            StringGene.mutationAlgo = "uniform";            // Mutation - onePoint, uniform
-            StringGene.aging = false;                       // Survivor Selection - True for aging, False for elitism
+            StringGene.fitnessAlgo = new BullPgiaStringFitness();               // Fitness - bull, default
+            StringGene.selectionAlgo = new StochasticUniversalSampling();       // Selection - sus, tournament, default
+            StringGene.mutationAlgo = new StringUniformCrossover();             // Mutation - onePoint, uniform
+            StringGene.aging = false;                                           // Survivor Selection - True for aging, False for elitism
         }
         StringGene.initPopulation(GA_TARGET, population);
 
         for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
         {
-            population.forEach(Gene::updateFitness);
-
+            population.forEach(Gene::updateFitness);                // Fitness
             averages = Utility.calcPopMeanVarGeneric(population);   // Calculate mean and variance fitness
             Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             population.sort(Gene.BY_FITNESS);                       // sort Population
@@ -74,31 +84,77 @@ public class Main
     }
 
 
-    public static void queensMain (String[] args)
+    public static void queensMain (String[] args, IFitnessAlgo fa, ISelectionAlgo sa, IMutationAlgo ma)
     {
-        QueensPopulation q1 = new QueensPopulation(8, 25, 0.1f);
-        q1.repopulate(Integer.MAX_VALUE);
-        System.out.println("Solved in " + q1.getGenerationCount() + " generations");
+        // Select algorithms
+        if (args.length == 5)
+        {
+            StringGene.fitnessAlgo = fa;
+            StringGene.selectionAlgo = sa;
+            StringGene.mutationAlgo = ma;
+            StringGene.aging = args[4].equals("aging");
+        } else
+        {
+            StringGene.fitnessAlgo = new QueensThreatFitness();                 // Fitness - single, square
+            StringGene.selectionAlgo = new StochasticUniversalSampling();       // Selection - sus, tournament, default
+            StringGene.mutationAlgo = new QueensUniformShuffle();               // Mutation - shuffle
+            StringGene.aging = false;                                           // Survivor Selection - True for aging, False for elitism
+        }
+        int boardSize = 40;
+        long totalElapsed = System.nanoTime();
+        long generationElapsed = System.nanoTime();
+        long time = 0;
+        Vector<Gene> population = new Vector<>(), buffer = new Vector<>();
+        float[] averages;
+        QueensGene.initPopulation(boardSize, population);
+        for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
+        {
+            // Fitness
+            population.forEach(Gene::updateFitness);
+            averages = Utility.calcPopMeanVarGeneric(population);   // Calculate mean and variance fitness
+            Utility.printMeanVariance(averages);                    // Print mean and variance fitness
+            population.sort(Gene.BY_FITNESS);                       // sort Population
+            QueensGene.printBest(population);                       // print the best one
 
-        System.out.println(q1.getSolution());
+            if ((population).get(0).fitness == 0)
+            {
+                System.out.println("Solved in " + generationNumber);
+                break;            // if solution found - exit
+            }
+            if (generationNumber == GA_MAXITER - 1)
+                System.out.println("Not solved");
+
+            Gene.selection(population, buffer); // Select parents and survivors
+            // Future Parents are now in population, survivors in buffer
+            QueensGene.mutation(population, buffer);
+
+            population = buffer;
+            buffer = new Vector<>();
+
+            time = System.nanoTime();
+            System.out.println("Generation :" + generationNumber + " | " + ((time - generationElapsed) / 1000) + " microseconds");
+            generationElapsed = time;
+
+        }
+        System.out.println("Total runtime: " + ((time - totalElapsed) / 1000000) + "." + (((time - totalElapsed) / 1000) % 1000) + " milliseconds");
     }
 
 
-    public static void knapsackMain (String[] args)
+    public static void knapsackMain (String[] args, IFitnessAlgo fa, ISelectionAlgo sa, IMutationAlgo ma)
     {
         float[] averages;
         if (args.length == 5)
         {
-            StringGene.fitnessAlgo = args[1];
-            StringGene.selectionAlgo = args[2];
-            StringGene.mutationAlgo = args[3];
+            StringGene.fitnessAlgo = fa;
+            StringGene.selectionAlgo = sa;
+            StringGene.mutationAlgo = ma;
             StringGene.aging = args[4].equals("aging");
         } else
         {
-            KnapsackGene.fitnessAlgo = "default";                   // Fitness - default
-            KnapsackGene.selectionAlgo = "tournament";              // Selection - sus, tournament, default
-            KnapsackGene.mutationAlgo = "uniform";                  // Mutation - onePoint, uniform
-            KnapsackGene.aging = false;                             // Survivor Selection - True for aging, False for elitism
+            KnapsackGene.fitnessAlgo = new KnapsackDefaultFitness();    // Fitness - default
+            KnapsackGene.selectionAlgo = new TournamentSelection();     // Selection - sus, tournament, default
+            KnapsackGene.mutationAlgo = new KnapsackUniformCrossover(); // Mutation - onePoint, uniform
+            KnapsackGene.aging = false;                                 // Survivor Selection - True for aging, False for elitism
         }
 
         for (int p = 1; p < 9; p++)
@@ -152,22 +208,36 @@ public class Main
 
     public static void main (String[] args)
     {
-        String[] param = Utility.extractUserParameters(args);
+        /*
+        Possible arguments
+        Arg 0 - string | queens | knapsack
+        Arg 1 - default | bull (string)
+        Arg 2 - sus | tournament | default
+        Arg 3 - onePoint (!queens) | uniform (!queens)
+        Arg 4 - aging | elitism
+         */
+        String[] ag = new String[]{"queens", "default", "sus", "uniform", "elitism"};
+
+
+        String[] param = Utility.checkUserParameters(ag);
         if (param == null) return;
+        ISelectionAlgo sa = Utility.ExtractSelectionAlgo(param);
+        IFitnessAlgo fa = Utility.ExtractFitnessAlgo(param);
+        IMutationAlgo ma = Utility.ExtractMutationAlgo(param);
         String mode = param[0];
         switch (mode)
         {
             case "string":
-                textMain(param);
+                textMain(param, fa, sa, ma);
                 break;
             case "test":
                 testing();
                 break;
             case "queens":
-                queensMain(param);
+                queensMain(param, fa, sa, ma);
                 break;
             case "knapsack":
-                knapsackMain(param);
+                knapsackMain(param, fa, sa, ma);
                 break;
             default:
                 break;
