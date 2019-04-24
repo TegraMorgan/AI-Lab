@@ -52,6 +52,8 @@ public abstract class Gene
         population.addAll(parents);
     }
 
+    public abstract int similar (Gene o);
+
     public abstract boolean isSolution ();
 
     public abstract void updateFitness ();
@@ -73,5 +75,4 @@ public abstract class Gene
             return Integer.compare((o1).fitness, (o2).fitness);
         }
     }
-
 }

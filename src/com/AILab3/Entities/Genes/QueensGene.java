@@ -86,9 +86,19 @@ public class QueensGene extends Gene
     public int indexOf (int x)
     {
         int y = -1;
+        //noinspection StatementWithEmptyBody
         while (queens[++y] != x) ;
         return y;
     }
 
-
+    @Override
+    public int similar (Gene other)
+    {
+        int res = 0;
+        int[] o = ((QueensGene) other).queens;
+        int[] t = this.queens;
+        for (int i = 0; i < t.length; i++)
+            if (o[i] != t[i]) res++;
+        return res;
+    }
 }

@@ -145,4 +145,15 @@ public class KnapsackGene extends Gene
     {
         Gene.fitnessAlgo.updateFitness(this);
     }
+
+    @Override
+    public int similar (Gene other)
+    {
+        int[] o = ((KnapsackGene) other).gene;
+        int[] t = this.gene;
+        int res = 0;
+        for (int i = 0; i < this.gene.length; i++)
+            if (o[i] != t[i]) res++;
+        return res;
+    }
 }

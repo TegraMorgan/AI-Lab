@@ -71,4 +71,15 @@ public class StringGene extends Gene
     {
         Gene.fitnessAlgo.updateFitness(this);
     }
+
+    @Override
+    public int similar (Gene other)
+    {
+        int res = 0;
+        String o = ((StringGene) other).str;
+        String t = this.str;
+        for (int i = 0; i < t.length(); i++)
+            if (o.charAt(i) != t.charAt(i)) res++;
+        return res;
+    }
 }
