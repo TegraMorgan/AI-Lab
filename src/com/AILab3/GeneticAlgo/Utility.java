@@ -20,25 +20,31 @@ public class Utility
 
     public static void printMeanVariance (float[] averages)
     {
-        System.out.println("Population average fitness: " + averages[0] + " | Population variance: " + averages[1]);
+        System.out.println("Population average fitness: " + averages[0] + " | Population variance: " + Math.sqrt(averages[1]));
     }
 
-    public static float[] calcPopMeanVarGeneric (Vector<Gene> population)
+    /**
+     * Calculates population mean and variance
+     *
+     * @param population Population
+     * @return Array of floats with population mean and variance
+     */
+    public static float[] calcPopMeanVariance (Vector<Gene> population)
     {
         float[] res = new float[2];
-        int t;
-        float avgPopFit = 0;
-        float popFitVar = 0;
+        int t, k = population.get(0).fitness;
+        float Ex = 0;
+        float Ex2 = 0;
         for (int i = 0; i < Constants.GA_POPSIZE; i++)
         {
-            t = population.get(i).fitness;
-            avgPopFit += t;
-            popFitVar += t * t;
+            t = population.get(i).fitness - k;
+            Ex += t;
+            Ex2 += t * t;
         }
-        popFitVar = (popFitVar - ((avgPopFit * avgPopFit) / Constants.GA_POPSIZE)) / (Constants.GA_POPSIZE - 1);
-        avgPopFit /= Constants.GA_POPSIZE;
-        res[0] = avgPopFit;
-        res[1] = popFitVar;
+        Ex2 = (Ex2 - ((Ex * Ex) / Constants.GA_POPSIZE)) / (Constants.GA_POPSIZE - 1);
+        Ex = k + (Ex / Constants.GA_POPSIZE);
+        res[0] = Ex;
+        res[1] = Ex2;
         return res;
     }
 
