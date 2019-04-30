@@ -8,7 +8,6 @@ import static com.AILab3.GeneticAlgo.Constants.*;
 public class StringGene extends Gene
 
 {
-    public static int targetLength;
     public static String target;
     public String str;         // String of the gene
 
@@ -23,26 +22,10 @@ public class StringGene extends Gene
         str = _str;
     }
 
-    public static void mutation (Vector<Gene> parents, Vector<Gene> ark)
-    {
-        int start = ark.size();
-        int psize = parents.size();
-        int i1, i2;
-        for (int i = start; i < GA_POPSIZE; i++)
-        {
-            do
-            {
-                i1 = r.nextInt(psize);
-                i2 = r.nextInt(psize);
-            } while (i1 == i2);
-            ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
-        }
-    }
-
     public static void initPopulation (String t, Vector<Gene> population)
     {
         target = t;
-        targetLength = t.length();
+        int targetLength = t.length();
         int age_factor = GA_POPSIZE / 5 + 1;
         StringBuilder sb = new StringBuilder(targetLength);
         for (int i = 0; i < GA_POPSIZE; i++)
@@ -81,5 +64,11 @@ public class StringGene extends Gene
         for (int i = 0; i < t.length(); i++)
             if (o.charAt(i) != t.charAt(i)) res++;
         return res;
+    }
+
+    @Override
+    public int getProblemSize ()
+    {
+        return target.length();
     }
 }

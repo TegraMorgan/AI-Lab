@@ -9,11 +9,13 @@ import com.AILab3.Entities.Genes.KnapsackGene;
 import com.AILab3.Entities.Genes.QueensGene;
 import com.AILab3.Entities.Genes.StringGene;
 import com.AILab3.Entities.Interfaces.IFitnessAlgo;
+import com.AILab3.Entities.Interfaces.ILocalOptimaSignals;
 import com.AILab3.Entities.Interfaces.IMutationAlgo;
 import com.AILab3.Entities.Interfaces.ISelectionAlgo;
 import com.AILab3.Entities.Mutations.KnapsackUniformCrossover;
 import com.AILab3.Entities.Mutations.QueensUniformShuffle;
 import com.AILab3.Entities.Mutations.StringUniformCrossover;
+import com.AILab3.Entities.OptimaDetecion.SimilarityBasedDetection;
 import com.AILab3.Entities.Selections.StochasticUniversalSampling;
 import com.AILab3.Entities.Selections.TournamentSelection;
 import com.AILab3.GeneticAlgo.Utility;
@@ -28,6 +30,7 @@ import static com.AILab3.GeneticAlgo.Tests.testing;
 @SuppressWarnings("WeakerAccess")
 public class Main
 {
+    public static ILocalOptimaSignals LocalOptimumDetection;
 
     public static void textMain (String[] args, IFitnessAlgo fa, ISelectionAlgo sa, IMutationAlgo ma)
     {
@@ -56,10 +59,13 @@ public class Main
         for (int generationNumber = 0; generationNumber < GA_MAXITER; generationNumber++)
         {
             population.forEach(Gene::updateFitness);                // Fitness
-            averages = Utility.calcPopMeanVarGeneric(population);   // Calculate mean and variance fitness
+            averages = Utility.calcPopMeanVariance(population);     // Calculate mean and variance fitness
             Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             population.sort(Gene.BY_FITNESS);                       // sort Population
             StringGene.printBest(population);                       // print the best one
+
+            //LocalOptimumDetection.detectLocalOptima(population);
+
             if ((population).get(0).fitness == 0)
             {
                 System.out.println("Solved in " + generationNumber);
@@ -70,7 +76,7 @@ public class Main
             Gene.selection(population, buffer); // Select parents and survivors
             // Future Parents are now in population, survivors in buffer
 
-            StringGene.mutation(population, buffer);
+            Gene.mutation(population, buffer);
 
             // swap pop and buffer, reset buffer
             population = buffer;
@@ -100,7 +106,7 @@ public class Main
             StringGene.mutationAlgo = new QueensUniformShuffle();               // Mutation - shuffle
             StringGene.aging = false;                                           // Survivor Selection - True for aging, False for elitism
         }
-        int boardSize = 40;
+        int boardSize = 300;
         long totalElapsed = System.nanoTime();
         long generationElapsed = System.nanoTime();
         long time = 0;
@@ -111,10 +117,12 @@ public class Main
         {
             // Fitness
             population.forEach(Gene::updateFitness);
-            averages = Utility.calcPopMeanVarGeneric(population);   // Calculate mean and variance fitness
-            Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             population.sort(Gene.BY_FITNESS);                       // sort Population
+            averages = Utility.calcPopMeanVariance(population);     // Calculate mean and variance fitness
+            Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             QueensGene.printBest(population);                       // print the best one
+
+            //LocalOptimumDetection.detectLocalOptima(population);
 
             if ((population).get(0).fitness == 0)
             {
@@ -126,7 +134,7 @@ public class Main
 
             Gene.selection(population, buffer); // Select parents and survivors
             // Future Parents are now in population, survivors in buffer
-            QueensGene.mutation(population, buffer);
+            Gene.mutation(population, buffer);
 
             population = buffer;
             buffer = new Vector<>();
@@ -171,11 +179,12 @@ public class Main
             {
                 // Fitness
                 population.forEach(Gene::updateFitness);
-                averages = Utility.calcPopMeanVarGeneric(population);
+                averages = Utility.calcPopMeanVariance(population);
                 Utility.printMeanVariance(averages); // Print mean and variance fitness
                 // Sort
                 population.sort(Gene.BY_FITNESS);
                 KnapsackGene.PrintBest(population);
+                //LocalOptimumDetection.detectLocalOptima(population);
                 if (population.get(0).isSolution())
                 {
                     System.out.println("Problem " + p + " solved in " + generationNumber);
@@ -190,7 +199,7 @@ public class Main
 
 
                 // Mutation
-                KnapsackGene.mutation(population, buffer);
+                Gene.mutation(population, buffer);
 
                 // swap pop and buffer, reset buffer
                 population = buffer;
@@ -210,13 +219,14 @@ public class Main
     {
         /*
         Possible arguments
-        Arg 0 - string | queens | knapsack
-        Arg 1 - default | bull (string)
-        Arg 2 - sus | tournament | default
-        Arg 3 - onePoint (!queens) | uniform (!queens)
-        Arg 4 - aging | elitism
+        Arg 0 - string             | queens             | knapsack
+        Arg 1 - default            | bull (string)      |
+        Arg 2 - sus                | tournament         | default
+        Arg 3 - onePoint (!queens) | uniform (!queens)  |
+        Arg 4 - aging              | elitism            |
          */
         String[] ag = new String[]{"queens", "default", "sus", "uniform", "elitism"};
+        LocalOptimumDetection = new SimilarityBasedDetection();
 
 
         String[] param = Utility.checkUserParameters(ag);

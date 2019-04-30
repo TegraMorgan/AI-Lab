@@ -8,8 +8,7 @@ import com.AILab3.GeneticAlgo.Utility;
 import java.util.Comparator;
 import java.util.Vector;
 
-import static com.AILab3.GeneticAlgo.Constants.GA_ELITRATE;
-import static com.AILab3.GeneticAlgo.Constants.GA_POPSIZE;
+import static com.AILab3.GeneticAlgo.Constants.*;
 
 public abstract class Gene
 {
@@ -52,7 +51,25 @@ public abstract class Gene
         population.addAll(parents);
     }
 
+    public static void mutation (Vector<Gene> parents, Vector<Gene> ark)
+    {
+        int start = ark.size();
+        int psize = parents.size();
+        int i1, i2;
+        for (int i = start; i < GA_POPSIZE; i++)
+        {
+            do
+            {
+                i1 = r.nextInt(psize);
+                i2 = r.nextInt(psize);
+            } while (i1 == i2);
+            ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
+        }
+    }
+
     public abstract int similar (Gene o);
+
+    public abstract int getProblemSize ();
 
     public abstract boolean isSolution ();
 

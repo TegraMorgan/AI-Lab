@@ -20,7 +20,7 @@ public class Utility
 
     public static void printMeanVariance (float[] averages)
     {
-        System.out.println("Population average fitness: " + averages[0] + " | Population variance: " + Math.sqrt(averages[1]));
+        System.out.println("Population average fitness: " + averages[0] + " | Population standard deviation: " + Math.sqrt(averages[1]));
     }
 
     /**
@@ -35,14 +35,15 @@ public class Utility
         int t, k = population.get(0).fitness;
         float Ex = 0;
         float Ex2 = 0;
-        for (int i = 0; i < Constants.GA_POPSIZE; i++)
+        int popSize = population.size();
+        for (Gene gene : population)
         {
-            t = population.get(i).fitness - k;
+            t = gene.fitness - k;
             Ex += t;
             Ex2 += t * t;
         }
-        Ex2 = (Ex2 - ((Ex * Ex) / Constants.GA_POPSIZE)) / (Constants.GA_POPSIZE - 1);
-        Ex = k + (Ex / Constants.GA_POPSIZE);
+        Ex2 = (Ex2 - ((Ex * Ex) / popSize)) / (popSize - 1);
+        Ex = k + (Ex / popSize);
         res[0] = Ex;
         res[1] = Ex2;
         return res;

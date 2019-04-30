@@ -16,7 +16,7 @@ public class BullPgiaStringFitness implements IFitnessAlgo
             */
 
         /* Target Length */
-        int _l = StringGene.targetLength;
+        int _l = sg.getProblemSize();
         /* Fitness */
         int _f;
         /* Gene */

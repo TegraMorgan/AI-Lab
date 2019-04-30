@@ -12,7 +12,7 @@ public class StringOnePointCrossover implements IMutationAlgo
     {
         StringGene one = (StringGene) p1, two = (StringGene) p2;
         StringGene ret = new StringGene();
-        int tsize = StringGene.targetLength;
+        int tsize = p1.getProblemSize();
         int spos = (Constants.r.nextInt(tsize));
         ret.str = one.str.substring(0, spos) + two.str.substring(spos, tsize);
         if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) IMutationAlgo.mutateOnePoint(ret);

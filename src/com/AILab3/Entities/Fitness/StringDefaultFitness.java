@@ -9,9 +9,9 @@ public class StringDefaultFitness implements IFitnessAlgo
     public void updateFitness (Object g)
     {
         StringGene sg = (StringGene) g;
-        int worst = 89 * StringGene.targetLength;
+        int worst = 89 * sg.getProblemSize();
         int fitness = 0;
-        for (int j = 0; j < StringGene.targetLength; j++)
+        for (int j = 0; j < sg.getProblemSize(); j++)
         {
             int cf = Math.abs((sg.str.charAt(j) - StringGene.target.charAt(j)));
             fitness += cf;

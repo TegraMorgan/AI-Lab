@@ -49,20 +49,10 @@ public class QueensGene extends Gene
     {
         QueensGene best = (QueensGene) p.get(0);
         String s = Arrays.toString(best.queens);
-        System.out.println("Best: " + s + " (" + best.fitness + ")");
+        //System.out.println("Best: " + s + " (" + best.fitness + ")");
+        System.out.println("Best: " + best.fitness);
     }
 
-    public static void mutation (Vector<Gene> parents, Vector<Gene> ark)
-    {
-        int size = parents.size();
-        int j = 0, i1, i2;
-        for (int i = ark.size(); i < GA_POPSIZE; i++, j += 2)
-        {
-            i1 = j % size;
-            i2 = (j + 1) % size;
-            ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
-        }
-    }
 
     @Override
     public boolean isSolution ()
@@ -99,6 +89,13 @@ public class QueensGene extends Gene
         int[] t = this.queens;
         for (int i = 0; i < t.length; i++)
             if (o[i] != t[i]) res++;
-        return res;
+        return (int) ((double) res / (double) this.getProblemSize() * 100);
+
+    }
+
+    @Override
+    public int getProblemSize ()
+    {
+        return queens.length;
     }
 }

@@ -5,8 +5,6 @@ import java.util.Random;
 public class Constants
 
 {
-
-    //#region Constants and static members
     public static final int GA_MAXITER = 16323;
     public static final int GA_POPSIZE = 2048;
     public static final float GA_ELITRATE = 0.10f;

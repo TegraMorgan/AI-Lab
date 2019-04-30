@@ -119,18 +119,6 @@ public class KnapsackGene extends Gene
         System.out.println("Best: " + s + " (" + best.fitness + ")");
     }
 
-    public static void mutation (Vector<Gene> parents, Vector<Gene> ark)
-    {
-        int size = parents.size();
-        int j = 0, i1, i2;
-        for (int i = ark.size(); i < GA_POPSIZE; i++, j += 2)
-        {
-            i1 = j % size;
-            i2 = (j + 1) % size;
-            ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
-        }
-    }
-
     @Override
     public boolean isSolution ()
     {
@@ -155,5 +143,11 @@ public class KnapsackGene extends Gene
         for (int i = 0; i < this.gene.length; i++)
             if (o[i] != t[i]) res++;
         return res;
+    }
+
+    @Override
+    public int getProblemSize ()
+    {
+        return gene.length;
     }
 }
