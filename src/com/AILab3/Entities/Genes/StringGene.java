@@ -63,7 +63,7 @@ public class StringGene extends Gene
         String t = this.str;
         for (int i = 0; i < t.length(); i++)
             if (o.charAt(i) != t.charAt(i)) res++;
-        return res;
+        return (int) ((double) res / (double) this.getProblemSize() * 100);
     }
 
     @Override

@@ -142,7 +142,7 @@ public class KnapsackGene extends Gene
         int res = 0;
         for (int i = 0; i < this.gene.length; i++)
             if (o[i] != t[i]) res++;
-        return res;
+        return (int) ((double) res / (double) this.getProblemSize() * 100);
     }
 
     @Override
