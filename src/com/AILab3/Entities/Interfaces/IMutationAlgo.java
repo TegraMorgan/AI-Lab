@@ -31,4 +31,9 @@ public interface IMutationAlgo
     }
 
     Gene mutate (Gene p1, Gene p2);
+
+    void enableHyperMutation ();
+
+    void disableHyperMutation ();
+
 }

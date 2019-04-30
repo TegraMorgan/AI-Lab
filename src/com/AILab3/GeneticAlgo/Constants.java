@@ -10,7 +10,7 @@ public class Constants
     public static final float GA_ELITRATE = 0.10f;
     public static final float GA_MUTATIONRATE = 0.25f;
     public static final int RAND_MAX = GA_POPSIZE * 4;
-    public static final float GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
+    private static final float GA_MUTATION = RAND_MAX * GA_MUTATIONRATE;
     public static final String GA_TARGET = "Hello world!";
     public static Random r = new Random();
 }

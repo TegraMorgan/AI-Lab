@@ -1,4 +1,4 @@
-package com.AILab3.Entities.OptimaDetecion;
+package com.AILab3.Entities.LocalOptimaDetecion;
 
 import com.AILab3.Entities.Genes.Gene;
 import com.AILab3.Entities.Interfaces.ILocalOptimaSignals;

@@ -9,13 +9,13 @@ import com.AILab3.Entities.Genes.KnapsackGene;
 import com.AILab3.Entities.Genes.QueensGene;
 import com.AILab3.Entities.Genes.StringGene;
 import com.AILab3.Entities.Interfaces.IFitnessAlgo;
-import com.AILab3.Entities.Interfaces.ILocalOptimaSignals;
 import com.AILab3.Entities.Interfaces.IMutationAlgo;
 import com.AILab3.Entities.Interfaces.ISelectionAlgo;
+import com.AILab3.Entities.LocalOptimaDetecion.SimilarityBasedDetection;
+import com.AILab3.Entities.LocalOptimaEscape.HyperMutation;
 import com.AILab3.Entities.Mutations.KnapsackUniformCrossover;
 import com.AILab3.Entities.Mutations.QueensUniformShuffle;
 import com.AILab3.Entities.Mutations.StringUniformCrossover;
-import com.AILab3.Entities.OptimaDetecion.SimilarityBasedDetection;
 import com.AILab3.Entities.Selections.StochasticUniversalSampling;
 import com.AILab3.Entities.Selections.TournamentSelection;
 import com.AILab3.GeneticAlgo.Utility;
@@ -30,7 +30,6 @@ import static com.AILab3.GeneticAlgo.Tests.testing;
 @SuppressWarnings("WeakerAccess")
 public class Main
 {
-    public static ILocalOptimaSignals LocalOptimumDetection;
 
     public static void textMain (String[] args, IFitnessAlgo fa, ISelectionAlgo sa, IMutationAlgo ma)
     {
@@ -64,8 +63,6 @@ public class Main
             population.sort(Gene.BY_FITNESS);                       // sort Population
             StringGene.printBest(population);                       // print the best one
 
-            //LocalOptimumDetection.detectLocalOptima(population);
-
             if ((population).get(0).fitness == 0)
             {
                 System.out.println("Solved in " + generationNumber);
@@ -95,16 +92,16 @@ public class Main
         // Select algorithms
         if (args.length == 5)
         {
-            StringGene.fitnessAlgo = fa;
-            StringGene.selectionAlgo = sa;
-            StringGene.mutationAlgo = ma;
-            StringGene.aging = args[4].equals("aging");
+            QueensGene.fitnessAlgo = fa;
+            QueensGene.selectionAlgo = sa;
+            QueensGene.mutationAlgo = ma;
+            QueensGene.aging = args[4].equals("aging");
         } else
         {
-            StringGene.fitnessAlgo = new QueensThreatFitness();                 // Fitness - single, square
-            StringGene.selectionAlgo = new StochasticUniversalSampling();       // Selection - sus, tournament, default
-            StringGene.mutationAlgo = new QueensUniformShuffle();               // Mutation - shuffle
-            StringGene.aging = false;                                           // Survivor Selection - True for aging, False for elitism
+            QueensGene.fitnessAlgo = new QueensThreatFitness();                 // Fitness - single, square
+            QueensGene.selectionAlgo = new StochasticUniversalSampling();       // Selection - sus, tournament, default
+            QueensGene.mutationAlgo = new QueensUniformShuffle();               // Mutation - shuffle
+            QueensGene.aging = false;                                           // Survivor Selection - True for aging, False for elitism
         }
         int boardSize = 300;
         long totalElapsed = System.nanoTime();
@@ -121,8 +118,6 @@ public class Main
             averages = Utility.calcPopMeanVariance(population);     // Calculate mean and variance fitness
             Utility.printMeanVariance(averages);                    // Print mean and variance fitness
             QueensGene.printBest(population);                       // print the best one
-
-            //LocalOptimumDetection.detectLocalOptima(population);
 
             if ((population).get(0).fitness == 0)
             {
@@ -153,10 +148,10 @@ public class Main
         float[] averages;
         if (args.length == 5)
         {
-            StringGene.fitnessAlgo = fa;
-            StringGene.selectionAlgo = sa;
-            StringGene.mutationAlgo = ma;
-            StringGene.aging = args[4].equals("aging");
+            KnapsackGene.fitnessAlgo = fa;
+            KnapsackGene.selectionAlgo = sa;
+            KnapsackGene.mutationAlgo = ma;
+            KnapsackGene.aging = args[4].equals("aging");
         } else
         {
             KnapsackGene.fitnessAlgo = new KnapsackDefaultFitness();    // Fitness - default
@@ -184,7 +179,6 @@ public class Main
                 // Sort
                 population.sort(Gene.BY_FITNESS);
                 KnapsackGene.PrintBest(population);
-                //LocalOptimumDetection.detectLocalOptima(population);
                 if (population.get(0).isSolution())
                 {
                     System.out.println("Problem " + p + " solved in " + generationNumber);
@@ -226,7 +220,7 @@ public class Main
         Arg 4 - aging              | elitism            |
          */
         String[] ag = new String[]{"queens", "default", "sus", "uniform", "elitism"};
-        LocalOptimumDetection = new SimilarityBasedDetection();
+
 
 
         String[] param = Utility.checkUserParameters(ag);
@@ -234,6 +228,8 @@ public class Main
         ISelectionAlgo sa = Utility.ExtractSelectionAlgo(param);
         IFitnessAlgo fa = Utility.ExtractFitnessAlgo(param);
         IMutationAlgo ma = Utility.ExtractMutationAlgo(param);
+        Gene.LocalOptimumDetection = new SimilarityBasedDetection();
+        Gene.escapeLocalOptimum = new HyperMutation();
         String mode = param[0];
         switch (mode)
         {

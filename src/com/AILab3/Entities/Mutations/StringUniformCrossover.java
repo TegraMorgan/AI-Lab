@@ -5,7 +5,7 @@ import com.AILab3.Entities.Genes.StringGene;
 import com.AILab3.Entities.Interfaces.IMutationAlgo;
 import com.AILab3.GeneticAlgo.Constants;
 
-public class StringUniformCrossover implements IMutationAlgo
+public class StringUniformCrossover extends BaseMutation
 {
     @Override
     public Gene mutate (Gene p1, Gene p2)
@@ -17,7 +17,7 @@ public class StringUniformCrossover implements IMutationAlgo
         for (int i = 0; i < _l; i++)
             sb.append(pool[Constants.r.nextInt(2)].str.charAt(i));
         StringGene sg = new StringGene(sb.toString(), 0, 0, 0);
-        if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) IMutationAlgo.mutateOnePoint(sg);
+        if (Constants.r.nextInt(Constants.RAND_MAX) < getMutationRate()) IMutationAlgo.mutateOnePoint(sg);
         return sg;
     }
 }

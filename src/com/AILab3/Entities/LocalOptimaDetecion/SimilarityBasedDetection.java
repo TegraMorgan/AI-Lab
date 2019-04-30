@@ -1,4 +1,4 @@
-package com.AILab3.Entities.OptimaDetecion;
+package com.AILab3.Entities.LocalOptimaDetecion;
 
 import com.AILab3.Entities.Genes.Gene;
 import com.AILab3.Entities.Interfaces.ILocalOptimaSignals;
@@ -42,8 +42,8 @@ public class SimilarityBasedDetection implements ILocalOptimaSignals
                 sm += p.get(i).similar(p.get(j));
             }
         sm = 100 - (sm / c);
-        System.out.print((sm + (bcounter / 10)) + " ");
-        if (sm + (bcounter / 10) > 90)
+        System.out.println("Similarity " + (sm + (bcounter / 10)) + "% ");
+        if (sm + (bcounter / 10) > 75)
         {
             bcounter = 0;
             return true;

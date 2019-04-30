@@ -1,8 +1,6 @@
 package com.AILab3.Entities.Genes;
 
-import com.AILab3.Entities.Interfaces.IFitnessAlgo;
-import com.AILab3.Entities.Interfaces.IMutationAlgo;
-import com.AILab3.Entities.Interfaces.ISelectionAlgo;
+import com.AILab3.Entities.Interfaces.*;
 import com.AILab3.GeneticAlgo.Utility;
 
 import java.util.Comparator;
@@ -17,6 +15,8 @@ public abstract class Gene
     public static IFitnessAlgo fitnessAlgo;
     public static ISelectionAlgo selectionAlgo;
     public static IMutationAlgo mutationAlgo;
+    public static ILocalOptimaSignals LocalOptimumDetection;
+    public static IEscapeLocalOptimum escapeLocalOptimum;
     public static boolean aging = false;
     public int fitness;        // Genetic fitness of the gene - less is better
     public int inverseFitness; // Inverse value of fitness - greater is better
@@ -31,6 +31,8 @@ public abstract class Gene
 
     public static void selection (Vector<Gene> population, Vector<Gene> ark)
     {
+        if (LocalOptimumDetection.detectLocalOptima(population)) escapeLocalOptimum.startLocalEscape(population);
+        else escapeLocalOptimum.endLocalEscape(population);
         int selection_size;
         Vector<Gene> parents = new Vector<>();
         if (aging)
@@ -65,6 +67,11 @@ public abstract class Gene
             } while (i1 == i2);
             ark.add(Gene.mutationAlgo.mutate(parents.get(i1), parents.get(i2)));
         }
+    }
+
+    public static void hyperMutation (Vector<Gene> parents, Vector<Gene> ark)
+    {
+
     }
 
     public abstract int similar (Gene o);

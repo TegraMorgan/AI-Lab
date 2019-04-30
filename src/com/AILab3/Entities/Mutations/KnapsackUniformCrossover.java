@@ -5,7 +5,7 @@ import com.AILab3.Entities.Genes.KnapsackGene;
 import com.AILab3.Entities.Interfaces.IMutationAlgo;
 import com.AILab3.GeneticAlgo.Constants;
 
-public class KnapsackUniformCrossover implements IMutationAlgo
+public class KnapsackUniformCrossover extends BaseMutation
 {
     @Override
     public Gene mutate (Gene p1, Gene p2)
@@ -15,7 +15,7 @@ public class KnapsackUniformCrossover implements IMutationAlgo
         int _l = KnapsackGene.count;
         for (int i = 0; i < _l; i++)
             if (Constants.r.nextInt(2) == 1) g[i] = two.gene[i];
-        if (Constants.r.nextInt(Constants.RAND_MAX) < Constants.GA_MUTATION) IMutationAlgo.mutateOnePoint(g);
+        if (Constants.r.nextInt(Constants.RAND_MAX) < getMutationRate()) IMutationAlgo.mutateOnePoint(g);
         return new KnapsackGene(g, 0, 0, 0);
     }
 }
