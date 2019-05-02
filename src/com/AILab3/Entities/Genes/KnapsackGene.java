@@ -3,9 +3,7 @@ package com.AILab3.Entities.Genes;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Vector;
 
-import static com.AILab3.GeneticAlgo.Constants.GA_POPSIZE;
 import static com.AILab3.GeneticAlgo.Constants.r;
 
 public class KnapsackGene extends Gene
@@ -101,24 +99,6 @@ public class KnapsackGene extends Gene
         return weights.length;
     }
 
-    public static void initPopulation (int numOfItems, Vector<Gene> population)
-    {
-        int age_factor = GA_POPSIZE / 5 + 1;
-        for (int i = 0; i < GA_POPSIZE; i++)
-        {
-            int[] t = new int[numOfItems];
-            t[r.nextInt(numOfItems)] = 1;
-            population.add(new KnapsackGene(t, 0, i / age_factor, 0));
-        }
-    }
-
-    public static void PrintBest (Vector<Gene> p)
-    {
-        KnapsackGene best = (KnapsackGene) p.get(0);
-        String s = Arrays.toString(best.gene);
-        System.out.println("Best: " + s + " (" + best.fitness + ")");
-    }
-
     @Override
     public boolean isSolution ()
     {
@@ -141,7 +121,7 @@ public class KnapsackGene extends Gene
         int[] t = this.gene;
         int res = 0;
         for (int i = 0; i < this.gene.length; i++)
-            if (o[i] != t[i]) res++;
+            if (o[i] == t[i]) res++;
         return (int) ((double) res / (double) this.getProblemSize() * 100);
     }
 
@@ -149,5 +129,22 @@ public class KnapsackGene extends Gene
     public int getProblemSize ()
     {
         return gene.length;
+    }
+
+    @Override
+    public void replace ()
+    {
+        int numOfItems = this.getProblemSize();
+        int[] t = new int[numOfItems];
+        t[r.nextInt(numOfItems)] = 1;
+        this.gene = t;
+        this.age = 0;
+        this.updateFitness();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return Arrays.toString(this.gene);
     }
 }

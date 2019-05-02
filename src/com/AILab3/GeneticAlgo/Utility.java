@@ -5,10 +5,17 @@ import com.AILab3.Entities.Fitness.KnapsackDefaultFitness;
 import com.AILab3.Entities.Fitness.QueensThreatFitness;
 import com.AILab3.Entities.Fitness.StringDefaultFitness;
 import com.AILab3.Entities.Genes.Gene;
-import com.AILab3.Entities.Interfaces.IFitnessAlgo;
-import com.AILab3.Entities.Interfaces.IMutationAlgo;
-import com.AILab3.Entities.Interfaces.ISelectionAlgo;
+import com.AILab3.Entities.Interfaces.*;
+import com.AILab3.Entities.LocalOptimaDetecion.EmptyOptimaDetection;
+import com.AILab3.Entities.LocalOptimaDetecion.SimilarityBasedDetection;
+import com.AILab3.Entities.LocalOptimaDetecion.VarianceBasedDetection;
+import com.AILab3.Entities.LocalOptimaEscape.HyperMutation;
+import com.AILab3.Entities.LocalOptimaEscape.NichePenalty;
+import com.AILab3.Entities.LocalOptimaEscape.RandomImmigrants;
 import com.AILab3.Entities.Mutations.*;
+import com.AILab3.Entities.Populations.KnapsackPopulation;
+import com.AILab3.Entities.Populations.QueenPopulation;
+import com.AILab3.Entities.Populations.StringPopulation;
 import com.AILab3.Entities.Selections.RandomSampling;
 import com.AILab3.Entities.Selections.StochasticUniversalSampling;
 import com.AILab3.Entities.Selections.TournamentSelection;
@@ -18,7 +25,7 @@ import java.util.Vector;
 public class Utility
 {
 
-    public static void printMeanVariance (float[] averages)
+    private static void printMeanVariance (float[] averages)
     {
         System.out.println("Population average fitness: " + averages[0] + " | Population standard deviation: " + Math.sqrt(averages[1]));
     }
@@ -51,14 +58,14 @@ public class Utility
 
     public static String[] checkUserParameters (String[] args)
     {
-        String[] param = new String[5];
+        int argc = 7;
+        String[] param = new String[argc];
         boolean argsOK = true;
-        if (args.length >= 1 && args.length <= 4)
+        if (args.length >= 1 && args.length <= argc - 1)
         {
             switch (args[0])
             {
                 case "queens":
-                    return args;
                 case "string":
                 case "knapsack":
                     System.out.println("Insufficient parameters. All parameters will be default");
@@ -67,12 +74,14 @@ public class Utility
                     param[2] = "default";
                     param[3] = "uniform";
                     param[4] = "elitism";
+                    param[5] = "default";
+                    param[6] = "default";
                     break;
                 default:
                     System.out.println("Cannot parse \"" + args[0] + "\"");
                     argsOK = false;
             }
-        } else if (args.length >= 5)
+        } else if (args.length >= argc)
         {
             switch (args[0])
             {
@@ -132,6 +141,31 @@ public class Utility
                 default:
                     System.out.println(args[4] + " is unknown. Using elitism");
                     param[3] = "elitism";
+            }
+            switch (args[5])
+            {
+                case "default":
+                case "simlarty":
+                case "variance":
+                case "noDetection":
+                    param[5] = args[5];
+                    break;
+                default:
+                    System.out.println(args[5] + " is unknown. Using default");
+                    param[5] = "default";
+                    break;
+            }
+            switch (args[6])
+            {
+                case "default":
+                case "niche":
+                case "hyper":
+                    param[6] = args[6];
+                    break;
+                default:
+                    System.out.println(args[6] + " is unknown. Using default");
+                    param[6] = "default";
+                    break;
             }
         } else
         {
@@ -249,5 +283,52 @@ public class Utility
                 break;
         }
         return ma;
+    }
+
+    public static ILocalOptimaSignals ExtractLocalOptimumSignal (String[] param)
+    {
+        switch (param[5])
+        {
+            case "variance":
+                return new VarianceBasedDetection();
+            case "noDetection":
+                return new EmptyOptimaDetection();
+            default:
+                return new SimilarityBasedDetection();
+        }
+    }
+
+    public static IEscapeLocalOptimum ExtractEscapeLocalOptimum (String[] param)
+    {
+        switch (param[6])
+        {
+            case "niche":
+                return new NichePenalty();
+            case "hyper":
+                return new HyperMutation();
+            default:
+                return new RandomImmigrants();
+        }
+    }
+
+    public static void output (float[] averages, Vector<Gene> population, int generation)
+    {
+        Utility.printMeanVariance(averages);              // Print mean and variance fitness
+        Gene.PrintBest(population);                       // print the best one
+    }
+
+    public static IPopType ExtractPopulationType (String[] param)
+    {
+        switch (param[0])
+        {
+            case "string":
+                return new StringPopulation();
+            case "queens":
+                return new QueenPopulation();
+            case "knapsack":
+                return new KnapsackPopulation();
+            default:
+                return null;
+        }
     }
 }

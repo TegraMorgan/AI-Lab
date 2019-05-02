@@ -8,7 +8,7 @@ import java.util.Vector;
 
 public class SimilarityBasedDetection implements ILocalOptimaSignals
 {
-    private static final float POPULATION_TO_COMPARE = (Constants.GA_POPSIZE * Constants.GA_ELITRATE);
+    private static final float POPULATION_TO_COMPARE = (Constants.GA_POPSIZE * 0.5f);
     private int oldBest;
     private int bcounter;
 
@@ -41,9 +41,9 @@ public class SimilarityBasedDetection implements ILocalOptimaSignals
                 c++;
                 sm += p.get(i).similar(p.get(j));
             }
-        sm = 100 - (sm / c);
-        System.out.println("Similarity " + (sm + (bcounter / 10)) + "% ");
-        if (sm + (bcounter / 10) > 75)
+        sm = (sm / c) + (bcounter / 10);
+        System.out.println("Equation - " + sm);
+        if (sm + (bcounter / 10) > 80)
         {
             bcounter = 0;
             return true;

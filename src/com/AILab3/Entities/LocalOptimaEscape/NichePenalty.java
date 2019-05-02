@@ -11,20 +11,17 @@ public class NichePenalty implements IEscapeLocalOptimum
     public void startLocalEscape (Vector<Gene> p)
     {
         int l = p.size();
-        for (int i = 0; i < l; i++)
+        Gene t = p.get(0);
+        for (int j = 1; j < l; j++)
         {
-            Gene t = p.get(i);
-            for (int j = i + 1; j < l; j++)
+            Gene o = p.get(j);
+            if (t.similar(o) > 75)
             {
-                Gene o = p.get(j);
-                if (t.similar(o) > 75)
-                {
-                    int pe = 10;
-                    o.fitness += pe;
-                    o.inverseFitness -= pe;
-                }
+                o.fitness += 110;
+                o.inverseFitness -= 110;
             }
         }
+        p.sort(Gene.BY_FITNESS);
     }
 
     @Override

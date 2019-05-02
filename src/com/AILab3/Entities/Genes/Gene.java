@@ -12,12 +12,13 @@ public abstract class Gene
 {
     public static final ByFitness BY_FITNESS = new ByFitness();
     private static final ByAge BY_AGE = new ByAge();
-    public static IFitnessAlgo fitnessAlgo;
-    public static ISelectionAlgo selectionAlgo;
+    static IFitnessAlgo fitnessAlgo;
+    private static ISelectionAlgo selectionAlgo;
     public static IMutationAlgo mutationAlgo;
-    public static ILocalOptimaSignals LocalOptimumDetection;
-    public static IEscapeLocalOptimum escapeLocalOptimum;
-    public static boolean aging = false;
+    private static ILocalOptimaSignals LocalOptimumDetection;
+    private static IEscapeLocalOptimum escapeLocalOptimum;
+    private static IPopType populationType;
+    private static boolean aging = false;
     public int fitness;        // Genetic fitness of the gene - less is better
     public int inverseFitness; // Inverse value of fitness - greater is better
     public int age;
@@ -27,6 +28,22 @@ public abstract class Gene
         fitness = _f;
         age = _a;
         inverseFitness = _if;
+    }
+
+    public static void initGene (IPopType pt, IFitnessAlgo fa,
+                                 ISelectionAlgo sa,
+                                 IMutationAlgo ma,
+                                 ILocalOptimaSignals los,
+                                 IEscapeLocalOptimum elo,
+                                 boolean a)
+    {
+        fitnessAlgo = fa;
+        selectionAlgo = sa;
+        mutationAlgo = ma;
+        LocalOptimumDetection = los;
+        escapeLocalOptimum = elo;
+        populationType = pt;
+        aging = a;
     }
 
     public static void selection (Vector<Gene> population, Vector<Gene> ark)
@@ -69,9 +86,9 @@ public abstract class Gene
         }
     }
 
-    public static void hyperMutation (Vector<Gene> parents, Vector<Gene> ark)
+    public static void initPopulation (Object n, Vector<Gene> p)
     {
-
+        populationType.initPopulation(n, p);
     }
 
     public abstract int similar (Gene o);
@@ -81,6 +98,17 @@ public abstract class Gene
     public abstract boolean isSolution ();
 
     public abstract void updateFitness ();
+
+    public static void PrintBest (Vector<Gene> p)
+    {
+        Gene best = p.get(0);
+        String s = best.toString();
+        System.out.println("Best: " + s + " (" + best.fitness + ")");
+    }
+
+    public abstract void replace ();
+
+    public abstract String toString ();
 
     public static class ByAge implements Comparator<Gene>
     {

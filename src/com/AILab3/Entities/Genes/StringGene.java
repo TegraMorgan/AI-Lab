@@ -1,9 +1,8 @@
 package com.AILab3.Entities.Genes;
 
 
-import java.util.Vector;
-
-import static com.AILab3.GeneticAlgo.Constants.*;
+import static com.AILab3.GeneticAlgo.Constants.RAND_MAX;
+import static com.AILab3.GeneticAlgo.Constants.r;
 
 public class StringGene extends Gene
 
@@ -20,27 +19,6 @@ public class StringGene extends Gene
     {
         super(_fit, _age, _invFit);
         str = _str;
-    }
-
-    public static void initPopulation (String t, Vector<Gene> population)
-    {
-        target = t;
-        int targetLength = t.length();
-        int age_factor = GA_POPSIZE / 5 + 1;
-        StringBuilder sb = new StringBuilder(targetLength);
-        for (int i = 0; i < GA_POPSIZE; i++)
-        {
-            for (int j = 0; j < targetLength; j++)
-                sb.append((char) ((r.nextInt(RAND_MAX) % 90) + 32));
-            population.add(new StringGene(sb.toString(), 0, i / age_factor, 0));
-            sb.delete(0, sb.length());
-        }
-    }
-
-    public static void printBest (Vector<Gene> gav)
-    {
-        StringGene sg = (StringGene) gav.get(0);
-        System.out.println("Best: " + sg.str + " (" + sg.fitness + ")");
     }
 
     @Override
@@ -62,7 +40,7 @@ public class StringGene extends Gene
         String o = ((StringGene) other).str;
         String t = this.str;
         for (int i = 0; i < t.length(); i++)
-            if (o.charAt(i) != t.charAt(i)) res++;
+            if (o.charAt(i) == t.charAt(i)) res++;
         return (int) ((double) res / (double) this.getProblemSize() * 100);
     }
 
@@ -70,5 +48,21 @@ public class StringGene extends Gene
     public int getProblemSize ()
     {
         return target.length();
+    }
+
+    @Override
+    public void replace ()
+    {
+        int targetLength = this.getProblemSize();
+        StringBuilder sb = new StringBuilder(targetLength);
+        for (int j = 0; j < targetLength; j++)
+            sb.append((char) ((r.nextInt(RAND_MAX) % 90) + 32));
+        this.str = sb.toString();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return this.str;
     }
 }
