@@ -54,8 +54,6 @@ public class VarianceBasedDetection implements ILocalOptimaSignals
         Ex = k + (Ex / POPULATION_TO_COMPARE);
         popData[0] = Ex;
         popData[1] = Ex2;
-        System.out.println("Optima - Mean - " + popData[0] + " | Variance - " + Math.sqrt(popData[1]));
-        System.out.println("Equation - " + (popData[0] - Math.sqrt(popData[1]) - window));
         if (popData[0] - Math.sqrt(popData[1]) - window < 0)
         {
             bcounter = 0;

@@ -99,12 +99,6 @@ public abstract class Gene
 
     public abstract void updateFitness ();
 
-    public static void PrintBest (Vector<Gene> p)
-    {
-        Gene best = p.get(0);
-        String s = best.toString();
-        System.out.println("Best: " + s + " (" + best.fitness + ")");
-    }
 
     public abstract void replace ();
 

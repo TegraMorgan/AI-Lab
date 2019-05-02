@@ -42,7 +42,6 @@ public class SimilarityBasedDetection implements ILocalOptimaSignals
                 sm += p.get(i).similar(p.get(j));
             }
         sm = (sm / c) + (bcounter / 10);
-        System.out.println("Equation - " + sm);
         if (sm + (bcounter / 10) > 80)
         {
             bcounter = 0;

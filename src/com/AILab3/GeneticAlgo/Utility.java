@@ -25,6 +25,8 @@ import java.util.Vector;
 public class Utility
 {
 
+    private static int currentBest = Integer.MAX_VALUE;
+
     private static void printMeanVariance (float[] averages)
     {
         System.out.println("Population average fitness: " + averages[0] + " | Population standard deviation: " + Math.sqrt(averages[1]));
@@ -313,8 +315,13 @@ public class Utility
 
     public static void output (float[] averages, Vector<Gene> population, int generation)
     {
-        Utility.printMeanVariance(averages);              // Print mean and variance fitness
-        Gene.PrintBest(population);                       // print the best one
+        Gene b = population.get(0);
+        if (currentBest > b.fitness)
+        {
+            currentBest = b.fitness;
+            System.out.println(b.fitness + "," + generation);
+        }
+        //Utility.printMeanVariance(averages);              // Print mean and variance fitness
     }
 
     public static IPopType ExtractPopulationType (String[] param)
