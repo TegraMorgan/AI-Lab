@@ -4,7 +4,7 @@ import com.AILab3.Entities.Interfaces.IMutationAlgo;
 
 public abstract class BaseMutation implements IMutationAlgo
 {
-    private static final float NORMAL_MUTATION = 2048 * 4 * 0.25f;
+    private static final float NORMAL_MUTATION = 2048f;
     private static final float HYPER_MUTATION = 2048 * 4 * 0.75f;
     private static boolean hm = false;
 

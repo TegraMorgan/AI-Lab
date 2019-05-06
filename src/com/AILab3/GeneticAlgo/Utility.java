@@ -1,10 +1,8 @@
 package com.AILab3.GeneticAlgo;
 
-import com.AILab3.Entities.Fitness.BullPgiaStringFitness;
-import com.AILab3.Entities.Fitness.KnapsackDefaultFitness;
-import com.AILab3.Entities.Fitness.QueensThreatFitness;
-import com.AILab3.Entities.Fitness.StringDefaultFitness;
+import com.AILab3.Entities.Fitness.*;
 import com.AILab3.Entities.Genes.Gene;
+import com.AILab3.Entities.Genes.NeedleGene;
 import com.AILab3.Entities.Interfaces.*;
 import com.AILab3.Entities.LocalOptimaDetecion.EmptyOptimaDetection;
 import com.AILab3.Entities.LocalOptimaDetecion.SimilarityBasedDetection;
@@ -14,6 +12,7 @@ import com.AILab3.Entities.LocalOptimaEscape.NichePenalty;
 import com.AILab3.Entities.LocalOptimaEscape.RandomImmigrants;
 import com.AILab3.Entities.Mutations.*;
 import com.AILab3.Entities.Populations.KnapsackPopulation;
+import com.AILab3.Entities.Populations.NeedlePopulation;
 import com.AILab3.Entities.Populations.QueenPopulation;
 import com.AILab3.Entities.Populations.StringPopulation;
 import com.AILab3.Entities.Selections.RandomSampling;
@@ -21,6 +20,8 @@ import com.AILab3.Entities.Selections.StochasticUniversalSampling;
 import com.AILab3.Entities.Selections.TournamentSelection;
 
 import java.util.Vector;
+
+import static com.AILab3.GeneticAlgo.Constants.GA_MAXITER;
 
 public class Utility
 {
@@ -79,6 +80,15 @@ public class Utility
                     param[5] = "default";
                     param[6] = "default";
                     break;
+                case "needle":
+                    param[0] = args[0];
+                    param[1] = "extreme";         // fitness
+                    param[2] = "sus";             // selection
+                    param[3] = "onePoint";        // mutation
+                    param[4] = "elitism";
+                    param[5] = "noDetection";
+                    param[6] = "default";
+                    return param;
                 default:
                     System.out.println("Cannot parse \"" + args[0] + "\"");
                     argsOK = false;
@@ -92,6 +102,15 @@ public class Utility
                 case "knapsack":
                     param[0] = args[0];
                     break;
+                case "needle":
+                    param[0] = args[0];
+                    param[1] = "extreme";         // fitness
+                    param[2] = "sus";             // selection
+                    param[3] = "onePoint";        // mutation
+                    param[4] = "elitism";
+                    param[5] = "noDetection";
+                    param[6] = "default";
+                    return param;
                 default:
                     System.out.println("Cannot parse \"" + args[0] + "\"");
                     argsOK = false;
@@ -241,6 +260,9 @@ public class Utility
             case "knapsack":
                 fa = new KnapsackDefaultFitness();
                 break;
+            case "needle":
+                fa = new NeedleFitness();
+                break;
             default:
                 fa = null;
                 break;
@@ -280,6 +302,9 @@ public class Utility
                         break;
                 }
                 break;
+            case "needle":
+                ma = new NeedleOnePointCrossover();
+                break;
             default:
                 ma = null;
                 break;
@@ -313,6 +338,39 @@ public class Utility
         }
     }
 
+    public static void needleDataOutput (Vector<Gene> p, int genNo)
+    {
+        int l = p.size();
+        int s = p.get(0).getProblemSize();
+        float ip = 0, cp = 0, lp = 0;
+        for (Gene gnn : p)
+        {
+            char[] ngg = ((NeedleGene) gnn).gene;
+            for (int j = 0; j < s; j++)
+            {
+                switch (ngg[j])
+                {
+                    case '0':
+                        ip++;
+                        break;
+                    case '1':
+                        cp++;
+                        break;
+                    case '?':
+                        lp++;
+                        break;
+                    default:
+                        System.out.println("WTF!");
+                        break;
+                }
+            }
+        }
+        ip = ((ip / l) / s) * 100;
+        cp = ((cp / l) / s) * 100;
+        lp = ((lp / l) / s) * 100;
+        System.out.println(genNo + "," + ip + "," + cp + "," + lp);
+    }
+
     public static void output (float[] averages, Vector<Gene> population, int generation)
     {
         Gene b = population.get(0);
@@ -334,8 +392,28 @@ public class Utility
                 return new QueenPopulation();
             case "knapsack":
                 return new KnapsackPopulation();
+            case "needle":
+                Constants.GA_POPSIZE = 1000;
+                return new NeedlePopulation();
             default:
                 return null;
         }
+    }
+
+    public static void reset ()
+    {
+        currentBest = Integer.MAX_VALUE;
+    }
+
+    public static boolean CheckIfSolution (Vector<Gene> population, int generationNumber)
+    {
+        if ((population).get(0).isSolution())
+        {
+            System.out.println("Solved in " + generationNumber);
+            return true;
+        }
+        if (generationNumber == GA_MAXITER - 1)
+            System.out.println("Not solved");
+        return false;
     }
 }

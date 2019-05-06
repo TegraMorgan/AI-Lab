@@ -102,10 +102,9 @@ public class KnapsackGene extends Gene
     @Override
     public boolean isSolution ()
     {
-        boolean ret = true;
         for (int i = 0; i < count; i++)
-            if (this.gene[i] != solution[i]) ret = false;
-        return ret;
+            if (this.gene[i] != solution[i]) return false;
+        return true;
     }
 
     @Override

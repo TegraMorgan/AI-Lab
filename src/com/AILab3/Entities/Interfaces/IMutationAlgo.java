@@ -30,6 +30,13 @@ public interface IMutationAlgo
         g[Constants.r.nextInt(KnapsackGene.count)] = (Constants.r.nextInt(2));
     }
 
+    static void mutateOnePoint (char[] g)
+    {
+        // Mutate one char
+        float ra = Constants.r.nextFloat();
+        g[Constants.r.nextInt(g.length)] = ra < 0.25f ? '0' : ra < 0.5f ? '1' : '?';
+    }
+
     Gene mutate (Gene p1, Gene p2);
 
     void enableHyperMutation ();

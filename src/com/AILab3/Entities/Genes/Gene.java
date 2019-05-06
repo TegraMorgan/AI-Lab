@@ -51,20 +51,21 @@ public abstract class Gene
         if (LocalOptimumDetection.detectLocalOptima(population)) escapeLocalOptimum.startLocalEscape(population);
         else escapeLocalOptimum.endLocalEscape(population);
         int selection_size;
+        int pops = population.size();
         Vector<Gene> parents = new Vector<>();
         if (aging)
         {
             // Aging
-            selection_size = GA_POPSIZE - 1;
+            selection_size = pops - 1;
             population.sort(Gene.BY_AGE);
             while (population.get(selection_size).age > 3) selection_size--;
         } else
             // Regular elitism
-            selection_size = (int) (GA_POPSIZE * GA_ELITRATE);
+            selection_size = (int) (pops * GA_ELITRATE);
         Utility.copyTop(population, ark, selection_size, aging);
 
         // Select parents
-        selectionAlgo.selectParents(population, parents, GA_POPSIZE - selection_size, aging);
+        selectionAlgo.selectParents(population, parents, pops - selection_size, aging);
         // Replace population with potential parents
         population.clear();
         population.addAll(parents);

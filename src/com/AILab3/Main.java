@@ -1,6 +1,5 @@
 package com.AILab3;
 
-
 import com.AILab3.Entities.Genes.Gene;
 import com.AILab3.Entities.Genes.KnapsackGene;
 import com.AILab3.Entities.Interfaces.*;
@@ -11,24 +10,22 @@ import java.util.Vector;
 import static com.AILab3.GeneticAlgo.Constants.GA_MAXITER;
 import static com.AILab3.GeneticAlgo.Constants.GA_TARGET;
 
-
 public class Main
 {
-
     public static void main (String[] args)
     {
         /*
         Possible arguments
-        Arg 0 - string             | queens             | knapsack
-        Arg 1 - default            | bull (string)      |
+        Arg 0 - string             | queens             | knapsack                    | needle
+        Arg 1 - default            | bull (string)      | extreme (needle)
         Arg 2 - sus                | tournament         | default
         Arg 3 - onePoint (!queens) | uniform (!queens)  |
         Arg 4 - aging              | elitism            |
         Arg 5 - default (simlarty) | variance           | noDetection
         Arg 6 - hyper              | niche              | default (Random immigrants)
          */
-        String[] ag = new String[]{"string", "bull", "sus", "uniform", "elitism", "noDetection", "default"};
-        String[] param = Utility.checkUserParameters(args);
+        String[] ag = new String[]{"needle", "default", "sus", "uniform", "elitism", "noDetection", "default"};
+        String[] param = Utility.checkUserParameters(ag);
         if (param == null) return;
         String mode = param[0];
         IPopType pt = Utility.ExtractPopulationType(param);
@@ -40,9 +37,9 @@ public class Main
         /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
         int problemsCount;
         if (param[0].equals("knapsack")) problemsCount = 9;
-        else problemsCount = 1;
+        else problemsCount = 2;
         Gene.initGene(pt, fa, sa, ma, los, elo, args[4].equals("aging"));
-        for (int problem = 0; problem < problemsCount; problem++)
+        for (int problem = 1; problem < problemsCount; problem++)
         {
             Object populationInitData;
             long startTime = System.nanoTime();
@@ -60,6 +57,9 @@ public class Main
                     populationInitData = KnapsackGene.parseProblem(problem);
                     System.out.println("Problem " + problem);
                     break;
+                case "needle":
+                    populationInitData = 1000;
+                    break;
                 default:
                     populationInitData = 0;
                     break;
@@ -70,14 +70,9 @@ public class Main
                 population.forEach(Gene::updateFitness);                // Fitness
                 population.sort(Gene.BY_FITNESS);                       // sort Population
                 averages = Utility.calcPopMeanVariance(population);     // Calculate mean and variance fitness
-                Utility.output(averages, population, generationNumber);
-                if ((population).get(0).isSolution())
-                {
-                    System.out.println("Solved in " + generationNumber);
-                    break;            // if solution found - exit
-                }
-                if (generationNumber == GA_MAXITER - 1)
-                    System.out.println("Not solved");
+                if (mode.equals("needle")) Utility.needleDataOutput(population, generationNumber);
+                else Utility.output(averages, population, generationNumber);
+                if (Utility.CheckIfSolution(population, generationNumber)) break;            // if solution found - exit
                 Gene.selection(population, buffer); // Select parents and survivors
                 // Future Parents are now in population, survivors in buffer
                 Gene.mutation(population, buffer);
@@ -88,6 +83,8 @@ public class Main
             /* ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- */
             long runTime = System.nanoTime() - startTime;
             System.out.println("Total runtime: " + (runTime / 1000000) + "." + ((runTime / 1000) % 1000) + " milliseconds");
+            Utility.reset();
         }
     }
+
 }
