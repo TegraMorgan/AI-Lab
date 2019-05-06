@@ -25,7 +25,7 @@ public class Main
         Arg 6 - hyper              | niche              | default (Random immigrants)
          */
         String[] ag = new String[]{"needle", "default", "sus", "uniform", "elitism", "noDetection", "default"};
-        String[] param = Utility.checkUserParameters(ag);
+        String[] param = Utility.checkUserParameters(args);
         if (param == null) return;
         String mode = param[0];
         IPopType pt = Utility.ExtractPopulationType(param);
