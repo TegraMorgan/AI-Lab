@@ -10,8 +10,8 @@ import static com.AILab3.GeneticAlgo.Constants.*;
 
 public abstract class Gene
 {
-    public static final ByFitness BY_FITNESS = new ByFitness();
-    private static final ByAge BY_AGE = new ByAge();
+    public static final Comparator<Gene> BY_FITNESS = Comparator.comparingInt(o -> o.fitness);
+    private static final Comparator<Gene> BY_AGE = Comparator.comparingInt(o -> o.age);
     static IFitnessAlgo fitnessAlgo;
     private static ISelectionAlgo selectionAlgo;
     public static IMutationAlgo mutationAlgo;
@@ -100,26 +100,7 @@ public abstract class Gene
 
     public abstract void updateFitness ();
 
-
     public abstract void replace ();
 
     public abstract String toString ();
-
-    public static class ByAge implements Comparator<Gene>
-    {
-        @Override
-        public int compare (Gene o1, Gene o2)
-        {
-            return Integer.compare((o1).age, (o2).age);
-        }
-    }
-
-    public static class ByFitness implements Comparator<Gene>
-    {
-        @Override
-        public int compare (Gene o1, Gene o2)
-        {
-            return Integer.compare((o1).fitness, (o2).fitness);
-        }
-    }
 }
