@@ -26,7 +26,7 @@ public class ParetoPopulation implements IPopType
         for (int i = 0; i < GA_POPSIZE; i++)
         {
             age_factor = GA_POPSIZE / 5 + 1;
-            float[] gen = new float[l];
+            double[] gen = new double[l];
             for (int j = 0; j < l; j++)
             {
                 center = min + j * segmentSize + midSegment;

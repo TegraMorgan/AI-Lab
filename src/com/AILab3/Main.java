@@ -16,7 +16,7 @@ public class Main
     {
         /*
         Possible arguments
-        Arg 0 - string             | queens             | knapsack                    | needle
+        Arg 0 - string             | queens             | knapsack                    | needle | pareto
         Arg 1 - default            | bull (string)      | extreme (needle)
         Arg 2 - sus                | tournament         | default
         Arg 3 - onePoint (!queens) | uniform (!queens)  |
@@ -24,8 +24,8 @@ public class Main
         Arg 5 - default (simlarty) | variance           | noDetection
         Arg 6 - hyper              | niche              | default (Random immigrants)
          */
-        String[] ag = new String[]{"needle", "default", "sus", "uniform", "elitism", "noDetection", "default"};
-        String[] param = Utility.checkUserParameters(args);
+        String[] ag = new String[]{"pareto", "default", "sus", "uniform", "elitism", "noDetection", "default"};
+        String[] param = Utility.checkUserParameters(ag);
         if (param == null) return;
         String mode = param[0];
         IPopType pt = Utility.ExtractPopulationType(param);
@@ -38,7 +38,7 @@ public class Main
         int problemsCount;
         if (param[0].equals("knapsack")) problemsCount = 9;
         else problemsCount = 2;
-        Gene.initGene(pt, fa, sa, ma, los, elo, args[4].equals("aging"));
+        Gene.initGene(pt, fa, sa, ma, los, elo, param[4].equals("aging"));
         for (int problem = 1; problem < problemsCount; problem++)
         {
             Object populationInitData;
@@ -59,6 +59,9 @@ public class Main
                     break;
                 case "needle":
                     populationInitData = 1000;
+                    break;
+                case "pareto":
+                    populationInitData = new int[]{-3, 3, 300};
                     break;
                 default:
                     populationInitData = 0;

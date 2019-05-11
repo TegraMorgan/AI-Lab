@@ -30,6 +30,11 @@ public interface IMutationAlgo
         g[Constants.r.nextInt(KnapsackGene.count)] = (Constants.r.nextInt(2));
     }
 
+    static void mutateOnePoint (double[] g)
+    {
+
+    }
+
     static void mutateOnePoint (char[] g)
     {
         // Mutate one char

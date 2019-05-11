@@ -26,6 +26,11 @@ public class ParetoGene extends Gene
         max = ma;
     }
 
+    public static int[] getMinMax ()
+    {
+        return new int[]{min, max};
+    }
+
     @Override
     public int similar (Gene other)
     {

@@ -11,10 +11,7 @@ import com.AILab3.Entities.LocalOptimaEscape.HyperMutation;
 import com.AILab3.Entities.LocalOptimaEscape.NichePenalty;
 import com.AILab3.Entities.LocalOptimaEscape.RandomImmigrants;
 import com.AILab3.Entities.Mutations.*;
-import com.AILab3.Entities.Populations.KnapsackPopulation;
-import com.AILab3.Entities.Populations.NeedlePopulation;
-import com.AILab3.Entities.Populations.QueenPopulation;
-import com.AILab3.Entities.Populations.StringPopulation;
+import com.AILab3.Entities.Populations.*;
 import com.AILab3.Entities.Selections.RandomSampling;
 import com.AILab3.Entities.Selections.StochasticUniversalSampling;
 import com.AILab3.Entities.Selections.TournamentSelection;
@@ -89,6 +86,15 @@ public class Utility
                     param[5] = "noDetection";
                     param[6] = "default";
                     return param;
+                case "pareto":
+                    param[0] = args[0];
+                    param[1] = "pareto";          // fitness
+                    param[2] = "sus";             // selection
+                    param[3] = "onePoint";        // mutation
+                    param[4] = "elitism";
+                    param[5] = "noDetection";
+                    param[6] = "default";
+                    return param;
                 default:
                     System.out.println("Cannot parse \"" + args[0] + "\"");
                     argsOK = false;
@@ -105,6 +111,15 @@ public class Utility
                 case "needle":
                     param[0] = args[0];
                     param[1] = "extreme";         // fitness
+                    param[2] = "sus";             // selection
+                    param[3] = "onePoint";        // mutation
+                    param[4] = "elitism";
+                    param[5] = "noDetection";
+                    param[6] = "default";
+                    return param;
+                case "pareto":
+                    param[0] = args[0];
+                    param[1] = "pareto";          // fitness
                     param[2] = "sus";             // selection
                     param[3] = "onePoint";        // mutation
                     param[4] = "elitism";
@@ -263,6 +278,9 @@ public class Utility
             case "needle":
                 fa = new NeedleFitness();
                 break;
+            case "pareto":
+                fa = new ParetoFitness();
+                break;
             default:
                 fa = null;
                 break;
@@ -304,6 +322,9 @@ public class Utility
                 break;
             case "needle":
                 ma = new NeedleOnePointCrossover();
+                break;
+            case "pareto":
+                ma = new ParetoOnePointCrossover();
                 break;
             default:
                 ma = null;
@@ -395,6 +416,8 @@ public class Utility
             case "needle":
                 Constants.GA_POPSIZE = 1000;
                 return new NeedlePopulation();
+            case "pareto":
+                return new ParetoPopulation();
             default:
                 return null;
         }
