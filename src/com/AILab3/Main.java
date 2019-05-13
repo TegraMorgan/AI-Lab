@@ -24,8 +24,8 @@ public class Main
         Arg 5 - default (simlarty) | variance           | noDetection
         Arg 6 - hyper              | niche              | default (Random immigrants)
          */
-        String[] ag = new String[]{"pareto", "default", "sus", "uniform", "elitism", "noDetection", "default"};
-        String[] param = Utility.checkUserParameters(ag);
+        //String[] ag = new String[]{"pareto", "default", "sus", "uniform", "elitism", "noDetection", "default"};
+        String[] param = Utility.checkUserParameters(args);
         if (param == null) return;
         String mode = param[0];
         IPopType pt = Utility.ExtractPopulationType(param);
@@ -61,6 +61,7 @@ public class Main
                     populationInitData = 1000;
                     break;
                 case "pareto":
+                    // We provide minimum, maximum and granularity (gene size) of the search
                     populationInitData = new int[]{-3, 3, 300};
                     break;
                 default:

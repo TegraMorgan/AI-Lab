@@ -22,23 +22,23 @@ public class ParetoFitness implements IFitnessAlgo
         {
             f = CalculateF(gene[i]);
             g = CalculateG(gene[i]);
-            coordinates.add(new Coord(f, g));
+            coordinates.add(new Coord(f, g, gene[i], i));
         }
         coordinates.sort(SORT_BY_X);
         int fr_it = 0, co_it = 0;
         frontier.add(coordinates.get(0));
         do
         {
-            while (co_it < l && coordinates.get(co_it).byY <= frontier.get(fr_it).byY)
-            {
-                co_it++;
-            }
-            if (co_it < l && coordinates.get(co_it).byY > frontier.get(fr_it).byY)
+            while (co_it < l && coordinates.get(co_it).byY >= frontier.get(fr_it).byY) co_it++;
+            if (co_it < l && coordinates.get(co_it).byY < frontier.get(fr_it).byY)
             {
                 frontier.add(coordinates.get(co_it));
                 fr_it++;
             }
         } while (co_it < l);
+        for (Coord c1 : frontier)
+            System.out.println(c1.byX + "," + c1.byY + "," + c1.point);
+
         pareto.fitness = l - frontier.size();
         pareto.inverseFitness = frontier.size();
     }
@@ -55,18 +55,22 @@ public class ParetoFitness implements IFitnessAlgo
 
     class Coord
     {
-        double byX, byY;
+        double byX, byY, point;
+        int index;
 
         Coord ()
         {
             byX = 0;
             byY = 0;
+            index = 0;
         }
 
-        Coord (double _x, double _y)
+        Coord (double _x, double _y, double _p, int _i)
         {
             byX = _x;
             byY = _y;
+            point = _p;
+            index = _i;
         }
     }
 }
