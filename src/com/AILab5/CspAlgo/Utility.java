@@ -13,9 +13,9 @@ import java.util.Vector;
 @SuppressWarnings("ALL")
 public class Utility
 {
-    String[] fileList = {"DSJC125.1", "DSJC125.5", "DSJC250.1", "DSJC250.5", "DSJC500.1", "DSJC500.5", "DSJC1000.1", "DSJC1000.5", "DSJR500.1", "DSJR500.5"};
+    static String[] fileList = {"DSJC125.1", "DSJC125.5", "DSJC250.1", "DSJC250.5", "DSJC500.1", "DSJC500.5", "DSJC1000.1", "DSJC1000.5", "DSJR500.1", "DSJR500.5"};
 
-    public boolean[][] parseProblem (int filenum)
+    public static boolean[][] parseProblem (int filenum)
     {
         int _nodesCount = -1, _edgesCount = -1;
         Vector<Pair<Integer, Integer>> _edg = new Vector<>();
