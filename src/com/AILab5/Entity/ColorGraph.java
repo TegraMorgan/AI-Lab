@@ -25,7 +25,7 @@ public class ColorGraph
     private final HashSet<Integer>[] colorClasses;
 
     @SuppressWarnings("unchecked")
-    public ColorGraph (int[][] adjacency_matrix, int nColors)
+    public ColorGraph (boolean[][] adjacency_matrix, int nColors)
     {
         final int n = adjacency_matrix.length;
         matrix = new boolean[n][n];
@@ -38,7 +38,7 @@ public class ColorGraph
             nodesColors[i] = -1;
             int count = 0;
             for (int j = 0; j < n; j++)
-                if (adjacency_matrix[i][j] != 0)
+                if (adjacency_matrix[i][j])
                 {
                     matrix[i][j] = true;
                     count++;
