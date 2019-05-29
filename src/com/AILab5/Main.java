@@ -1,25 +1,27 @@
 package com.AILab5;
 
 import com.AILab5.Entity.ColorGraph;
-import com.AILab5.Entity.Solutions;
+
+import static com.AILab5.CspAlgo.Utility.parseProblem;
+import static com.AILab5.Entity.Solutions.backJumping;
+import static com.AILab5.Entity.Solutions.isSolved;
 
 public class Main
 {
     public static void main (String[] args)
     {
-
         // Read and Parse problem
-        boolean[][] _gr = com.AILab5.CspAlgo.Utility.parseProblem(10);
-
+        boolean[][] _gr = parseProblem(10);
+        if (_gr == null) return;
         ColorGraph graph = new ColorGraph(_gr, 10);
         // Run algo to find answer
-        boolean solved = Solutions.backJumping(graph);
+        boolean solved = backJumping(graph);
 
         // Output
         if (solved)
         {
             System.out.println("Solved");
-            System.out.println(Solutions.isSolved(graph));
+            System.out.println(isSolved(graph));
         }
         else System.out.println("Not solved");
 
