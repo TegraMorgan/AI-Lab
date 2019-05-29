@@ -59,13 +59,17 @@ public class ColorGraph
         return graph[node].length;
     }
 
-    /** Returns specific neighbor of the node */
+    /**
+     * Returns specific neighbor of the node
+     */
     public int getNeighbor (int node, int i)
     {
         return graph[node][i];
     }
 
-    /** Run a function on each node in specific colour */
+    /**
+     * Run a function on each node in specific colour
+     */
     public void foreachNodeInColorClass (int color, IntFunction func)
     {
         for (int node : colorClasses[color])
@@ -74,7 +78,9 @@ public class ColorGraph
         }
     }
 
-    /** Run a function on each node in specific colour with a stop criterion */
+    /**
+     * Run a function on each node in specific colour with a stop criterion
+     */
     public void foreachNodeInColorClass (int color, IntFunction func, Supplier<Boolean> stop)
     {
         for (int node : colorClasses[color])
@@ -87,7 +93,9 @@ public class ColorGraph
         }
     }
 
-    /** Set a colour to a specific node */
+    /**
+     * Set a colour to a specific node
+     */
     public void setColor (int node, int color)
     {
         if (nodesColors[node] >= 0)
@@ -101,19 +109,25 @@ public class ColorGraph
         nodesColors[node] = color;
     }
 
-    /** Get nodes colour */
+    /**
+     * Get nodes colour
+     */
     public int getColor (int node)
     {
         return nodesColors[node];
     }
 
-    /** Returns true is vertexes are connected with a node */
+    /**
+     * Returns true is vertexes are connected with a node
+     */
     public boolean areConnected (int n1, int n2)
     {
         return matrix[n1][n2];
     }
 
-    /** Returns number of nodes of specific colour */
+    /**
+     * Returns number of nodes of specific colour
+     */
     public int colorCount (int c)
     {
         return colorClasses[c].size();
