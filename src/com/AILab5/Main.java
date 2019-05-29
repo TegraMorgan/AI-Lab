@@ -12,12 +12,19 @@ public class Main
         // Read and Parse problem
         boolean[][] _gr = parseProblem(10);
         if (_gr == null) return;
+        ColorGraph graph = new ColorGraph(_gr, 10);
         // Run algo to find answer
-        boolean solved = backJumping(new ColorGraph(_gr, 5));
+        boolean solved = backJumping(graph);
 
         // Output
-        if (solved) System.out.println("Solved");
-        else System.out.println("Not solved");
+        if (solved)
+        {
+            System.out.println("Solved");
+            for (int i = 0; i < graph.getNumberOfNodes(); i++)
+            {
+                System.out.println("Color of node " + (i + 1) + ": " + graph.getColor(i));
+            }
+        } else System.out.println("Not solved");
 
     }
 
