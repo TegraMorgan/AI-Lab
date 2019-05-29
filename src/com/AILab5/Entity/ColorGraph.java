@@ -7,9 +7,21 @@ import java.util.function.Supplier;
 
 public class ColorGraph
 {
+    /**
+     * Adjacency matrix
+     */
     private final boolean[][] matrix;
+    /**
+     * Neighbours array
+     */
     private final int[][] graph;
+    /**
+     * Nodes colours
+     */
     private final int[] nodesColors;
+    /**
+     * Set of nodes by colour
+     */
     private final HashSet<Integer>[] colorClasses;
 
     @SuppressWarnings("unchecked")
@@ -26,55 +38,34 @@ public class ColorGraph
             nodesColors[i] = -1;
             int count = 0;
             for (int j = 0; j < n; j++)
-            {
                 if (adjacency_matrix[i][j] != 0)
                 {
                     matrix[i][j] = true;
                     count++;
                 }
-            }
             graph[i] = new int[count];
             int index = 0;
             for (int j = 0; j < n && index < count; j++)
-            {
                 if (matrix[i][j])
-                {
                     graph[i][index++] = j;
-                }
-            }
         }
     }
 
+    /**
+     * Returns number of node neighbors
+     */
     public int getNeighborsCount (int node)
     {
         return graph[node].length;
     }
 
+    /** Returns specific neighbor of the node */
     public int getNeighbor (int node, int i)
     {
         return graph[node][i];
     }
 
-    public void foreachNeighbor (int node, IntFunction func)
-    {
-        for (int n : graph[node])
-        {
-            func.apply(n);
-        }
-    }
-
-    public void foreachNeighbor (int node, IntFunction func, Supplier<Boolean> stop)
-    {
-        for (int n : graph[node])
-        {
-            if (stop.get())
-            {
-                break;
-            }
-            func.apply(n);
-        }
-    }
-
+    /** Run a function on each node in specific colour */
     public void foreachNodeInColorClass (int color, IntFunction func)
     {
         for (int node : colorClasses[color])
@@ -83,6 +74,7 @@ public class ColorGraph
         }
     }
 
+    /** Run a function on each node in specific colour with a stop criterion */
     public void foreachNodeInColorClass (int color, IntFunction func, Supplier<Boolean> stop)
     {
         for (int node : colorClasses[color])
@@ -95,6 +87,7 @@ public class ColorGraph
         }
     }
 
+    /** Set a colour to a specific node */
     public void setColor (int node, int color)
     {
         if (nodesColors[node] >= 0)
@@ -108,16 +101,19 @@ public class ColorGraph
         nodesColors[node] = color;
     }
 
+    /** Get nodes colour */
     public int getColor (int node)
     {
         return nodesColors[node];
     }
 
+    /** Returns true is vertexes are connected with a node */
     public boolean areConnected (int n1, int n2)
     {
         return matrix[n1][n2];
     }
 
+    /** Returns number of nodes of specific colour */
     public int colorCount (int c)
     {
         return colorClasses[c].size();
