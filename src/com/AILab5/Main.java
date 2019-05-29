@@ -9,12 +9,14 @@ public class Main
     {
 
         // Read and Parse problem
-        boolean[][] _gr = com.AILab5.CspAlgo.Utility.parseProblem(1);
+        boolean[][] _gr = com.AILab5.CspAlgo.Utility.parseProblem(10);
 
         // Run algo to find answer
-        Solutions.backJumping(new ColorGraph(_gr, 10));
+        boolean solved = Solutions.backJumping(new ColorGraph(_gr, 10));
 
         // Output
+        if (solved) System.out.println("Solved");
+        else System.out.println("Not solved");
 
     }
 

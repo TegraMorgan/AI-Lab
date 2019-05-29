@@ -13,7 +13,7 @@ import java.util.Vector;
 @SuppressWarnings("ALL")
 public class Utility
 {
-    static String[] fileList = {"DSJC125.1", "DSJC125.5", "DSJC250.1", "DSJC250.5", "DSJC500.1", "DSJC500.5", "DSJC1000.1", "DSJC1000.5", "DSJR500.1", "DSJR500.5"};
+    static String[] fileList = {"DSJC125.1", "DSJC125.5", "DSJC250.1", "DSJC250.5", "DSJC500.1", "DSJC500.5", "DSJC1000.1", "DSJC1000.5", "DSJR500.1", "DSJR500.5", "1-Insertions_4"};
 
     public static boolean[][] parseProblem (int filenum)
     {
@@ -31,12 +31,12 @@ public class Utility
                 {
                     case 'p':
                         String[] splitInput = _line.split(" ");
-                        _nodesCount = Integer.parseInt(splitInput[3]);
-                        _edgesCount = Integer.parseInt(splitInput[4]);
+                        _nodesCount = Integer.parseInt(splitInput[2]);
+                        _edgesCount = Integer.parseInt(splitInput[3]);
                         break;
                     case 'e':
                         String[] s = _line.split(" ");
-                        _edg.add(new Pair<>(Integer.parseInt(s[1]), Integer.parseInt(s[2])));
+                        _edg.add(new Pair<>(Integer.parseInt(s[1]) - 1, Integer.parseInt(s[2]) - 1));
                         break;
                     default:
                         break;
