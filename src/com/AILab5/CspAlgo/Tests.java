@@ -1,4 +1,4 @@
-package com.AILab3.GeneticAlgo;
+package com.AILab5.CspAlgo;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
