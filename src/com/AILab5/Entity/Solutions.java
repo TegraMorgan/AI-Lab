@@ -43,4 +43,15 @@ public class Solutions
                 return false;
         return true;
     }
+    public static boolean isSolved(ColorGraph graph)
+    {
+        for (int i = 0; i < graph.getNumberOfNodes(); i++)
+        {
+            if(!isSafe(graph, i, graph.getColor(i)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

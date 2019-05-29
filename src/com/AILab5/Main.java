@@ -19,10 +19,7 @@ public class Main
         if (solved)
         {
             System.out.println("Solved");
-            for (int i = 0; i < graph.getNumberOfNodes(); i++)
-            {
-                System.out.println("Color of node " + i  + ": " + graph.getColor(i));
-            }
+            System.out.println(Solutions.isSolved(graph));
         }
         else System.out.println("Not solved");
 
