@@ -1,6 +1,7 @@
 package com.AILab5.CspAlgo;
 
 
+import com.AILab5.Entity.ColorGraph;
 import org.apache.commons.math3.util.Pair;
 
 import java.io.BufferedReader;
@@ -58,5 +59,25 @@ public class Utility
             res[p.getSecond()][p.getFirst()] = true;
         }
         return res;
+    }
+
+    public static boolean isSafe (ColorGraph graph, int node, int c)
+    {
+        for (int i = 0; i < graph.getNeighborsCount(node); i++)
+            if (graph.getColor(graph.getNeighbor(node, i)) == c)
+                return false;
+        return true;
+    }
+
+    public static boolean isSolved (ColorGraph graph)
+    {
+        for (int i = 0; i < graph.getNumberOfNodes(); i++)
+        {
+            if (!isSafe(graph, i, graph.getColor(i)))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

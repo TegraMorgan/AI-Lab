@@ -1,5 +1,7 @@
 package com.AILab5.Entity;
 
+import static com.AILab5.CspAlgo.Utility.isSafe;
+
 public class Solutions
 {
     public static boolean backJumping(ColorGraph graph)
@@ -35,23 +37,5 @@ public class Solutions
             }
         }
         return foundSolution ? -1 : errNode;
-    }
-    private static boolean isSafe (ColorGraph graph, int node, int c)
-    {
-        for (int i = 0; i < graph.getNeighborsCount(node); i++)
-            if (graph.getColor(graph.getNeighbor(node, i)) == c)
-                return false;
-        return true;
-    }
-    public static boolean isSolved(ColorGraph graph)
-    {
-        for (int i = 0; i < graph.getNumberOfNodes(); i++)
-        {
-            if(!isSafe(graph, i, graph.getColor(i)))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 }
