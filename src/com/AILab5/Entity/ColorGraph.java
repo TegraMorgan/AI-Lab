@@ -29,7 +29,7 @@ public class ColorGraph
     {
         final int n = adjacency_matrix.length;
         matrix = new boolean[n][n];
-        graph = new int[adjacency_matrix.length][];
+        graph = new int[n][];
         nodesColors = new int[n];
         colorClasses = new HashSet[nColors];
         Arrays.setAll(colorClasses, i -> new HashSet<>());
@@ -49,6 +49,22 @@ public class ColorGraph
                 if (matrix[i][j])
                     graph[i][index++] = j;
         }
+    }
+
+    /**
+     * Returns number of nodes in the graph
+     */
+    public int getNumberOfNodes()
+    {
+        return matrix.length;
+    }
+
+    /**
+     * Returns number of possible colors
+     */
+    public int getNumberOfColors()
+    {
+        return colorClasses.length;
     }
 
     /**
