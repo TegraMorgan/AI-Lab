@@ -4,7 +4,7 @@ import com.AILab5.Entity.ColorGraph;
 import com.AILab5.Entity.LabAnswer;
 
 import static com.AILab5.CspAlgo.Utility.*;
-import static com.AILab5.Entity.Solutions.straightforwardBackJumping;
+import static com.AILab5.Entity.Solutions.*;
 
 public class Main
 {
@@ -21,10 +21,7 @@ public class Main
         if (ans.foundSolution)
         {
             System.out.println("Solved in: " + executionTimeString(ans.executionTime));
-            System.out.println("States scanned: " + ans.statesScanned);
-            System.out.println("Solution check: " + isSolved(graph));
-            System.out.println("Solved in: " + executionTimeString(ans.executionTime));
-            System.out.println("States scanned: " + ans.statesScanned);
+            System.out.println("Nodes scanned: " + ans.statesScanned);
             System.out.println("Solution check: " + isSolved(graph));
         } else System.out.println("Not solved");
     }
