@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 public class Solutions
 {
+
     public static boolean BackJumping (ColorGraph graph)
     {
         boolean foundSolution = false;
@@ -68,6 +69,7 @@ public class Solutions
         }
         return errNode;
     }
+
 
     public static LabAnswer straightforwardBackJumping(ColorGraph graph)
     {
