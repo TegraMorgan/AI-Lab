@@ -5,7 +5,7 @@ import com.AILab5.Entity.LabAnswer;
 
 import static com.AILab5.CspAlgo.Utility.isSolved;
 import static com.AILab5.CspAlgo.Utility.parseProblem;
-import static com.AILab5.Entity.Solutions.backJumping;
+import static com.AILab5.Entity.Solutions.straightforwardBackJumping;
 import static com.AILab5.CspAlgo.Utility.executionTimeString;
 
 public class Main
@@ -17,7 +17,7 @@ public class Main
         if (_gr == null) return;
         ColorGraph graph = new ColorGraph(_gr, 5);
         // Run algo to find answer
-        LabAnswer ans = backJumping(graph);
+        LabAnswer ans = straightforwardBackJumping(graph);
 
         // Output
         if (ans.foundSolution)

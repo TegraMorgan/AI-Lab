@@ -54,7 +54,7 @@ public class ColorGraph
     /**
      * Returns number of nodes in the graph
      */
-    public int getNumberOfNodes()
+    public int getNumberOfNodes ()
     {
         return matrix.length;
     }
@@ -62,7 +62,7 @@ public class ColorGraph
     /**
      * Returns number of possible colors
      */
-    public int getNumberOfColors()
+    public int getNumberOfColors ()
     {
         return colorClasses.length;
     }
@@ -81,6 +81,35 @@ public class ColorGraph
     public int getNeighbor (int node, int i)
     {
         return graph[node][i];
+    }
+
+    public HashSet<Integer> getNeighbors (int node)
+    {
+        HashSet<Integer> result = new HashSet<>();
+        int[] neighbours = graph[node];
+        for (int neighbour : neighbours) result.add(neighbour);
+        return result;
+    }
+
+    public Integer[] getNeighboursColoursArray (int node)
+    {
+        HashSet<Integer> res = new HashSet<>();
+        int l = graph[node].length;
+        for (int i = 0; i < l; i++)
+            res.add(nodesColors[graph[node][i]]);
+        Integer[] res2 = res.toArray(new Integer[0]);
+
+        return res2;
+    }
+
+    public HashSet<Integer> getNeighboursColoursHash (int node)
+    {
+        HashSet<Integer> res = new HashSet<>();
+        int l = graph[node].length;
+        for (int i = 0; i < l; i++)
+            res.add(nodesColors[graph[node][i]]);
+        res.remove(-1);
+        return res;
     }
 
     /**
