@@ -4,7 +4,6 @@ import java.util.HashSet;
 
 public class Solutions
 {
-
     public static boolean BackJumping (ColorGraph graph)
     {
         boolean foundSolution = false;
@@ -23,6 +22,7 @@ public class Solutions
                 currNode++;
             }
         }
+        return false;
     }
 
     private static boolean vertexColored (ColorGraph graph, int currNode, int COLORS)
@@ -79,7 +79,7 @@ public class Solutions
     }
     private static int straightforwardBackJumping(ColorGraph graph, int node,LabAnswer ans)
     {
-        ans.statesScanned++;
+        ans.nodesScanned++;
         boolean foundSolution = false;
         int errNode = node;
         boolean[] nc = new boolean[graph.getNumberOfColors() + 1];
