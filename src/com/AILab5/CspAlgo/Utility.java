@@ -15,7 +15,19 @@ import java.util.Vector;
 @SuppressWarnings("ALL")
 public class Utility
 {
-    static String[] fileList = {"DSJC125.1", "DSJC125.5", "DSJC250.1", "DSJC250.5", "DSJC500.1", "DSJC500.5", "DSJC1000.1", "DSJC1000.5", "DSJR500.1", "DSJR500.5", "1-Insertions_4"};
+    static String[] fileList = {
+            "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
+            , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
+            , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
+            , "1-FullIns_3", "1-FullIns_4", "1-FullIns_5"
+            , "2-FullIns_3", "2-FullIns_4", "2-FullIns_5"
+            , "3-FullIns_3", "3-FullIns_4", "3-FullIns_5"
+            , "4-FullIns_3", "4-FullIns_4", "4-FullIns_5"
+            , "fpsol2.i.1", "fpsol2.i.2", "fpsol2.i.3"
+            , "inithx.i.1", "inithx.i.2", "inithx.i.3"
+            , "DSJC125.5", "DSJC250.5", "DSJC500.1"
+            , "DSJC500.5", "DSJR500.1", "DSJR500.1c"
+            , "le450_15a", "le450_15b", "le450_15c"};
 
     public static boolean[][] parseProblem (int filenum)
     {

@@ -13,7 +13,7 @@ public class Main
     public static void main (String[] args)
     {
         // Read and Parse problem
-        boolean[][] _gr = parseProblem(10);
+        boolean[][] _gr = parseProblem(0);
         if (_gr == null) return;
         ColorGraph graph = new ColorGraph(_gr, 5);
         // Run algo to find answer
