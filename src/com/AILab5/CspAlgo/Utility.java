@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("ALL")
 public class Utility
 {
-    static String[] fileList = {
+    static final String[] fileList = {
             "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
             , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
             , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
