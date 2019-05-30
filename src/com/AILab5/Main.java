@@ -3,11 +3,8 @@ package com.AILab5;
 import com.AILab5.Entity.ColorGraph;
 import com.AILab5.Entity.LabAnswer;
 
-import static com.AILab5.CspAlgo.Utility.isSolved;
-import static com.AILab5.CspAlgo.Utility.parseProblem;
-import static com.AILab5.Entity.Solutions.backJumping;
+import static com.AILab5.CspAlgo.Utility.*;
 import static com.AILab5.Entity.Solutions.straightforwardBackJumping;
-import static com.AILab5.CspAlgo.Utility.executionTimeString;
 
 public class Main
 {
