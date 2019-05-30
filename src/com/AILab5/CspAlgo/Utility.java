@@ -15,7 +15,7 @@ import java.util.Vector;
 @SuppressWarnings("ALL")
 public class Utility
 {
-    static String[] fileList = {
+    static final String[] fileList = {
             "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
             , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
             , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
@@ -28,9 +28,17 @@ public class Utility
             , "DSJC125.5", "DSJC250.5", "DSJC500.1"
             , "DSJC500.5", "DSJR500.1", "DSJR500.1c"
             , "le450_15a", "le450_15b", "le450_15c"};
+    public static final int NO_OF_PROBLEMS = fileList.length;
 
+    /**
+     * Decodes input file
+     *
+     * @param filenum number of problem to be solved
+     * @return Returns boolean adjacency matrix
+     */
     public static boolean[][] parseProblem (int filenum)
     {
+        if (filenum < 0 || filenum > NO_OF_PROBLEMS) return null;
         int _nodesCount = -1, _edgesCount = -1;
         Vector<Pair<Integer, Integer>> _edg = new Vector<>();
         File _a = new File("Problems\\" + fileList[filenum] + ".txt");
@@ -63,15 +71,15 @@ public class Utility
             e.printStackTrace();
         }
         if (_nodesCount == -1 || _edgesCount == -1) return null;
-        boolean[][] res = new boolean[_nodesCount][_nodesCount];
+        boolean[][] adjacencyMatrix = new boolean[_nodesCount][_nodesCount];
         for (int i = 0; i < _nodesCount; i++)
-            Arrays.fill(res[i], false);
+            Arrays.fill(adjacencyMatrix[i], false);
         for (Pair<Integer, Integer> p : _edg)
         {
-            res[p.getFirst()][p.getSecond()] = true;
-            res[p.getSecond()][p.getFirst()] = true;
+            adjacencyMatrix[p.getFirst()][p.getSecond()] = true;
+            adjacencyMatrix[p.getSecond()][p.getFirst()] = true;
         }
-        return res;
+        return adjacencyMatrix;
     }
 
     public static boolean isAllowed (ColorGraph graph, int node)
