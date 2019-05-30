@@ -1,7 +1,5 @@
 package com.AILab5.Entity;
 
-import static com.AILab5.CspAlgo.Utility.isSafe;
-
 public class Solutions
 {
     public static boolean backJumping(ColorGraph graph)
@@ -12,9 +10,14 @@ public class Solutions
     {
         boolean foundSolution = false;
         int errNode = node;
+        boolean[] nc = new boolean[graph.getNumberOfColors() + 1];
+        for (int i = 0; i < graph.getNeighborsCount(node); i++)
+        {
+            nc[1 + graph.getColor(graph.getNeighbor(node, i))] = true;
+        }
         for (int c = 0; c < graph.getNumberOfColors(); c++)
         {
-            if(isSafe(graph, node, c))
+            if (!nc[1 + c])
             {
                 graph.setColor(node, c);
                 if (node + 1 == graph.getNumberOfNodes())

@@ -61,8 +61,9 @@ public class Utility
         return res;
     }
 
-    public static boolean isSafe (ColorGraph graph, int node, int c)
+    public static boolean isAllowed (ColorGraph graph, int node)
     {
+        int c = graph.getColor(node);
         for (int i = 0; i < graph.getNeighborsCount(node); i++)
             if (graph.getColor(graph.getNeighbor(node, i)) == c)
                 return false;
@@ -73,7 +74,7 @@ public class Utility
     {
         for (int i = 0; i < graph.getNumberOfNodes(); i++)
         {
-            if (!isSafe(graph, i, graph.getColor(i)))
+            if (!isAllowed(graph, i))
             {
                 return false;
             }
