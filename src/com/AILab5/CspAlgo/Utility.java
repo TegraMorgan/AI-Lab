@@ -4,18 +4,18 @@ package com.AILab5.CspAlgo;
 import com.AILab5.Entity.ColorGraph;
 import org.apache.commons.math3.util.Pair;
 
-import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("ALL")
 public class Utility
 {
-    static final String[] fileList = {
+    static String[] fileList = {
             "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
             , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
             , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
@@ -29,7 +29,6 @@ public class Utility
             , "DSJC500.5", "DSJR500.1", "DSJR500.1c"
             , "le450_15a", "le450_15b", "le450_15c"};
     public static final int NO_OF_PROBLEMS = fileList.length;
-
     /**
      * Decodes input file
      *
