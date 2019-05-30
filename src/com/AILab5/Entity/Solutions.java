@@ -12,7 +12,7 @@ public class Solutions
     }
     private static int backJumping(ColorGraph graph, int node, LabAnswer ans)
     {
-        ans.nodesScanned++;
+        ans.statesScanned++;
         boolean foundSolution = false;
         int errNode = node;
         boolean[] nc = new boolean[graph.getNumberOfColors() + 1];
