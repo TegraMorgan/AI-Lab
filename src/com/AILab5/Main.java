@@ -24,7 +24,7 @@ public class Main
         if (ans.foundSolution)
         {
             System.out.println("Solved in: " + executionTimeString(ans.executionTime));
-            System.out.println("Nodes scanned: " + ans.nodesScanned);
+            System.out.println("States scanned: " + ans.statesScanned);
             System.out.println("Solution check: " + isSolved(graph));
             System.out.println("Solved in: " + executionTimeString(ans.executionTime));
             System.out.println("States scanned: " + ans.statesScanned);
