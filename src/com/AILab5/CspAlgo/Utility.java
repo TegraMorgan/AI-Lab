@@ -4,6 +4,7 @@ package com.AILab5.CspAlgo;
 import com.AILab5.Entity.ColorGraph;
 import org.apache.commons.math3.util.Pair;
 
+import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -80,5 +81,21 @@ public class Utility
             }
         }
         return true;
+    }
+
+    public static String executionTimeString (long time_ns)
+    {
+        final long time_ms = TimeUnit.NANOSECONDS.toMillis(time_ns);
+        final long time_sec = TimeUnit.NANOSECONDS.toSeconds(time_ns);
+        final long time_min = TimeUnit.NANOSECONDS.toMinutes(time_ns);
+        String str = "";
+        if(time_min > 0)
+            str += time_min + " Minutes, ";
+        if(time_sec > 0)
+            str += (time_sec % 60) + " Seconds, ";
+        if(time_ms > 0)
+            str += (time_ms % 1000) + " MicroSeconds, ";
+        str += (time_ns % 1000000) + " NanoSeconds";
+        return str;
     }
 }

@@ -2,12 +2,17 @@ package com.AILab5.Entity;
 
 public class Solutions
 {
-    public static boolean backJumping(ColorGraph graph)
+    public static LabAnswer backJumping(ColorGraph graph)
     {
-        return backJumping(graph, 0) == -1;
+        final long t0 = System.nanoTime();
+        LabAnswer ans = new LabAnswer();
+        ans.foundSolution = backJumping(graph, 0, ans) == -1;
+        ans.executionTime = System.nanoTime() - t0;
+        return ans;
     }
-    private static int backJumping(ColorGraph graph, int node)
+    private static int backJumping(ColorGraph graph, int node, LabAnswer ans)
     {
+        ans.nodesScanned++;
         boolean foundSolution = false;
         int errNode = node;
         boolean[] nc = new boolean[graph.getNumberOfColors() + 1];
@@ -25,7 +30,7 @@ public class Solutions
                     foundSolution = true;
                     break;
                 }
-                int err = backJumping(graph, node + 1);
+                int err = backJumping(graph, node + 1, ans);
                 if (err == -1)
                 {
                     foundSolution = true;
