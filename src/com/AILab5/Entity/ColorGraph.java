@@ -95,7 +95,7 @@ public class ColorGraph
      * @param node The node whose neighbours will be checked
      * @return Array of free colors
      */
-    boolean[] getAvailableColours (int node)
+    public boolean[] getAvailableColours (int node)
     {
         boolean[] res = new boolean[colorClasses.length];
         Arrays.fill(res, true);

@@ -1,7 +1,7 @@
 package com.AILab5.Entity;
 
-import com.AILab5.CspAlgo.Utility;
 
+import static com.AILab5.CspAlgo.Utility.changeColour;
 import static com.AILab5.CspAlgo.Utility.isDeadEnd;
 
 public class Solutions
@@ -23,8 +23,9 @@ public class Solutions
                     err2 = 0;
                     int[] errorNeigh = graph.getNeighbors(currNode);
                     for (int n : errorNeigh)
-                        if (graph.getColor(n) != -1 && n > err2) err2 = n;
-                    graph.setColor(err2, -1);
+                    {
+                        if (graph.getColor(n) != -1 && !changeColour(n, graph)) graph.setColor(n, -1);
+                    }
                     ans.statesScanned++;
                 } while (vertexNotColored(graph, currNode, COLORS));
                 if (err2 < currNode) currNode = err2;
@@ -37,11 +38,11 @@ public class Solutions
             {
                 ans.foundSolution = true;
                 ans.executionTime = System.nanoTime() - t0;
-                ans.coloursUsed = Utility.countColorsUsed(graph);
                 return ans;
             }
         }
     }
+
 
     private static boolean vertexNotColored (ColorGraph graph, int currNode, int COLORS)
     {
@@ -55,7 +56,7 @@ public class Solutions
         return true;
     }
 
-    public static LabAnswer straightforwardBackJumping(ColorGraph graph)
+    public static LabAnswer straightforwardBackJumping (ColorGraph graph)
     {
         final long t0 = System.nanoTime();
         LabAnswer ans = new LabAnswer();
@@ -97,7 +98,8 @@ public class Solutions
         }
         return foundSolution ? -1 : errNode;
     }
-    public static LabAnswer forwardChecking(ColorGraph graph)
+
+    public static LabAnswer forwardChecking (ColorGraph graph)
     {
         final long t0 = System.nanoTime();
         LabAnswer ans = new LabAnswer();
@@ -106,7 +108,8 @@ public class Solutions
         ans.coloursUsed = Utility.countColorsUsed(graph);
         return ans;
     }
-    private static int forwardChecking(ColorGraph graph, int node, LabAnswer ans)
+
+    private static int forwardChecking (ColorGraph graph, int node, LabAnswer ans)
     {
         ans.statesScanned++;
         boolean foundSolution = false;
@@ -139,7 +142,8 @@ public class Solutions
         }
         return foundSolution ? -1 : errNode;
     }
-    private static boolean forwardCheck(ColorGraph graph, int node, int color)
+
+    private static boolean forwardCheck (ColorGraph graph, int node, int color)
     {
         graph.setColor(node, color);
         for (int i = 0; i < graph.getNeighborsCount(node); i++)

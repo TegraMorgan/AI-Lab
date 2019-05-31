@@ -123,6 +123,7 @@ public class Utility
     {
         if (ans != null && ans.foundSolution)
         {
+            ans.coloursUsed = Utility.countColorsUsed(graph);
             System.out.println("Solved in: " + executionTimeString(ans.executionTime));
             System.out.println("States scanned: " + ans.statesScanned);
             System.out.println("Solution check: " + isSolved(graph));
@@ -157,5 +158,28 @@ public class Utility
         for (int color = 0; color < COLOURS; color++)
             if (isUsed[color]) totalColoursUsed++;
         return totalColoursUsed;
+    }
+
+    public static boolean changeColour (int node, ColorGraph graph)
+    {
+        int currCol = graph.getColor(node);
+        boolean[] availableColours = graph.getAvailableColours(node);
+        for (int i = currCol + 1; i < availableColours.length; i++)
+        {
+            if (availableColours[i])
+            {
+                graph.setColor(node, i);
+                return true;
+            }
+        }
+        for (int i = 0; i < currCol; i++)
+        {
+            if (availableColours[i])
+            {
+                graph.setColor(node, i);
+                return true;
+            }
+        }
+        return false;
     }
 }
