@@ -9,7 +9,7 @@ public class Main
 {
     public static void main (String[] args)
     {
-        final int file_number = 10;
+        final int file_number = 0;
         final int numberOfColors = 5;
 
         // Read and Parse problem
@@ -22,7 +22,7 @@ public class Main
         ColorGraph graph2 = new ColorGraph(_gr, numberOfColors);
 
         System.out.println("File " + file_number + " - backJumping test:");
-        printResults(backJumping(graph1), graph1);
+        printResults(straightforwardBackJumping(graph1), graph1);
 
         System.out.println();
 
