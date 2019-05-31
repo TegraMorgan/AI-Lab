@@ -1,5 +1,7 @@
 package com.AILab5.Entity;
 
+import static com.AILab5.CspAlgo.Utility.isDeadEnd;
+
 public class Solutions
 {
     public static LabAnswer backJumping(ColorGraph graph)
@@ -20,24 +22,25 @@ public class Solutions
         {
             nc[1 + graph.getColor(graph.getNeighbor(node, i))] = true;
         }
+        final int nextNode = node + 1;
         for (int c = 0; c < graph.getNumberOfColors(); c++)
         {
             if (!nc[1 + c])
             {
                 graph.setColor(node, c);
-                if (node + 1 == graph.getNumberOfNodes())
+                if (nextNode == graph.getNumberOfNodes())
                 {
                     foundSolution = true;
                     break;
                 }
-                int err = backJumping(graph, node + 1, ans);
+                int err = backJumping(graph, nextNode, ans);
                 if (err == -1)
                 {
                     foundSolution = true;
                     break;
                 }
                 graph.setColor(node, -1);
-                if(!graph.areConnected(node, err))
+                if (!graph.areConnected(node, err))
                 {
                     errNode = err;
                     break;
@@ -45,5 +48,52 @@ public class Solutions
             }
         }
         return foundSolution ? -1 : errNode;
+    }
+    public static LabAnswer forwardChecking(ColorGraph graph)
+    {
+        final long t0 = System.nanoTime();
+        LabAnswer ans = new LabAnswer();
+        ans.foundSolution = forwardChecking(graph, 0, ans);
+        ans.executionTime = System.nanoTime() - t0;
+        return ans;
+    }
+    private static boolean forwardChecking(ColorGraph graph, int node, LabAnswer ans)
+    {
+        ans.statesScanned++;
+        boolean foundSolution = false;
+        boolean[] nc = new boolean[graph.getNumberOfColors() + 1];
+        for (int i = 0; i < graph.getNeighborsCount(node); i++)
+        {
+            nc[1 + graph.getColor(graph.getNeighbor(node, i))] = true;
+        }
+        final int nextNode = node + 1;
+        for (int c = 0; c < graph.getNumberOfColors(); c++)
+        {
+            if (!nc[1 + c] && forwardCheck(graph, node, c))
+            {
+                if (nextNode == graph.getNumberOfNodes() ||
+                        forwardChecking(graph, nextNode, ans))
+                {
+                    foundSolution = true;
+                    break;
+                }
+                graph.setColor(node, -1);
+            }
+        }
+        return foundSolution;
+    }
+    private static boolean forwardCheck(ColorGraph graph, int node, int color)
+    {
+        graph.setColor(node, color);
+        for (int i = 0; i < graph.getNeighborsCount(node); i++)
+        {
+            int neighbor = graph.getNeighbor(node, i);
+            if (graph.getColor(neighbor) == -1 && isDeadEnd(graph, neighbor))
+            {
+                graph.setColor(node, -1);
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -1,30 +1,33 @@
 package com.AILab5;
 
 import com.AILab5.Entity.ColorGraph;
-import com.AILab5.Entity.LabAnswer;
 
-import static com.AILab5.CspAlgo.Utility.isSolved;
+import static com.AILab5.Entity.Solutions.*;
 import static com.AILab5.CspAlgo.Utility.parseProblem;
-import static com.AILab5.Entity.Solutions.backJumping;
-import static com.AILab5.CspAlgo.Utility.executionTimeString;
+import static com.AILab5.CspAlgo.Utility.printResults;
 
 public class Main
 {
     public static void main (String[] args)
     {
-        // Read and Parse problem
-        boolean[][] _gr = parseProblem(10);
-        if (_gr == null) return;
-        ColorGraph graph = new ColorGraph(_gr, 5);
-        // Run algo to find answer
-        LabAnswer ans = backJumping(graph);
+        final int file_number = 10;
+        final int numberOfColors = 5;
 
-        // Output
-        if (ans.foundSolution)
-        {
-            System.out.println("Solved in: " + executionTimeString(ans.executionTime));
-            System.out.println("States scanned: " + ans.statesScanned);
-            System.out.println("Solution check: " + isSolved(graph));
-        } else System.out.println("Not solved");
+        // Read and Parse problem
+        boolean[][] _gr = parseProblem(file_number);
+        if (_gr == null) return;
+
+        System.out.println("File " + file_number + " - number of nodes: " + _gr.length + "\n");
+
+        ColorGraph graph1 = new ColorGraph(_gr, numberOfColors);
+        ColorGraph graph2 = new ColorGraph(_gr, numberOfColors);
+
+        System.out.println("File " + file_number + " - backJumping test:");
+        printResults(backJumping(graph1), graph1);
+
+        System.out.println();
+
+        System.out.println("File " + file_number + " - forwardChecking test:");
+        printResults(backJumping(graph2), graph2);
     }
 }

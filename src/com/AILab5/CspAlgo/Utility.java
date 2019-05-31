@@ -2,6 +2,7 @@ package com.AILab5.CspAlgo;
 
 
 import com.AILab5.Entity.ColorGraph;
+import com.AILab5.Entity.LabAnswer;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.concurrent.TimeUnit;
@@ -82,7 +83,30 @@ public class Utility
         }
         return true;
     }
-
+    public static boolean isDeadEnd(ColorGraph graph, int node)
+    {
+        boolean[] nc = new boolean[graph.getNumberOfColors()];
+        int count = 0;
+        for (int i = 0; i < graph.getNeighborsCount(node); i++)
+        {
+            int c = graph.getColor(graph.getNeighbor(node, i));
+            if (c >= 0 && !nc[c])
+            {
+                nc[c] = true;
+                count++;
+            }
+        }
+        return count == nc.length;
+    }
+    public static void printResults(LabAnswer ans, ColorGraph graph)
+    {
+        if (ans != null && ans.foundSolution)
+        {
+            System.out.println("Solved in: " + executionTimeString(ans.executionTime));
+            System.out.println("States scanned: " + ans.statesScanned);
+            System.out.println("Solution check: " + isSolved(graph));
+        } else System.out.println("Not solved");
+    }
     public static String executionTimeString (long time_ns)
     {
         final long time_ms = TimeUnit.NANOSECONDS.toMillis(time_ns);
