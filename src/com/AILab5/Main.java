@@ -2,9 +2,8 @@ package com.AILab5;
 
 import com.AILab5.Entity.ColorGraph;
 
+import static com.AILab5.CspAlgo.Utility.*;
 import static com.AILab5.Entity.Solutions.*;
-import static com.AILab5.CspAlgo.Utility.parseProblem;
-import static com.AILab5.CspAlgo.Utility.printResults;
 
 public class Main
 {
@@ -28,6 +27,6 @@ public class Main
         System.out.println();
 
         System.out.println("File " + file_number + " - forwardChecking test:");
-        printResults(backJumping(graph2), graph2);
+        printResults(forwardChecking(graph2), graph2);
     }
 }

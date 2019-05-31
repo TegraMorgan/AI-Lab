@@ -5,24 +5,43 @@ import com.AILab5.Entity.ColorGraph;
 import com.AILab5.Entity.LabAnswer;
 import org.apache.commons.math3.util.Pair;
 
-import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("ALL")
 public class Utility
 {
-    static String[] fileList = {"DSJC125.1", "DSJC125.5", "DSJC250.1", "DSJC250.5", "DSJC500.1", "DSJC500.5", "DSJC1000.1", "DSJC1000.5", "DSJR500.1", "DSJR500.5", "1-Insertions_4"};
-
+    static final String[] fileList = {
+            "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
+            , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
+            , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
+            , "1-FullIns_3", "1-FullIns_4", "1-FullIns_5"
+            , "2-FullIns_3", "2-FullIns_4", "2-FullIns_5"
+            , "3-FullIns_3", "3-FullIns_4", "3-FullIns_5"
+            , "4-FullIns_3", "4-FullIns_4", "4-FullIns_5"
+            , "fpsol2.i.1", "fpsol2.i.2", "fpsol2.i.3"
+            , "inithx.i.1", "inithx.i.2", "inithx.i.3"
+            , "DSJC125.5", "DSJC250.5", "DSJC500.1"
+            , "DSJC500.5", "DSJR500.1", "DSJR500.1c"
+            , "le450_15a", "le450_15b", "le450_15c"};
+    public static final int NO_OF_PROBLEMS = fileList.length;
+    /**
+     * Decodes input file
+     *
+     * @param filenum number of problem to be solved
+     * @return Returns boolean adjacency matrix
+     */
     public static boolean[][] parseProblem (int filenum)
     {
+        if (filenum < 0 || filenum > NO_OF_PROBLEMS) return null;
         int _nodesCount = -1, _edgesCount = -1;
         Vector<Pair<Integer, Integer>> _edg = new Vector<>();
-        File _a = new File("Problems\\" + fileList[filenum] + ".txt");
+        File _a = new File("Problems" + File.separator + fileList[filenum] + ".txt");
         try
         {
             FileReader _r = new FileReader(_a);
@@ -52,15 +71,15 @@ public class Utility
             e.printStackTrace();
         }
         if (_nodesCount == -1 || _edgesCount == -1) return null;
-        boolean[][] res = new boolean[_nodesCount][_nodesCount];
+        boolean[][] adjacencyMatrix = new boolean[_nodesCount][_nodesCount];
         for (int i = 0; i < _nodesCount; i++)
-            Arrays.fill(res[i], false);
+            Arrays.fill(adjacencyMatrix[i], false);
         for (Pair<Integer, Integer> p : _edg)
         {
-            res[p.getFirst()][p.getSecond()] = true;
-            res[p.getSecond()][p.getFirst()] = true;
+            adjacencyMatrix[p.getFirst()][p.getSecond()] = true;
+            adjacencyMatrix[p.getSecond()][p.getFirst()] = true;
         }
-        return res;
+        return adjacencyMatrix;
     }
 
     public static boolean isAllowed (ColorGraph graph, int node)
