@@ -11,7 +11,7 @@ public class Main
     public static void main (String[] args)
     {
         final int file_number = 29;
-        final int numberOfColors = 100;
+        final int numberOfColors = 19;
 
         // Read and Parse problem
         boolean[][] _gr = parseProblem(file_number);
