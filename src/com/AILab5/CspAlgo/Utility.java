@@ -40,7 +40,7 @@ public class Utility
         if (filenum < 0 || filenum > NO_OF_PROBLEMS) return null;
         int _nodesCount = -1, _edgesCount = -1;
         Vector<Pair<Integer, Integer>> _edg = new Vector<>();
-        File _a = new File("Problems\\" + fileList[filenum] + ".txt");
+        File _a = new File("Problems" + File.separator + fileList[filenum] + ".txt");
         try
         {
             FileReader _r = new FileReader(_a);
