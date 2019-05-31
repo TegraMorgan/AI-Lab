@@ -1,76 +1,59 @@
 package com.AILab5.Entity;
 
+import com.AILab5.CspAlgo.Utility;
+
 import static com.AILab5.CspAlgo.Utility.isDeadEnd;
-import java.util.HashSet;
 
 public class Solutions
 {
 
-    public static boolean BackJumping (ColorGraph graph)
+    public static LabAnswer advancedBackJumping (ColorGraph graph)
     {
-        boolean foundSolution = false;
+        final long t0 = System.nanoTime();
+        LabAnswer ans = new LabAnswer();
         final int COLORS = graph.getNumberOfColors();
-        int errNode = -1;
         int currNode = 0;
-        while (!foundSolution)
+        while (true)
         {
-            if (!vertexColored(graph, currNode, COLORS))
+            if (graph.getColor(currNode) == -1 && vertexNotColored(graph, currNode, COLORS))
             {
-                errNode = currNode;
-                HashSet<Integer> errorNeigh = graph.getNeighbors(errNode);
-
+                int err2;
+                do
+                {
+                    err2 = 0;
+                    int[] errorNeigh = graph.getNeighbors(currNode);
+                    for (int n : errorNeigh)
+                        if (graph.getColor(n) != -1 && n > err2) err2 = n;
+                    graph.setColor(err2, -1);
+                    ans.statesScanned++;
+                } while (vertexNotColored(graph, currNode, COLORS));
+                if (err2 < currNode) currNode = err2;
             } else
             {
                 currNode++;
+                ans.statesScanned++;
+            }
+            if (currNode == graph.getNumberOfNodes())
+            {
+                ans.foundSolution = true;
+                ans.executionTime = System.nanoTime() - t0;
+                ans.coloursUsed = Utility.countColorsUsed(graph);
+                return ans;
             }
         }
-        return false;
     }
 
-    private static boolean vertexColored (ColorGraph graph, int currNode, int COLORS)
+    private static boolean vertexNotColored (ColorGraph graph, int currNode, int COLORS)
     {
-        HashSet<Integer> neighColours = graph.getNeighboursColoursHash(currNode);
+        boolean[] availableColours = graph.getAvailableColours(currNode);
         for (int color = 0; color < COLORS; color++)
-        {
-            if (!neighColours.contains(color))
+            if (availableColours[color])
             {
                 graph.setColor(currNode, color);
-                return true;
+                return false;
             }
-        }
-        return false;
+        return true;
     }
-
-    private static int BackJumping (ColorGraph graph, int node)
-    {
-        int errNode = node;
-        boolean[] nc = new boolean[graph.getNumberOfColors() + 1];
-        Integer[] NeighboursColours = graph.getNeighboursColoursArray(node);
-        for (int neighbourColor : NeighboursColours)
-            nc[1 + neighbourColor] = true;
-        for (int c = 0; c < graph.getNumberOfColors(); c++)
-        {
-            if (!nc[1 + c])
-            {
-                graph.setColor(node, c);
-                if (node + 1 == graph.getNumberOfNodes())
-                {
-                    return -1;
-                }
-                int err = BackJumping(graph, node + 1);
-                if (err == -1)
-                    return -1;
-                graph.setColor(node, -1);
-                if (!graph.areConnected(node, err))
-                {
-                    errNode = err;
-                    break;
-                }
-            }
-        }
-        return errNode;
-    }
-
 
     public static LabAnswer straightforwardBackJumping(ColorGraph graph)
     {
@@ -78,6 +61,7 @@ public class Solutions
         LabAnswer ans = new LabAnswer();
         ans.foundSolution = straightforwardBackJumping(graph, 0, ans) == -1;
         ans.executionTime = System.nanoTime() - t0;
+        ans.coloursUsed = Utility.countColorsUsed(graph);
         return ans;
     }
     private static int straightforwardBackJumping(ColorGraph graph, int node, LabAnswer ans)

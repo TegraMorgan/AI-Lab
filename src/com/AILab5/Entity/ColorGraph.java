@@ -83,32 +83,26 @@ public class ColorGraph
         return graph[node][i];
     }
 
-    public HashSet<Integer> getNeighbors (int node)
+    public int[] getNeighbors (int node)
     {
-        HashSet<Integer> result = new HashSet<>();
-        int[] neighbours = graph[node];
-        for (int neighbour : neighbours) result.add(neighbour);
-        return result;
+        return graph[node];
     }
 
-    public Integer[] getNeighboursColoursArray (int node)
-    {
-        HashSet<Integer> res = new HashSet<>();
-        int l = graph[node].length;
-        for (int i = 0; i < l; i++)
-            res.add(nodesColors[graph[node][i]]);
-        Integer[] res2 = res.toArray(new Integer[0]);
 
-        return res2;
-    }
-
-    public HashSet<Integer> getNeighboursColoursHash (int node)
+    /**
+     * Returns a boolean array. True is the color is free, false if taken.
+     *
+     * @param node The node whose neighbours will be checked
+     * @return Array of free colors
+     */
+    boolean[] getAvailableColours (int node)
     {
-        HashSet<Integer> res = new HashSet<>();
-        int l = graph[node].length;
+        boolean[] res = new boolean[colorClasses.length];
+        Arrays.fill(res, true);
+        final int l = graph[node].length;
         for (int i = 0; i < l; i++)
-            res.add(nodesColors[graph[node][i]]);
-        res.remove(-1);
+            if (getColor(graph[node][i]) != -1)
+                res[getColor(graph[node][i])] = false;
         return res;
     }
 

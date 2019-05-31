@@ -29,7 +29,8 @@ public class Utility
             , "DSJC125.5", "DSJC250.5", "DSJC500.1"
             , "DSJC500.5", "DSJR500.1", "DSJR500.1c"
             , "le450_15a", "le450_15b", "le450_15c"};
-    public static final int NO_OF_PROBLEMS = fileList.length;
+    public static final int NO_OF_PROBLEMS = fileList.length; //36
+
     /**
      * Decodes input file
      *
@@ -49,20 +50,21 @@ public class Utility
             String _line;
             while ((_line = _reader.readLine()) != null)
             {
-                switch (_line.charAt(0))
-                {
-                    case 'p':
-                        String[] splitInput = _line.split(" ");
-                        _nodesCount = Integer.parseInt(splitInput[2]);
-                        _edgesCount = Integer.parseInt(splitInput[3]);
-                        break;
-                    case 'e':
-                        String[] s = _line.split(" ");
-                        _edg.add(new Pair<>(Integer.parseInt(s[1]) - 1, Integer.parseInt(s[2]) - 1));
-                        break;
-                    default:
-                        break;
-                }
+                if (_line.length() > 0)
+                    switch (_line.charAt(0))
+                    {
+                        case 'p':
+                            String[] splitInput = _line.split(" ");
+                            _nodesCount = Integer.parseInt(splitInput[2]);
+                            _edgesCount = Integer.parseInt(splitInput[3]);
+                            break;
+                        case 'e':
+                            String[] s = _line.split(" ");
+                            _edg.add(new Pair<>(Integer.parseInt(s[1]) - 1, Integer.parseInt(s[2]) - 1));
+                            break;
+                        default:
+                            break;
+                    }
             }
             _reader.close();
             _r.close();
@@ -124,6 +126,7 @@ public class Utility
             System.out.println("Solved in: " + executionTimeString(ans.executionTime));
             System.out.println("States scanned: " + ans.statesScanned);
             System.out.println("Solution check: " + isSolved(graph));
+            System.out.println("Colours used = " + ans.coloursUsed);
         } else System.out.println("Not solved");
     }
     public static String executionTimeString (long time_ns)
@@ -132,13 +135,27 @@ public class Utility
         final long time_sec = TimeUnit.NANOSECONDS.toSeconds(time_ns);
         final long time_min = TimeUnit.NANOSECONDS.toMinutes(time_ns);
         String str = "";
-        if(time_min > 0)
+        if (time_min > 0)
             str += time_min + " Minutes, ";
-        if(time_sec > 0)
+        if (time_sec > 0)
             str += (time_sec % 60) + " Seconds, ";
-        if(time_ms > 0)
+        if (time_ms > 0)
             str += (time_ms % 1000) + " MicroSeconds, ";
         str += (time_ns % 1000000) + " NanoSeconds";
         return str;
+    }
+
+    public static int countColorsUsed (ColorGraph graph)
+    {
+        final int COLOURS = graph.getNumberOfColors();
+        final int NODES = graph.getNumberOfNodes();
+        int totalColoursUsed = 0;
+        boolean[] isUsed = new boolean[COLOURS];
+        Arrays.fill(isUsed, false);
+        for (int node = 0; node < NODES; node++)
+            isUsed[graph.getColor(node)] = true;
+        for (int color = 0; color < COLOURS; color++)
+            if (isUsed[color]) totalColoursUsed++;
+        return totalColoursUsed;
     }
 }
