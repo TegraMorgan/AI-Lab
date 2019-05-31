@@ -123,6 +123,7 @@ public class Utility
     {
         if (ans != null && ans.foundSolution)
         {
+            ans.coloursUsed = Utility.countColorsUsed(graph);
             System.out.println("Solved in: " + executionTimeString(ans.executionTime));
             System.out.println("States scanned: " + ans.statesScanned);
             System.out.println("Solution check: " + isSolved(graph));
