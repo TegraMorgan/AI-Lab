@@ -159,4 +159,27 @@ public class Utility
             if (isUsed[color]) totalColoursUsed++;
         return totalColoursUsed;
     }
+
+    public static boolean changeColour (int node, ColorGraph graph)
+    {
+        int currCol = graph.getColor(node);
+        boolean[] availableColours = graph.getAvailableColours(node);
+        for (int i = currCol + 1; i < availableColours.length; i++)
+        {
+            if (availableColours[i])
+            {
+                graph.setColor(node, i);
+                return true;
+            }
+        }
+        for (int i = 0; i < currCol; i++)
+        {
+            if (availableColours[i])
+            {
+                graph.setColor(node, i);
+                return true;
+            }
+        }
+        return false;
+    }
 }
