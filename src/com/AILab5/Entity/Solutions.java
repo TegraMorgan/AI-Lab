@@ -3,6 +3,7 @@ package com.AILab5.Entity;
 
 import static com.AILab5.CspAlgo.Utility.changeColour;
 import static com.AILab5.CspAlgo.Utility.isDeadEnd;
+import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 
 public class Solutions
 {
@@ -62,7 +63,7 @@ public class Solutions
         LabAnswer ans = new LabAnswer();
         ans.foundSolution = straightforwardBackJumping(graph, 0, ans) == -1;
         ans.executionTime = System.nanoTime() - t0;
-        ans.coloursUsed = Utility.countColorsUsed(graph);
+        ans.coloursUsed = countColorsUsed(graph);
         return ans;
     }
     private static int straightforwardBackJumping(ColorGraph graph, int node, LabAnswer ans)
@@ -105,7 +106,7 @@ public class Solutions
         LabAnswer ans = new LabAnswer();
         ans.foundSolution = forwardChecking(graph, 0, ans) == -1;
         ans.executionTime = System.nanoTime() - t0;
-        ans.coloursUsed = Utility.countColorsUsed(graph);
+        ans.coloursUsed = countColorsUsed(graph);
         return ans;
     }
 

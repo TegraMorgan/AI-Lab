@@ -4,8 +4,7 @@ import com.AILab5.Entity.ColorGraph;
 
 import static com.AILab5.CspAlgo.Utility.parseProblem;
 import static com.AILab5.CspAlgo.Utility.printResults;
-import static com.AILab5.Entity.Solutions.forwardChecking;
-import static com.AILab5.Entity.Solutions.straightforwardBackJumping;
+import static com.AILab5.Entity.Solutions.*;
 
 public class Main
 {
