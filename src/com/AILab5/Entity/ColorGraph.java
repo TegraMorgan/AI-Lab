@@ -1,7 +1,6 @@
 package com.AILab5.Entity;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -22,7 +21,7 @@ public class ColorGraph
     /**
      * Set of nodes by colour
      */
-    private final Domain[] colorClasses;
+    private final RangeSet[] colorClasses;
 
     public ColorGraph (boolean[][] adjacency_matrix, int nColors)
     {
@@ -30,8 +29,8 @@ public class ColorGraph
         matrix = new boolean[n][n];
         graph = new int[n][];
         nodesColors = new int[n];
-        colorClasses = new Domain[nColors];
-        Arrays.setAll(colorClasses, i -> new Domain(n));
+        colorClasses = new RangeSet[nColors];
+        Arrays.setAll(colorClasses, i -> new RangeSet(n, false));
         for (int i = 0; i < n; i++)
         {
             nodesColors[i] = -1;
@@ -89,7 +88,7 @@ public class ColorGraph
 
 
     /**
-     * Returns a boolean array. True is the color is free, false if taken.
+     * Returns a boolean array. True is the value is free, false if taken.
      *
      * @param node The node whose neighbours will be checked
      * @return Array of free colors
