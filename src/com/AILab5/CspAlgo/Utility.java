@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class Utility
 {
     static final String[] fileList = {
-            "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
+            "Tegra-test", "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
             , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
             , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
             , "1-FullIns_3", "1-FullIns_4", "1-FullIns_5"
