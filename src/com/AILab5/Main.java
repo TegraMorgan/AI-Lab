@@ -4,7 +4,8 @@ import com.AILab5.Entity.ColorGraph;
 
 import static com.AILab5.CspAlgo.Utility.parseProblem;
 import static com.AILab5.CspAlgo.Utility.printResults;
-import static com.AILab5.Entity.Solutions.*;
+import static com.AILab5.Entity.Solutions.forwardChecking;
+import static com.AILab5.Entity.Solutions.straightforwardBackJumping;
 
 public class Main
 {
@@ -24,10 +25,6 @@ public class Main
 
         System.out.println("File " + file_number + " - Straightforward Back-Jumping test:");
         printResults(straightforwardBackJumping(graph1), graph1);
-
-        //ColorGraph graph2 = new ColorGraph(_gr, numberOfColors);
-        //System.out.println("\nFile " + file_number + " - Advanced Back-Jumping test:");
-        //printResults(advancedBackJumping(graph2), graph2);
 
         System.out.println();
 

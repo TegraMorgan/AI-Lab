@@ -1,61 +1,12 @@
 package com.AILab5.Entity;
 
 
-import static com.AILab5.CspAlgo.Utility.changeColour;
-import static com.AILab5.CspAlgo.Utility.isDeadEnd;
 import static com.AILab5.CspAlgo.Utility.countColorsUsed;
+import static com.AILab5.CspAlgo.Utility.isDeadEnd;
 
 public class Solutions
 {
 
-    public static LabAnswer advancedBackJumping (ColorGraph graph)
-    {
-        final long t0 = System.nanoTime();
-        LabAnswer ans = new LabAnswer();
-        final int COLORS = graph.getNumberOfColors();
-        int currNode = 0;
-        while (true)
-        {
-            if (graph.getColor(currNode) == -1 && vertexNotColored(graph, currNode, COLORS))
-            {
-                int err2;
-                do
-                {
-                    err2 = 0;
-                    int[] errorNeigh = graph.getNeighbors(currNode);
-                    for (int n : errorNeigh)
-                    {
-                        if (graph.getColor(n) != -1 && !changeColour(n, graph)) graph.setColor(n, -1);
-                    }
-                    ans.statesScanned++;
-                } while (vertexNotColored(graph, currNode, COLORS));
-                if (err2 < currNode) currNode = err2;
-            } else
-            {
-                currNode++;
-                ans.statesScanned++;
-            }
-            if (currNode == graph.getNumberOfNodes())
-            {
-                ans.foundSolution = true;
-                ans.executionTime = System.nanoTime() - t0;
-                return ans;
-            }
-        }
-    }
-
-
-    private static boolean vertexNotColored (ColorGraph graph, int currNode, int COLORS)
-    {
-        boolean[] availableColours = graph.getAvailableColours(currNode);
-        for (int color = 0; color < COLORS; color++)
-            if (availableColours[color])
-            {
-                graph.setColor(currNode, color);
-                return false;
-            }
-        return true;
-    }
 
     public static LabAnswer straightforwardBackJumping (ColorGraph graph)
     {
