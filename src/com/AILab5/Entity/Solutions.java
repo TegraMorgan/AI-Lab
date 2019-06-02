@@ -1,6 +1,8 @@
 package com.AILab5.Entity;
 
 
+import jdk.jshell.spi.ExecutionControl;
+
 import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 import static com.AILab5.CspAlgo.Utility.isDeadEnd;
 
@@ -8,16 +10,17 @@ public class Solutions
 {
 
 
-    public static LabAnswer straightforwardBackJumping (ColorGraph graph)
+    public static LabAnswer straightforwardBackJumping (ColorGraph graph, boolean forwardChecking)
     {
         final long t0 = System.nanoTime();
         LabAnswer ans = new LabAnswer();
-        ans.foundSolution = straightforwardBackJumping(graph, 0, ans) == -1;
+        ans.foundSolution = straightforwardBackJumping(graph, 0, ans, forwardChecking) == -1;
         ans.executionTime = System.nanoTime() - t0;
-        ans.coloursUsed = countColorsUsed(graph);
+        if (ans.foundSolution)
+            ans.coloursUsed = countColorsUsed(graph);
         return ans;
     }
-    private static int straightforwardBackJumping(ColorGraph graph, int node, LabAnswer ans)
+    private static int straightforwardBackJumping(ColorGraph graph, int node, LabAnswer ans, boolean forwardChecking)
     {
         ans.statesScanned++;
         boolean foundSolution = false;
@@ -26,7 +29,7 @@ public class Solutions
         final int nextNode = node + 1;
         for (int c = 0; c < graph.getNumberOfColors(); c++)
         {
-            if (ac[c])
+            if (isSafeToColor(graph, node, c, ac, forwardChecking))
             {
                 graph.setColor(node, c);
                 if (nextNode == graph.getNumberOfNodes())
@@ -34,7 +37,7 @@ public class Solutions
                     foundSolution = true;
                     break;
                 }
-                int err = straightforwardBackJumping(graph, nextNode, ans);
+                int err = straightforwardBackJumping(graph, nextNode, ans, forwardChecking);
                 if (err == -1)
                 {
                     foundSolution = true;
@@ -50,65 +53,33 @@ public class Solutions
         }
         return foundSolution ? -1 : errNode;
     }
-
-    public static LabAnswer forwardChecking (ColorGraph graph)
+    private static boolean isSafeToColor (ColorGraph graph, int node, int color, boolean[] ac, boolean forwardChecking)
     {
-        final long t0 = System.nanoTime();
-        LabAnswer ans = new LabAnswer();
-        ans.foundSolution = forwardChecking(graph, 0, ans) == -1;
-        ans.executionTime = System.nanoTime() - t0;
-        ans.coloursUsed = countColorsUsed(graph);
-        return ans;
-    }
-
-    private static int forwardChecking (ColorGraph graph, int node, LabAnswer ans)
-    {
-        ans.statesScanned++;
-        boolean foundSolution = false;
-        int errNode = node;
-        boolean[] ac = graph.getAvailableColours(node);
-        final int nextNode = node + 1;
-        for (int c = 0; c < graph.getNumberOfColors(); c++)
+        boolean isSafe = true;
+        if(ac[color] && forwardChecking)
         {
-            if (ac[c] && forwardCheck(graph, node, c))
+            graph.setColor(node, color);
+            for (int i = 0; i < graph.getNeighborsCount(node); i++)
             {
-                graph.setColor(node, c);
-                if (nextNode == graph.getNumberOfNodes())
+                int neighbor = graph.getNeighbor(node, i);
+                if (graph.getColor(neighbor) == -1 && isDeadEnd(graph, neighbor))
                 {
-                    foundSolution = true;
-                    break;
-                }
-                int err = forwardChecking(graph, nextNode, ans);
-                if (err == -1)
-                {
-                    foundSolution = true;
-                    break;
-                }
-                graph.setColor(node, -1);
-                if (!graph.areConnected(node, err))
-                {
-                    errNode = err;
+                    isSafe = false;
                     break;
                 }
             }
+            graph.setColor(node, -1);
         }
-        return foundSolution ? -1 : errNode;
+        else
+        {
+            isSafe = ac[color];
+        }
+        return isSafe;
     }
 
-    private static boolean forwardCheck (ColorGraph graph, int node, int color)
+    public static LabAnswer arcConsistencyForwardChecking (ColorGraph graph)
     {
-        graph.setColor(node, color);
-        for (int i = 0; i < graph.getNeighborsCount(node); i++)
-        {
-            int neighbor = graph.getNeighbor(node, i);
-            if (graph.getColor(neighbor) == -1 && isDeadEnd(graph, neighbor))
-            {
-                graph.setColor(node, -1);
-                return false;
-            }
-        }
-        graph.setColor(node, -1);
-        return true;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
 
