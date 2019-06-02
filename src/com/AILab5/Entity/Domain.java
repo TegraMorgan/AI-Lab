@@ -5,40 +5,45 @@ import java.util.Iterator;
 
 public class Domain implements Iterable<Integer>
 {
-    private int count = 0;
+    private int count;
     private ColorNode[] nodes;
     private final ColorNode list;
 
-    public Domain(int nColors)
+    public Domain(int n)
     {
-        if(nColors <= 1)
+        if (n <= 0)
         {
-            System.err.println("nColors must be bigger than 1 (nColors = " + nColors + ").");
+            System.err.println("n must be positive (n = " + n + ").");
         }
-        nodes = new ColorNode[nColors];
+        nodes = new ColorNode[n];
         Arrays.setAll(nodes, ColorNode::new);
-        nodes[0].next = nodes[1];
-        nodes[nColors - 1].previous = nodes[nColors - 2];
-        for (int i = nColors - 2; i >= 1; i--)
+        count = n;
+        if(n > 1)
         {
-            nodes[i].previous = nodes[i - 1];
-            nodes[i].next = nodes[i + 1];
+            nodes[0].next = nodes[1];
+            nodes[n - 1].previous = nodes[n - 2];
+            for (int i = n - 2; i >= 1; i--)
+            {
+                nodes[i].previous = nodes[i - 1];
+                nodes[i].next = nodes[i + 1];
+            }
         }
-        list = new ColorNode(null, -1, nodes[0]);
+        list = new ColorNode(null, -1, nodes[0]); //set first node to -1
+        new ColorNode(nodes[n - 1], -1, null); //set last node to -1
     }
     public int size()
     {
         return count;
     }
-    public boolean contains(int color)
+    public boolean contains(int c)
     {
-        return nodes[color] != null;
+        return nodes[c] != null;
     }
-    public void add(int color)
+    public void add(int c)
     {
-        if (nodes[color] == null)
+        if (nodes[c] == null)
         {
-            nodes[color] = new ColorNode(list, color, list.next);
+            nodes[c] = new ColorNode(list, c, list.next);
             count++;
         }
     }
@@ -48,6 +53,7 @@ public class Domain implements Iterable<Integer>
         if(node != null)
         {
             node.previous.next = node.next;
+            node.next.previous = node.previous;
             nodes[color] = null;
             count--;
         }
@@ -90,7 +96,7 @@ public class Domain implements Iterable<Integer>
         }
         public boolean hasNext()
         {
-            return iterator.next != null;
+            return iterator.next.color != -1;
         }
         public Integer next()
         {

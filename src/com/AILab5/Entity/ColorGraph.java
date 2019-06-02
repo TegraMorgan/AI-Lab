@@ -22,17 +22,16 @@ public class ColorGraph
     /**
      * Set of nodes by colour
      */
-    private final HashSet<Integer>[] colorClasses;
+    private final Domain[] colorClasses;
 
-    @SuppressWarnings("unchecked")
     public ColorGraph (boolean[][] adjacency_matrix, int nColors)
     {
         final int n = adjacency_matrix.length;
         matrix = new boolean[n][n];
         graph = new int[n][];
         nodesColors = new int[n];
-        colorClasses = new HashSet[nColors];
-        Arrays.setAll(colorClasses, i -> new HashSet<>());
+        colorClasses = new Domain[nColors];
+        Arrays.setAll(colorClasses, i -> new Domain(n));
         for (int i = 0; i < n; i++)
         {
             nodesColors[i] = -1;
@@ -157,7 +156,7 @@ public class ColorGraph
     }
 
     /**
-     * Returns true is vertexes are connected with a node
+     * Returns true if vertexes are connected with a node
      */
     public boolean areConnected (int n1, int n2)
     {
