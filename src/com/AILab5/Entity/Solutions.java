@@ -110,4 +110,29 @@ public class Solutions
         graph.setColor(node, -1);
         return true;
     }
+
+
+    //#region Feasability first
+
+    public static LabAnswer greedyFeasibility (ColorGraph graph)
+    {
+        final long t0 = System.nanoTime();
+        final int gl = graph.getNumberOfNodes();
+        LabAnswer ans = new LabAnswer();
+        boolean[] ac;
+        for (int _nodeI = 0; _nodeI < gl; _nodeI++)
+        {
+            ans.statesScanned++;
+            ac = graph.getAvailableColours(_nodeI);
+            for (int _colorI = 0; _colorI < graph.getNumberOfColors() && graph.getColor(_nodeI) == -1; _colorI++)
+                if (ac[_colorI])
+                    graph.setColor(_nodeI, _colorI);
+        }
+        ans.executionTime = System.nanoTime() - t0;
+        ans.coloursUsed = countColorsUsed(graph);
+        ans.foundSolution = true;
+        return ans;
+    }
+
+    //#endregion
 }

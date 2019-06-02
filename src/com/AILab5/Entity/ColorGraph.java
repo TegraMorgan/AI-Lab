@@ -50,6 +50,11 @@ public class ColorGraph
         }
     }
 
+    public ColorGraph (boolean[][] adjacency_matrix)
+    {
+        this(adjacency_matrix, adjacency_matrix.length);
+    }
+
     /**
      * Returns number of nodes in the graph
      */
