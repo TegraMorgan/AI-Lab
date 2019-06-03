@@ -10,7 +10,7 @@ public class Main
 {
     public static void main (String[] args)
     {
-        final int file_number = 29;
+        final int file_number = 30;
         final int numberOfColors = 38;
 
         // Read and Parse problem
@@ -28,7 +28,7 @@ public class Main
 
         System.out.println();
         System.out.println("File " + file_number + " - Greedy Feasibility test:");
-        printResults(greedyFeasibility(graph2), graph2);
+        printResults(feasibilityMain(graph2), graph2);
 
         System.out.println();
 

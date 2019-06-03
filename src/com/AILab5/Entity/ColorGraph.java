@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
+@SuppressWarnings("WeakerAccess")
 public class ColorGraph
 {
     /**
@@ -189,6 +190,67 @@ public class ColorGraph
     public int colorCount (int c)
     {
         return colorClasses[c].size();
+    }
+
+    /**
+     * Changes the colours in the graph so they will be at the beginning of the array
+     *
+     * @return return number of active colours
+     */
+    public int compactColours ()
+    {
+        int i = 0;
+        int j = colorClasses.length - 1;
+        while (i < j)
+        {
+            while (colorClasses[i].size() > 0 && i < j) i++;
+            while (colorClasses[j].size() == 0 && i < j) j--;
+            if (i < j)
+                for (int node : colorClasses[j])
+                    this.setColor(node, i);
+        }
+        return i;
+    }
+
+    /**
+     * Returns the color from the given set, that will violate graph the least
+     * @param node Vertex that is being checked
+     * @param colours Set of colours to be tried
+     * @return The best colour to use from the given set
+     */
+    public int findMinViolationsColour (int node, int[] colours)
+    {
+        int min = graph.length, minI = -1;
+        for (int c : colours)
+        {
+            int colorViolations = countViolations(node, c);
+            if (colorViolations < min)
+            {
+                min = colorViolations;
+                minI = c;
+            }
+        }
+        return minI;
+    }
+
+    /**
+     * Count how much violations applying given colour to given vertex will create
+     * @param node Vertex to be checked
+     * @param colour Colour to be applied
+     * @return Number of violations that will occur if given colour is applied
+     */
+    public int countViolations (int node, int colour)
+    {
+        int violations = 0;
+        int[] ne = getNeighbors(node);
+        for (int n : ne)
+            if (getColor(n) == colour) violations++;
+        return violations;
+    }
+
+    public RangeSet getNodesByColour (int c)
+    {
+        return colorClasses[c];
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 import static com.AILab5.CspAlgo.Utility.isDeadEnd;
 
+@SuppressWarnings("WeakerAccess")
 public class Solutions
 {
 
@@ -194,11 +195,79 @@ public class Solutions
 
     //#region Feasability first
 
-    public static LabAnswer greedyFeasibility (ColorGraph graph)
+    public static LabAnswer feasibilityMain (ColorGraph graph)
     {
         final long t0 = System.nanoTime();
-        final int gl = graph.getNumberOfNodes();
         LabAnswer ans = new LabAnswer();
+
+        ans.foundSolution = sequenceFeasibility(graph, ans);
+
+        ans.executionTime = System.nanoTime() - t0;
+        ans.coloursUsed = countColorsUsed(graph);
+        return ans;
+    }
+
+    /**
+     * Find a graph colouring using a sequence of feasibility problems
+     *
+     * @param graph Graph to be run on
+     * @param ans   LabAnswer to be updated
+     * @return True if some solution is found
+     */
+
+    private static boolean sequenceFeasibility (ColorGraph graph, LabAnswer ans)
+    {
+        boolean success;
+        success = greedyFeasibility(graph, ans);
+        int minI = -1;
+
+        // Compact colours and find actual amount of colours used
+        int coloursUsed = graph.compactColours();
+
+        // Find the smallest colour group
+        minI = findSmallestColour(graph, minI, coloursUsed);
+
+        // Find the nodes in the colour group
+        RangeSet problemNodes = graph.getNodesByColour(minI);
+
+        // Move the colour to the end of array
+        for (int node : problemNodes)
+        {
+
+        }
+
+        // Create new, smaller colour palette without the min colour
+
+
+        // Find best colour to replace
+        for (int node : problemNodes)
+        {
+            System.out.println(graph.getAvailableColours(node).toString());
+        }
+
+        return success;
+    }
+
+    private static int findSmallestColour (ColorGraph graph, int minI, int coloursUsed)
+    {
+        int min = graph.getNumberOfNodes();
+        int t2;
+        for (int i = 0; i < coloursUsed; i++)
+        {
+            t2 = graph.colorCount(i);
+            if (t2 < min && t2 != 0)
+            {
+                min = t2;
+                minI = i;
+            }
+        }
+        return minI;
+    }
+
+
+    public static boolean greedyFeasibility (ColorGraph graph, LabAnswer ans)
+    {
+        final int gl = graph.getNumberOfNodes();
         boolean[] ac;
         for (int _nodeI = 0; _nodeI < gl; _nodeI++)
         {
@@ -208,10 +277,7 @@ public class Solutions
                 if (ac[_colorI])
                     graph.setColor(_nodeI, _colorI);
         }
-        ans.executionTime = System.nanoTime() - t0;
-        ans.coloursUsed = countColorsUsed(graph);
-        ans.foundSolution = true;
-        return ans;
+        return true;
     }
 
     //#endregion
