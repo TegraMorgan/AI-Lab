@@ -193,7 +193,7 @@ public class Solutions
         return true;
     }
 
-    //#region Feasability first
+    //#region Feasibility first
 
     public static LabAnswer feasibilityMain (ColorGraph graph)
     {
@@ -219,39 +219,53 @@ public class Solutions
     {
         boolean success;
         success = greedyFeasibility(graph, ans);
-        int minI = -1;
 
         // Compact colours and find actual amount of colours used
         int coloursUsed = graph.compactColours();
 
         // Find the smallest colour group
-        minI = findSmallestColour(graph, minI, coloursUsed);
+        int minI = findSmallestColour(graph, coloursUsed);
 
         // Find the nodes in the colour group
-        RangeSet problemNodes = graph.getNodesByColour(minI);
+        int[] problemNodes = graph.getNodesByColour(minI);
+        // Swap the small colour with the last colour
+        recolorNodes(graph, minI, -1); // Remove colour from smallest group
+        // Move last colour to take place of the colour
+        if (minI!=coloursUsed-1)
+            recolorNodes(graph, coloursUsed - 1, minI);
 
-        // Move the colour to the end of array
-        for (int node : problemNodes)
-        {
-
-        }
-
-        // Create new, smaller colour palette without the min colour
-
-
-        // Find best colour to replace
-        for (int node : problemNodes)
-        {
-            System.out.println(graph.getAvailableColours(node).toString());
-        }
+        // Decrease colour pool
+        coloursUsed--;
+        for (int emptyNode : problemNodes)
+            graph.setColor(emptyNode, graph.findMinViolationsColour(emptyNode, coloursUsed));
 
         return success;
     }
 
-    private static int findSmallestColour (ColorGraph graph, int minI, int coloursUsed)
+    /**
+     * Find vertexes of one color and recolor them to a new color
+     *
+     * @param graph
+     * @param oldColour Original colour
+     * @param newColour New colour
+     */
+    private static void recolorNodes (ColorGraph graph, int oldColour, int newColour)
     {
-        int min = graph.getNumberOfNodes();
-        int t2;
+        int[] nodesToRecolour = graph.getNodesByColour(oldColour);
+        for (int n : nodesToRecolour)
+            graph.setColor(n, newColour);
+    }
+
+    /**
+     * Find which colour has the least vertexes colored
+     *
+     * @param graph
+     * @param coloursUsed
+     * @return The colour that has the least vertexes
+     */
+    private static int findSmallestColour (ColorGraph graph, int coloursUsed)
+    {
+        int min = graph.getNumberOfNodes(), minI = -1, t2;
         for (int i = 0; i < coloursUsed; i++)
         {
             t2 = graph.colorCount(i);

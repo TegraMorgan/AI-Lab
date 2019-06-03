@@ -117,12 +117,24 @@ public class ColorGraph
      */
     public boolean[] getAvailableColours (int node)
     {
-        boolean[] res = new boolean[colorClasses.length];
+        return getAvailableColours(node, colorClasses.length);
+    }
+
+    /**
+     * Returns a boolean array. True is the value is free, false if taken.
+     *
+     * @param maxColor Limit colours search space
+     * @param node     The node whose neighbours will be checked
+     * @return Array of free colors
+     */
+    public boolean[] getAvailableColours (int node, int maxColor)
+    {
+        boolean[] res = new boolean[maxColor];
         Arrays.fill(res, true);
-        final int l = graph[node].length;
-        for (int i = 0; i < l; i++)
-            if (getColor(graph[node][i]) != -1)
-                res[getColor(graph[node][i])] = false;
+        final int neighboursCount = graph[node].length;
+        for (int neighbour = 0; neighbour < neighboursCount; neighbour++)
+            if (getColor(graph[node][neighbour]) != -1 && getColor(graph[node][neighbour]) < maxColor)
+                res[getColor(graph[node][neighbour])] = false;
         return res;
     }
 
@@ -214,20 +226,21 @@ public class ColorGraph
 
     /**
      * Returns the color from the given set, that will violate graph the least
-     * @param node Vertex that is being checked
-     * @param colours Set of colours to be tried
+     *
+     * @param node    Vertex that is being checked
+     * @param maxColor Number of colours to check
      * @return The best colour to use from the given set
      */
-    public int findMinViolationsColour (int node, int[] colours)
+    public int findMinViolationsColour (int node, int maxColor)
     {
         int min = graph.length, minI = -1;
-        for (int c : colours)
+        for (int colour = 0; colour < maxColor; colour++)
         {
-            int colorViolations = countViolations(node, c);
+            int colorViolations = countViolations(node, colour);
             if (colorViolations < min)
             {
                 min = colorViolations;
-                minI = c;
+                minI = colour;
             }
         }
         return minI;
@@ -235,7 +248,8 @@ public class ColorGraph
 
     /**
      * Count how much violations applying given colour to given vertex will create
-     * @param node Vertex to be checked
+     *
+     * @param node   Vertex to be checked
      * @param colour Colour to be applied
      * @return Number of violations that will occur if given colour is applied
      */
@@ -248,9 +262,16 @@ public class ColorGraph
         return violations;
     }
 
-    public RangeSet getNodesByColour (int c)
+    public int[] getNodesByColour (int c)
     {
-        return colorClasses[c];
+        RangeSet t = colorClasses[c];
+        int[] res = new int[t.size()];
+        int i = 0;
+        for (int cc : t)
+        {
+            res[i++] = cc;
+        }
+        return res;
     }
 
 }
