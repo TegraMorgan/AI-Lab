@@ -5,6 +5,7 @@ import com.AILab5.Entity.ColorGraph;
 import static com.AILab5.CspAlgo.Utility.parseProblem;
 import static com.AILab5.CspAlgo.Utility.printResults;
 import static com.AILab5.Entity.Solutions.*;
+import static com.AILab5.Entity.Feasibility.*;
 
 public class Main
 {
