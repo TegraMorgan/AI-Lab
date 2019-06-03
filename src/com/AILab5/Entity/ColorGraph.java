@@ -1,5 +1,6 @@
 package com.AILab5.Entity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -91,6 +92,21 @@ public class ColorGraph
         return graph[node];
     }
 
+    /**
+     * @return all the neighbors with color = -1
+     */
+    public Integer[] getUnColoredNeighbors(int node)
+    {
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < getNeighborsCount(node); i++)
+        {
+            if (getColor(getNeighbor(node, i)) == -1)
+            {
+                list.add(getNeighbor(node, i));
+            }
+        }
+        return list.toArray(new Integer[0]);
+    }
 
     /**
      * Returns a boolean array. True is the value is free, false if taken.

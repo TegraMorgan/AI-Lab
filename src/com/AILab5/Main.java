@@ -4,8 +4,7 @@ import com.AILab5.Entity.ColorGraph;
 
 import static com.AILab5.CspAlgo.Utility.parseProblem;
 import static com.AILab5.CspAlgo.Utility.printResults;
-import static com.AILab5.Entity.Solutions.greedyFeasibility;
-import static com.AILab5.Entity.Solutions.straightforwardBackJumping;
+import static com.AILab5.Entity.Solutions.*;
 
 public class Main
 {
@@ -25,7 +24,7 @@ public class Main
         ColorGraph graph3 = new ColorGraph(_gr, numberOfColors);
 
         //System.out.println("File " + file_number + " - Straightforward Back-Jumping test:");
-        //printResults(straightforwardBackJumping(graph1, false), graph1);
+        printResults(arcConsistencyForwardChecking(graph1), graph1);
 
         System.out.println();
         System.out.println("File " + file_number + " - Greedy Feasibility test:");

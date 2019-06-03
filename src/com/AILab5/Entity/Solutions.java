@@ -1,7 +1,10 @@
 package com.AILab5.Entity;
 
 
-import jdk.jshell.spi.ExecutionControl;
+import org.apache.commons.math3.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 import static com.AILab5.CspAlgo.Utility.isDeadEnd;
@@ -20,7 +23,10 @@ public class Solutions
             ans.coloursUsed = countColorsUsed(graph);
         return ans;
     }
-    private static int straightforwardBackJumping(ColorGraph graph, int node, LabAnswer ans, boolean forwardChecking)
+    private static int straightforwardBackJumping(ColorGraph graph,
+                                                  int node,
+                                                  LabAnswer ans,
+                                                  boolean forwardChecking)
     {
         ans.statesScanned++;
         boolean foundSolution = false;
@@ -53,11 +59,16 @@ public class Solutions
         }
         return foundSolution ? -1 : errNode;
     }
-    private static boolean isSafeToColor (ColorGraph graph, int node, int color, boolean[] ac, boolean forwardChecking)
+    private static boolean isSafeToColor (ColorGraph graph,
+                                          int node,
+                                          int color,
+                                          boolean[] ac,
+                                          boolean forwardChecking)
     {
-        boolean isSafe = true;
-        if(ac[color] && forwardChecking)
+        boolean isSafe;
+        if (ac[color] && forwardChecking)
         {
+            isSafe = true;
             graph.setColor(node, color);
             for (int i = 0; i < graph.getNeighborsCount(node); i++)
             {
@@ -69,8 +80,7 @@ public class Solutions
                 }
             }
             graph.setColor(node, -1);
-        }
-        else
+        } else
         {
             isSafe = ac[color];
         }
@@ -79,9 +89,108 @@ public class Solutions
 
     public static LabAnswer arcConsistencyForwardChecking (ColorGraph graph)
     {
-        throw new UnsupportedOperationException("Not implemented yet");
+        RangeSet[] domains = new RangeSet[graph.getNumberOfNodes()];
+        Arrays.setAll(domains, i -> new RangeSet(graph.getNumberOfColors(), true));
+        LabAnswer ans = new LabAnswer();
+        final long t0 = System.nanoTime();
+        ans.foundSolution = arcConsistencyForwardChecking(graph, 0, ans, domains) == -1;
+        ans.executionTime = System.nanoTime() - t0;
+        if (ans.foundSolution)
+            ans.coloursUsed = countColorsUsed(graph);
+        return ans;
     }
 
+    private static int arcConsistencyForwardChecking (ColorGraph graph,
+                                                      int node,
+                                                      LabAnswer ans,
+                                                      RangeSet[] domains)
+    {
+        if (node == graph.getNumberOfNodes())
+        {
+            return -1;
+        }
+
+        final int nextNode = node + 1;
+        if (graph.getColor(node)!= -1)
+        {
+            return arcConsistencyForwardChecking(graph, nextNode, ans, domains);
+        }
+
+        ans.statesScanned++;
+        var uncolored = graph.getUnColoredNeighbors(node);
+        for (Integer color: domains[node])
+        {
+            var nodesChanged = new ArrayList<Pair<Integer, Integer>>(graph.getNeighborsCount(node));
+            if (domainCheckAndSetColor(graph,
+                                       node,
+                                       color,
+                                       uncolored,
+                                       nodesChanged,
+                                       domains))
+            {
+                int err = arcConsistencyForwardChecking(graph, nextNode, ans, domains);
+                if (err == -1)
+                {
+                    return -1;
+                }
+                for (var p: nodesChanged)
+                {
+                    domains[p.getFirst()].add(p.getSecond());
+                }
+                if (!graph.areConnected(err, node))
+                {
+                    return err;
+                }
+            }
+        }
+        return node;
+    }
+
+    private static boolean domainCheckAndSetColor (ColorGraph graph,
+                                                   int node,
+                                                   int color,
+                                                   Integer[] uncolored,
+                                                   ArrayList<Pair<Integer, Integer>> nodesChanged,
+                                                   RangeSet[] domains)
+    {
+        graph.setColor(node, color);
+        for (int neighbor: uncolored)
+        {
+            if (domains[neighbor].contains(color))
+            {
+                if (domains[neighbor].size() == 1)
+                {
+                    graph.setColor(node, -1);
+                    for (var p: nodesChanged)
+                    {
+                        domains[p.getFirst()].add(p.getSecond());
+                    }
+                    nodesChanged.clear();
+                    return false;
+                }
+                nodesChanged.add(new Pair<>(neighbor, color));
+                domains[neighbor].remove(color);
+            }
+        }
+        for (int neighbor: uncolored)
+        {
+            if (domains[neighbor].size() == 1)
+            {
+                if (!domainCheckAndSetColor(graph,
+                                            neighbor,
+                                            domains[neighbor].iterator().next(),
+                                            graph.getUnColoredNeighbors(neighbor),
+                                            nodesChanged,
+                                            domains))
+                {
+                    graph.setColor(node, -1);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
     //#region Feasability first
 

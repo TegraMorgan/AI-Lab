@@ -1,9 +1,8 @@
 package com.AILab5.Entity;
-
 import java.util.Iterator;
 
 /**
-    Set only of values between 0 to n - 1.
+    Set only for values between 0 to n - 1.
     Worst case time complexity of each one of the operations is O(1).
     Can be used as a Colors-Domain for the arc consistency algorithm.
  */
@@ -15,9 +14,10 @@ public class RangeSet implements Iterable<Integer>
 
     public RangeSet (int n, boolean isFull)
     {
-        if (n <= 0)
+        if (n <= 1)
         {
-            System.err.println("n must be positive (n = " + n + ").");
+            System.err.println("n must be bigger than 1 (n = " + n + ").");
+            throw new IllegalArgumentException();
         }
         nodes = new Node[n];
         list = new Node(null, -1, new Node(-1));
@@ -59,7 +59,7 @@ public class RangeSet implements Iterable<Integer>
     }
     public Iterator<Integer> iterator()
     {
-        return new DomainIterator(this);
+        return new SetIterator(this);
     }
     private class Node
     {
@@ -84,14 +84,14 @@ public class RangeSet implements Iterable<Integer>
             }
         }
     }
-    private class DomainIterator implements Iterator<Integer>
+    private class SetIterator implements Iterator<Integer>
     {
         Node iterator;
-        final RangeSet domain;
-        DomainIterator (RangeSet domain)
+        final RangeSet set;
+        SetIterator (RangeSet set)
         {
-            iterator = domain.list;
-            this.domain = domain;
+            iterator = set.list;
+            this.set = set;
         }
         public boolean hasNext()
         {
@@ -103,7 +103,7 @@ public class RangeSet implements Iterable<Integer>
         }
         public void remove()
         {
-            domain.remove(iterator.value);
+            set.remove(iterator.value);
         }
     }
 }
