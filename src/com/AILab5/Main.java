@@ -25,13 +25,13 @@ public class Main
         ColorGraph graph3 = new ColorGraph(_gr, numberOfColors);
 
         //System.out.println("File " + file_number + " - Straightforward Back-Jumping test:");
-        printResults(arcConsistencyForwardChecking(graph1), graph1);
+        //printResults(arcConsistencyForwardChecking(graph1), graph1);
 
-        System.out.println();
+        //System.out.println();
         System.out.println("File " + file_number + " - Greedy Feasibility test:");
         printResults(feasibilityMain(graph2), graph2);
 
-        System.out.println();
+        //System.out.println();
 
         //System.out.println("File " + file_number + " - forwardChecking test:");
         //printResults(forwardChecking(graph3), graph3);
