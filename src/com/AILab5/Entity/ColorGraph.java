@@ -221,11 +221,11 @@ public class ColorGraph
     }
 
     /**
-     * Returns true if vertexes are connected with a node
+     * Returns true if vertexes are disconnected with a node
      */
-    public boolean areConnected (int n1, int n2)
+    public boolean areDisconnected (int n1, int n2)
     {
-        return matrix[n1][n2];
+        return !matrix[n1][n2];
     }
 
     /**

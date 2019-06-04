@@ -51,7 +51,7 @@ public class Solutions
                     break;
                 }
                 graph.setColor(node, -1);
-                if (!graph.areConnected(node, err))
+                if (graph.areDisconnected(node, err))
                 {
                     errNode = err;
                     break;
@@ -142,7 +142,7 @@ public class Solutions
                     break;
                 }
                 domainUnSetColor(domains, changes);
-                if (!graph.areConnected(err, node))
+                if (graph.areDisconnected(err, node))
                 {
                     errNode = err;
                     break;
