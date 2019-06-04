@@ -1,8 +1,9 @@
 package com.AILab5.Entity;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Random;
 
-import static com.AILab5.CspAlgo.Utility.*;
+import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 
 @SuppressWarnings("WeakerAccess")
 public class Feasibility
@@ -29,91 +30,43 @@ public class Feasibility
 
     private static boolean sequenceFeasibility (ColorGraph graph, LabAnswer ans)
     {
+
         greedyFeasibility(graph, ans);
-
-        // Compact colours and find actual amount of colours used
-        int coloursUsed = graph.compactColours();
-
-        // Find the smallest colour group
-        int minI = findSmallestColour(graph, coloursUsed, ans);
-
-        // Find the nodes in the colour group
-        int[] problemNodes = graph.getNodesByColour(minI);
-        // Swap the small colour with the last colour
-        recolorNodes(graph, minI, -1); // Remove colour from smallest group
-        ans.statesScanned += problemNodes.length;
-        // Move last colour to take place of the colour
-        if (minI != coloursUsed - 1)
-            recolorNodes(graph, coloursUsed - 1, minI);
-
-        // Decrease colour pool
-        coloursUsed--;
-        for (int emptyNode : problemNodes)
-            graph.setColor(emptyNode, graph.findMinViolationsColour(emptyNode, coloursUsed));
-
-        // Run tabucol algorithm
-        return tabucol(graph, coloursUsed, ans);
-    }
-
-    private static class MoveList
-    {
-        HashMap<String, Long> moves = new HashMap<>();
-
-        public void add (int node, int colour, Long delay)
+        ColorGraph originalGraph = new ColorGraph(graph), improvedGraph;
+        int coloursUsed;
+        boolean improvedColoring;
+        do
         {
-            moves.put(encode(node, colour), delay);
-        }
+            // Copy the original graph
+            improvedGraph = new ColorGraph(originalGraph);
 
-        private String encode (int node, int colour)
-        {
-            return (node) + "|" + (colour);
-        }
+            // Compact colours and find actual amount of colours used
+            coloursUsed = improvedGraph.compactColours();
 
-        private int[] decode (String s)
-        {
-            String[] s2 = s.split("\\|");
-            return new int[]{Integer.parseInt(s2[0]), Integer.parseInt(s2[1])};
-        }
+            // Find the smallest colour group
+            int minI = findSmallestColour(improvedGraph, coloursUsed, ans);
 
-        @SuppressWarnings("unused")
-        public int[][] bestMoves ()
-        {
-            Long bestScore = -1L;
-            int counter = 0;
+            // Find the nodes in the colour group
+            int[] problemNodes = improvedGraph.getNodesByColour(minI);
+            // Swap the small colour with the last colour
+            recolorNodes(improvedGraph, minI, -1); // Remove colour from smallest group
+            ans.statesScanned += problemNodes.length;
+            // Move last colour to take place of the colour
+            if (minI != coloursUsed - 1)
+                recolorNodes(improvedGraph, coloursUsed - 1, minI);
 
-            for (Long p : moves.values())
-                if (p > bestScore)
-                {
-                    bestScore = p;
-                    counter = 0;
-                } else if (p.equals(bestScore)) counter++;
+            // Decrease colour pool
+            coloursUsed--;
+            for (int emptyNode : problemNodes)
+                improvedGraph.setColor(emptyNode, improvedGraph.findMinViolationsColour(emptyNode, coloursUsed));
 
-            int[][] res = new int[counter][];
-            counter = 0;
-
-            for (Map.Entry<String, Long> p : moves.entrySet())
-                if (p.getValue().equals(bestScore))
-                    res[counter++] = decode(p.getKey());
-            return res;
-        }
-
-        public boolean isTabu (int node, int colour, Long step)
-        {
-            final String key = encode(node, colour);
-            final Long val = moves.get(key);
-            if (val != null)
-            {
-                if (val < step)
-                {
-                    moves.remove(key);
-                    return false;
-                } else
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+            // Run tabucol algorithm
+            improvedColoring = tabucol(improvedGraph, coloursUsed, ans);
+            if (improvedColoring)
+                originalGraph = improvedGraph;
+        } while (improvedColoring);
+        graph.copy(originalGraph);
+        return graph.countAllViolations() == 0;
     }
 
     public static boolean tabucol (ColorGraph graph, int maxColors, LabAnswer ans)
@@ -190,7 +143,7 @@ public class Feasibility
      *
      * @param graph       Graph to be worked on
      * @param coloursUsed Amount of colours to scan
-     * @param ans
+     * @param ans LabAnswer in order to update amount of scanned nodes
      * @return The colour that has the least vertexes
      */
     private static int findSmallestColour (ColorGraph graph, int coloursUsed, LabAnswer ans)
@@ -209,8 +162,7 @@ public class Feasibility
         return minI;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static boolean greedyFeasibility (ColorGraph graph, LabAnswer ans)
+    public static void greedyFeasibility (ColorGraph graph, LabAnswer ans)
     {
         final int gl = graph.getNumberOfNodes();
         boolean[] ac;
@@ -222,6 +174,44 @@ public class Feasibility
                 if (ac[_colorI])
                     graph.setColor(_nodeI, _colorI);
         }
-        return true;
+    }
+
+    private static class MoveList
+    {
+        HashMap<String, Long> moves = new HashMap<>();
+
+        public void add (int node, int colour, Long delay)
+        {
+            moves.put(encode(node, colour), delay);
+        }
+
+        private String encode (int node, int colour)
+        {
+            return (node) + "|" + (colour);
+        }
+
+        private int[] decode (String s)
+        {
+            String[] s2 = s.split("\\|");
+            return new int[]{Integer.parseInt(s2[0]), Integer.parseInt(s2[1])};
+        }
+
+        public boolean isTabu (int node, int colour, Long step)
+        {
+            final String key = encode(node, colour);
+            final Long val = moves.get(key);
+            if (val != null)
+            {
+                if (val < step)
+                {
+                    moves.remove(key);
+                    return false;
+                } else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

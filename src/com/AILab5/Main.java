@@ -11,7 +11,7 @@ public class Main
 {
     public static void main (String[] args)
     {
-        final int file_number = 30;
+        final int file_number = 22;
         final int numberOfColors = 17;
 
         // Read and Parse problem

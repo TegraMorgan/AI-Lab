@@ -51,10 +51,42 @@ public class ColorGraph
         }
     }
 
+
     public ColorGraph (boolean[][] adjacency_matrix)
     {
         this(adjacency_matrix, adjacency_matrix.length);
     }
+
+    public ColorGraph (ColorGraph o)
+    {
+        final int n = o.nodesColors.length;
+        final int nColors = o.colorClasses.length;
+        matrix = new boolean[n][n];
+        graph = new int[n][];
+        nodesColors = new int[n];
+        colorClasses = new RangeSet[nColors];
+        Arrays.setAll(colorClasses, i -> new RangeSet(n, false));
+        for (int i = 0; i < n; i++)
+        {
+            nodesColors[i] = o.nodesColors[i];
+            int count = 0;
+            for (int j = 0; j < n; j++)
+                if (o.matrix[i][j])
+                {
+                    matrix[i][j] = true;
+                    count++;
+                }
+            graph[i] = new int[count];
+            int index = 0;
+            for (int j = 0; j < n && index < count; j++)
+                if (matrix[i][j])
+                    graph[i][index++] = j;
+        }
+        for (int i = 0; i < o.colorClasses.length; i++)
+            for (int k : o.colorClasses[i])
+                colorClasses[i].add(k);
+    }
+
 
     /**
      * Returns number of nodes in the graph
@@ -290,4 +322,17 @@ public class ColorGraph
         return res;
     }
 
+    public void copy (ColorGraph o)
+    {
+        final int n = o.nodesColors.length;
+        for (int i = 0; i < n; i++)
+        {
+            nodesColors[i] = o.nodesColors[i];
+            System.arraycopy(o.matrix[i], 0, matrix[i], 0, n);
+            graph[i] = o.graph[i];
+        }
+        for (int i = 0; i < o.colorClasses.length; i++)
+            for (int k : o.colorClasses[i])
+                colorClasses[i].add(k);
+    }
 }
