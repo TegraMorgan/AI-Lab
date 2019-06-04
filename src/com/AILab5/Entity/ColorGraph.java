@@ -96,7 +96,7 @@ public class ColorGraph
     /**
      * @return all the neighbors with color = -1
      */
-    public Integer[] getUnColoredNeighbors(int node)
+    public Integer[] getUnColoredNeighbors (int node)
     {
         ArrayList<Integer> list = new ArrayList<>();
         for (int i = 0; i < getNeighborsCount(node); i++)
@@ -227,7 +227,7 @@ public class ColorGraph
     /**
      * Returns the color from the given set, that will violate graph the least
      *
-     * @param node    Vertex that is being checked
+     * @param node     Vertex that is being checked
      * @param maxColor Number of colours to check
      * @return The best colour to use from the given set
      */
@@ -236,7 +236,7 @@ public class ColorGraph
         int min = graph.length, minI = -1;
         for (int colour = 0; colour < maxColor; colour++)
         {
-            int colorViolations = countViolations(node, colour);
+            int colorViolations = countPotentialViolations(node, colour);
             if (colorViolations < min)
             {
                 min = colorViolations;
@@ -246,6 +246,21 @@ public class ColorGraph
         return minI;
     }
 
+    public int countAllViolations ()
+    {
+        final int allNodes = graph.length;
+        int violations = 0;
+        for (int node = 0; node < allNodes; node++)
+            violations += countNodeViolations(node);
+        return violations;
+    }
+
+
+    public int countNodeViolations (int node)
+    {
+        return countPotentialViolations(node, getColor(node));
+    }
+
     /**
      * Count how much violations applying given colour to given vertex will create
      *
@@ -253,10 +268,11 @@ public class ColorGraph
      * @param colour Colour to be applied
      * @return Number of violations that will occur if given colour is applied
      */
-    public int countViolations (int node, int colour)
+    public int countPotentialViolations (int node, int colour)
     {
         int violations = 0;
         int[] ne = getNeighbors(node);
+        if (colour == -1) return ne.length;
         for (int n : ne)
             if (getColor(n) == colour) violations++;
         return violations;
