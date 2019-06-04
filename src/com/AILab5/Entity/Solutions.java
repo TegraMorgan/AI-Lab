@@ -107,90 +107,131 @@ public class Solutions
                                                       LabAnswer ans,
                                                       RangeSet[] domains)
     {
-        if (node == graph.getNumberOfNodes())
-        {
-            return -1;
-        }
-
-        final int nextNode = node + 1;
-        if (graph.getColor(node) != -1)
-        {
-            return arcConsistencyForwardChecking(graph, nextNode, ans, domains);
-        }
-
         ans.statesScanned++;
+        final int NODES = graph.getNumberOfNodes();
+        int next = node + 1;
+        while (next < NODES && graph.getColor(next) != -1)
+        {
+            next++;
+        }
+        final int nextNode = next;
+        int errNode = node;
         var uncolored = graph.getUnColoredNeighbors(node);
         for (Integer color : domains[node])
         {
-            var nodesChanged = new ArrayList<Pair<Integer, Integer>>(graph.getNeighborsCount(node));
-            if (domainCheckAndSetColor(graph,
-                                       node,
-                                       color,
-                                       uncolored,
-                                       nodesChanged,
-                                       domains))
+            var changes = domainSetColor(graph, node, color, uncolored, domains);
+            if (graph.getColor(node) != -1)
             {
-                int err = arcConsistencyForwardChecking(graph, nextNode, ans, domains);
+                next = nextNode;
+                while (next < NODES && graph.getColor(next) != -1)
+                {
+                    next++;
+                }
+                if(next == NODES)
+                {
+                    errNode = -1;
+                    break;
+                }
+                int err = arcConsistencyForwardChecking(graph, next, ans, domains);
                 if (err == -1)
                 {
-                    return -1;
+                    errNode = -1;
+                    break;
                 }
-                for (var p : nodesChanged)
-                {
-                    domains[p.getFirst()].add(p.getSecond());
-                }
+                domainUnSetColor(graph, domains, changes);
                 if (!graph.areConnected(err, node))
                 {
-                    return err;
+                    errNode = err;
+                    break;
                 }
             }
         }
-        return node;
+        return errNode;
     }
 
-    private static boolean domainCheckAndSetColor (ColorGraph graph,
-                                                   int node,
-                                                   int color,
-                                                   Integer[] uncolored,
-                                                   ArrayList<Pair<Integer, Integer>> nodesChanged,
-                                                   RangeSet[] domains)
+    private static Pair<ArrayList<Integer>, ArrayList<Pair<Integer, Integer>>>
+    domainSetColor (ColorGraph graph,
+                     int node,
+                     int color,
+                     Integer[] uncolored,
+                     RangeSet[] domains)
     {
+        var nodesChanged = new ArrayList<Integer>();
+        var domainsChanged = new ArrayList<Pair<Integer, Integer>>(graph.getNeighborsCount(node));
+        var changes = new Pair<>(nodesChanged, domainsChanged);
+
+        if (domainSetFailed(graph,
+                            node,
+                            color,
+                            uncolored,
+                            nodesChanged,
+                            domainsChanged,
+                            domains))
+        {
+            domainUnSetColor(graph, domains, changes);
+        }
+
+        return changes;
+    }
+
+    private static boolean domainSetFailed (ColorGraph graph,
+                                            int node,
+                                            int color,
+                                            Integer[] uncolored,
+                                            ArrayList<Integer> nodesChanged,
+                                            ArrayList<Pair<Integer, Integer>> domainsChanged,
+                                            RangeSet[] domains)
+    {
+        boolean failed = false;
+
+        nodesChanged.add(node);
         graph.setColor(node, color);
+
         for (int neighbor : uncolored)
         {
             if (domains[neighbor].contains(color))
             {
-                if (domains[neighbor].size() == 1)
-                {
-                    graph.setColor(node, -1);
-                    for (var p : nodesChanged)
-                    {
-                        domains[p.getFirst()].add(p.getSecond());
-                    }
-                    nodesChanged.clear();
-                    return false;
-                }
-                nodesChanged.add(new Pair<>(neighbor, color));
+                domainsChanged.add(new Pair<>(neighbor, color));
                 domains[neighbor].remove(color);
             }
         }
+
         for (int neighbor : uncolored)
         {
             if (domains[neighbor].size() == 1)
             {
-                if (!domainCheckAndSetColor(graph,
-                                            neighbor,
-                                            domains[neighbor].iterator().next(),
-                                            graph.getUnColoredNeighbors(neighbor),
-                                            nodesChanged,
-                                            domains))
+                if (domainSetFailed(graph,
+                                    neighbor,
+                                    domains[neighbor].iterator().next(),
+                                    graph.getUnColoredNeighbors(neighbor),
+                                    nodesChanged,
+                                    domainsChanged,
+                                    domains))
                 {
-                    graph.setColor(node, -1);
-                    return false;
+                    failed = true;
+                    break;
                 }
             }
         }
 
-        return true;
+        return failed;
+    }
+    private static void domainUnSetColor
+            (ColorGraph graph,
+             RangeSet[] domains,
+             Pair<ArrayList<Integer>, ArrayList<Pair<Integer, Integer>>> changes)
+    {
+        var nodesChanged = changes.getFirst();
+        var domainsChanged = changes.getSecond();
+
+        for (var p : domainsChanged)
+        {
+            domains[p.getFirst()].add(p.getSecond());
+        }
+        domainsChanged.clear();
+        for (var n : nodesChanged)
+        {
+            graph.setColor(n, -1);
+        }
     }
 }
