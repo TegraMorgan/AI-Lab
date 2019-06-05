@@ -5,7 +5,7 @@ import com.AILab5.Entity.ColorGraph;
 import static com.AILab5.CspAlgo.Utility.parseProblem;
 import static com.AILab5.CspAlgo.Utility.printResults;
 import static com.AILab5.Entity.Solutions.*;
-import static com.AILab5.Entity.Feasibility.*;
+import static com.AILab5.CspAlgo.LocalSearch.LocalFeasibleDecrementalSearch.*;
 
 public class Main
 {
@@ -29,7 +29,7 @@ public class Main
 
         //System.out.println();
         System.out.println("File " + file_number + " - Greedy Feasibility test:");
-        printResults(feasibilityMain(graph2), graph2);
+        printResults(localFeasibleDecrementalSearch(graph2), graph2);
 
         //System.out.println();
 
