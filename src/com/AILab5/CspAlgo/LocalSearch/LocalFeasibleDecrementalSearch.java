@@ -33,7 +33,7 @@ public class LocalFeasibleDecrementalSearch
     private static boolean sequenceFeasibility (ColorGraph graph, LabAnswer ans)
     {
 
-        greedyFeasibility(graph, ans);
+        GreedySearch.greedyFeasibleSearch(graph, ans);
         ColorGraph originalGraph = new ColorGraph(graph), improvedGraph;
         int coloursUsed;
         boolean improvedColoring;
@@ -160,20 +160,6 @@ public class LocalFeasibleDecrementalSearch
             }
         }
         return minI;
-    }
-
-    private static void greedyFeasibility (ColorGraph graph, LabAnswer ans)
-    {
-        final int gl = graph.getNumberOfNodes();
-        boolean[] ac;
-        for (int _nodeI = 0; _nodeI < gl; _nodeI++)
-        {
-            ans.statesScanned++;
-            ac = graph.getAvailableColours(_nodeI);
-            for (int _colorI = 0; _colorI < graph.getNumberOfColors() && graph.getColor(_nodeI) == -1; _colorI++)
-                if (ac[_colorI])
-                    graph.setColor(_nodeI, _colorI);
-        }
     }
 
     private static class MoveList

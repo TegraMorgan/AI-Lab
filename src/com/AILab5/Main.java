@@ -2,6 +2,7 @@ package com.AILab5;
 
 import com.AILab5.Entity.ColorGraph;
 
+import static com.AILab5.CspAlgo.LocalSearch.KempeChainsLocalSearch.kempeChainsLocalSearch;
 import static com.AILab5.CspAlgo.Utility.parseProblem;
 import static com.AILab5.CspAlgo.Utility.printResults;
 import static com.AILab5.Entity.Solutions.*;
@@ -22,18 +23,16 @@ public class Main
 
         ColorGraph graph1 = new ColorGraph(_gr, numberOfColors);
         ColorGraph graph2 = new ColorGraph(_gr);
-        ColorGraph graph3 = new ColorGraph(_gr, numberOfColors);
-
-        //System.out.println("File " + file_number + " - Straightforward Back-Jumping test:");
-        //printResults(arcConsistencyForwardChecking(graph1), graph1);
+        ColorGraph graph3 = new ColorGraph(_gr);
 
         //System.out.println();
-        System.out.println("File " + file_number + " - Greedy Feasibility test:");
+        System.out.println("File " + file_number + " - Local Feasible Decremental Search test:");
         printResults(localFeasibleDecrementalSearch(graph2), graph2);
 
         //System.out.println();
 
-        //System.out.println("File " + file_number + " - forwardChecking test:");
-        //printResults(forwardChecking(graph3), graph3);
+        System.out.println("File " + file_number + " - Kempe Chains Local Search test:");
+        printResults(kempeChainsLocalSearch(graph3), graph3);
+
     }
 }

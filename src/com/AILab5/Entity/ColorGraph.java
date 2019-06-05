@@ -304,7 +304,7 @@ public class ColorGraph
     {
         int violations = 0;
         int[] ne = getNeighbors(node);
-        if (colour == -1) return ne.length;
+        if (colour == -1) return Math.max(ne.length, 1);
         for (int n : ne)
             if (getColor(n) == colour) violations++;
         return violations;
