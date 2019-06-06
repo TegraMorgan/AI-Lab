@@ -8,9 +8,16 @@ import java.util.Random;
 
 import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 
-public class LocalFeasibleDecrementalSearch
+public class ObjectiveFirst
 {
-    public static LabAnswer localFeasibleDecrementalSearch (ColorGraph graph)
+
+    /**
+     * This method implements tabu, and annealing and does not stop until it reaches the absolute minimum of colours
+     *
+     * @param graph
+     * @return
+     */
+    public static LabAnswer objectiveFunctionFirstSearch (ColorGraph graph)
     {
         final long t0 = System.nanoTime();
         LabAnswer ans = new LabAnswer();
@@ -33,9 +40,10 @@ public class LocalFeasibleDecrementalSearch
     private static boolean sequenceFeasibility (ColorGraph graph, LabAnswer ans)
     {
 
-        GreedySearch.greedyFeasibleSearch(graph, ans);
+        FeasibilityFirst.greedyFeasibleSearch(graph, ans);
         ColorGraph originalGraph = new ColorGraph(graph), improvedGraph;
-        int coloursUsed;
+        int coloursUsed, attempts = 0;
+        final int giveUp = 5;
         boolean improvedColoring;
         do
         {
@@ -65,8 +73,11 @@ public class LocalFeasibleDecrementalSearch
             // Run tabucol algorithm
             improvedColoring = tabucol(improvedGraph, coloursUsed, ans);
             if (improvedColoring)
+            {
                 originalGraph = improvedGraph;
-        } while (improvedColoring);
+                attempts = 0;
+            } else attempts++;
+        } while (attempts < giveUp);
         graph.copy(originalGraph);
         return graph.countAllViolations() == 0;
     }
@@ -74,7 +85,7 @@ public class LocalFeasibleDecrementalSearch
     private static boolean tabucol (ColorGraph graph, int maxColors, LabAnswer ans)
     {
         // Setup
-        final long TABU_TIME = 50, MAXIMUM_ITERATIONS = 5000, ALLOWED_ATTEMPTS_TO_FIX_THE_GRAPH = graph.getNumberOfNodes() * maxColors;
+        final long MAXIMUM_ITERATIONS = 5000, TABU_TIME = MAXIMUM_ITERATIONS / 2, ALLOWED_ATTEMPTS_TO_FIX_THE_GRAPH = graph.getNumberOfNodes() * maxColors;
         long currentIteration = 0;
         Random r = new Random();
         MoveList tabuList = new MoveList();
@@ -99,7 +110,7 @@ public class LocalFeasibleDecrementalSearch
                 while (tabuList.isTabu(newVertex, newColour, currentIteration) && (graph.getColor(newVertex) != newColour));
 
                 // measure violations
-                final int improvement = graph.countNodeViolations(newVertex)-graph.countPotentialViolations(newVertex, newColour);
+                final int improvement = graph.countNodeViolations(newVertex) - graph.countPotentialViolations(newVertex, newColour);
                 // compare with current best result
                 if (improvement > bestImprovement || bestImprovement == Integer.MIN_VALUE)
                 {
