@@ -1,29 +1,71 @@
 package com.AILab5;
 
+import com.AILab5.CspAlgo.LocalSearch.FeasibilityFirst;
+import com.AILab5.CspAlgo.LocalSearch.HybridSearch;
+import com.AILab5.CspAlgo.LocalSearch.ObjectiveFirst;
+import com.AILab5.CspAlgo.Utility;
 import com.AILab5.Entity.ColorGraph;
+import com.AILab5.Entity.LabAnswer;
+import com.AILab5.Entity.Solutions;
 
-import static com.AILab5.CspAlgo.LocalSearch.HybridSearch.hybridSearch;
-import static com.AILab5.CspAlgo.LocalSearch.ObjectiveFirst.objectiveFunctionFirstSearch;
-import static com.AILab5.CspAlgo.Utility.parseProblem;
-import static com.AILab5.CspAlgo.Utility.printResults;
+import static com.AILab5.CspAlgo.Utility.*;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class Main
 {
     public static void main (String[] args)
     {
-        final int file_number = 29;
-        final int numberOfColors = 17;
 
-        // Read and Parse problem
-        boolean[][] _gr = parseProblem(file_number);
-        if (_gr == null) return;
+        // Read and parse the arguments
+        String[] input = Utility.parseInput(args);
+        int start, end;
+        if (input[0].charAt(0) == 'a')
+        {
+            start = 0;
+            end = NO_OF_PROBLEMS;
+        } else
+        {
+            start = Integer.valueOf(input[0]);
+            end = start + 1;
+        }
+        int file_number = start;
+        while (file_number < end)
+        {
+            // Read and parse problem
+            boolean[][] _gr = parseProblem(file_number);
+            if (_gr == null) return;
+            LabAnswer answer;
+            System.out.println(file_number + "," + _gr.length);
+            ColorGraph graph = new ColorGraph(_gr);
+            switch (input[1])
+            {
+                case "Objective":
+                    int per = Integer.valueOf(input[2]);
+                    if (per == 0) answer = ObjectiveFirst.objectiveFunctionFirstSearch(graph);
+                    else answer = ObjectiveFirst.objectiveFunctionFirstSearch(graph, per);
+                    break;
 
-        System.out.println("File " + file_number + " - number of nodes: " + _gr.length + "\n");
+                case "Backjumping":
+                    answer = Solutions.straightforwardBackJumping(graph, true);
+                    break;
 
-        ColorGraph graph1 = new ColorGraph(_gr);
+                case "Forwardchecking":
+                    answer = Solutions.arcConsistencyForwardChecking(graph);
+                    break;
 
-        System.out.println("File " + file_number + " - Kempe Chains Local Search test:");
-        printResults(hybridSearch(graph1), graph1);
+                case "Feasibility":
+                    answer = FeasibilityFirst.feasibleFirstSearch(graph);
+                    break;
 
+                case "Hybrid":
+                    answer = HybridSearch.hybridSearch(graph);
+                    break;
+
+                default:
+                    return;
+            }
+            printResults(answer, graph);
+            file_number++;
+        }
     }
 }

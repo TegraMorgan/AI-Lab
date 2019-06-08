@@ -17,16 +17,27 @@ public class ObjectiveFirst
      * @param graph
      * @return
      */
-    public static LabAnswer objectiveFunctionFirstSearch (ColorGraph graph)
+    public static LabAnswer objectiveFunctionFirstSearch (ColorGraph graph,int persistence)
     {
         final long t0 = System.nanoTime();
         LabAnswer ans = new LabAnswer();
 
-        ans.foundSolution = sequenceFeasibility(graph, ans);
+        ans.foundSolution = sequenceFeasibility(graph, ans,persistence);
 
         ans.executionTime = System.nanoTime() - t0;
         ans.coloursUsed = countColorsUsed(graph);
         return ans;
+    }
+
+    /**
+     * This method implements tabu, and annealing and does not stop until it reaches the absolute minimum of colours
+     *
+     * @param graph
+     * @return
+     */
+    public static LabAnswer objectiveFunctionFirstSearch (ColorGraph graph)
+    {
+        return objectiveFunctionFirstSearch(graph, 10);
     }
 
     /**
@@ -37,13 +48,12 @@ public class ObjectiveFirst
      * @return True if some solution is found
      */
 
-    private static boolean sequenceFeasibility (ColorGraph graph, LabAnswer ans)
+    private static boolean sequenceFeasibility (ColorGraph graph, LabAnswer ans,final int persistence)
     {
 
         FeasibilityFirst.greedyFeasibleSearch(graph, ans);
         ColorGraph originalGraph = new ColorGraph(graph), improvedGraph;
         int coloursUsed, attempts = 0;
-        final int giveUp = 5;
         boolean improvedColoring;
         do
         {
@@ -77,7 +87,7 @@ public class ObjectiveFirst
                 originalGraph = improvedGraph;
                 attempts = 0;
             } else attempts++;
-        } while (attempts < giveUp);
+        } while (attempts < persistence);
         graph.copy(originalGraph);
         return graph.countAllViolations() == 0;
     }

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class Utility
 {
     static final String[] fileList = {
-            "Tegra-test", "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
+            "1-Insertions_4", "1-Insertions_5", "1-Insertions_6"
             , "2-Insertions_3", "2-Insertions_4", "2-Insertions_5"
             , "3-Insertions_3", "3-Insertions_4", "3-Insertions_5"
             , "1-FullIns_3", "1-FullIns_4", "1-FullIns_5"
@@ -104,7 +104,8 @@ public class Utility
         }
         return true;
     }
-    public static boolean isDeadEnd(ColorGraph graph, int node)
+
+    public static boolean isDeadEnd (ColorGraph graph, int node)
     {
         boolean[] nc = new boolean[graph.getNumberOfColors()];
         int count = 0;
@@ -119,7 +120,8 @@ public class Utility
         }
         return count == nc.length;
     }
-    public static void printResults(LabAnswer ans, ColorGraph graph)
+
+    public static void printResults (LabAnswer ans, ColorGraph graph)
     {
         if (ans != null && ans.foundSolution)
         {
@@ -130,6 +132,7 @@ public class Utility
             System.out.println("Colours used = " + ans.coloursUsed);
         } else System.out.println("Not solved");
     }
+
     public static String executionTimeString (long time_ns)
     {
         final long time_ms = TimeUnit.NANOSECONDS.toMillis(time_ns);
@@ -181,5 +184,55 @@ public class Utility
             }
         }
         return false;
+    }
+
+    public static String[] parseInput (String[] args)
+    {
+        final int l = args.length;
+        String[] ret = new String[l];
+        int temp;
+        if (l > 0)
+            switch (args[0].toLowerCase())
+            {
+                case "all":
+                    ret[0] = "all";
+                    break;
+                default:
+                    try
+                    {
+                        temp = Integer.parseInt(ret[0]);
+                        ret[0] = String.valueOf(temp);
+                    } catch (NumberFormatException e)
+                    {
+                        ret[0] = "all";
+                    }
+            }
+        if (l > 1)
+            switch (args[1])
+            {
+                case "Objective":
+                case "Backjumping":
+                case "Forwardchecking":
+                case "Feasibility":
+                case "Hybrid":
+                    ret[1] = args[1];
+                    break;
+                default:
+                    ret[1] = "Feasibility";
+                    break;
+            }
+        if (l > 2)
+            if (ret[2].equals("Objective"))
+            {
+                try
+                {
+                    temp = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e)
+                {
+                    temp = 0;
+                }
+                ret[2] = String.valueOf(temp);
+            }
+        return ret;
     }
 }

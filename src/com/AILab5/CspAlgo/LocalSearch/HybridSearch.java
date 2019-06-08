@@ -35,7 +35,7 @@ public class HybridSearch
 
         long bestFitnessOld = Integer.MAX_VALUE, bestFitness, score, bestScore;
 
-        // Outer loop
+        // Search loop
         while (stagnationCounter < MAX_STAGNATION && iteration < MAX_ITERATIONS)
         {
             bestScore = Integer.MAX_VALUE;
@@ -53,11 +53,11 @@ public class HybridSearch
                     bestColour = c;
                 }
             }
-            // If there were no legal colours to use
+            // If there were no legal colours to use - random
             if (bestColour == graph.getColor(node))
                 bestColour = r.nextInt(MAX_COLOURS);
 
-            // Finally assign the best colour
+            // Assign colour
             graph.setColor(node, bestColour);
             bestFitness = bestScore;
 
