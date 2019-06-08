@@ -7,7 +7,7 @@ import static com.AILab5.CspAlgo.Utility.countColorsUsed;
 
 public class FeasibilityFirst
 {
-    private static boolean greedyFeasibleSearch (ColorGraph graph, LabAnswer ans)
+    static boolean greedyFeasibleSearch (ColorGraph graph, LabAnswer ans)
     {
         final int gl = graph.getNumberOfNodes();
         boolean[] ac;

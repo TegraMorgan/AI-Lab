@@ -35,7 +35,7 @@ public class Main
             boolean[][] _gr = parseProblem(file_number);
             if (_gr == null) return;
             LabAnswer answer;
-            System.out.println(file_number + "," + _gr.length);
+
             ColorGraph graph = new ColorGraph(_gr);
             switch (input[1])
             {
@@ -64,7 +64,8 @@ public class Main
                 default:
                     return;
             }
-            printResults(answer, graph);
+            //printResults(answer, graph);
+            machineOutput(answer, graph,file_number);
             file_number++;
         }
     }

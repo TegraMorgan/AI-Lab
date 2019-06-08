@@ -133,6 +133,28 @@ public class Utility
         } else System.out.println("Not solved");
     }
 
+    public static void machineOutput (LabAnswer ans, ColorGraph graph, int file_number)
+    {
+        StringBuilder str = new StringBuilder();
+        if (ans != null && ans.foundSolution)
+        {
+            ans.coloursUsed = Utility.countColorsUsed(graph);
+            str.append(file_number);
+            str.append(",");
+            str.append(ans.executionTime);
+            str.append(",");
+            str.append(graph.getNumberOfNodes());
+            str.append(",");
+            str.append(ans.statesScanned);
+            str.append(",");
+            str.append(isSolved(graph));
+            str.append(",");
+            str.append(ans.coloursUsed);
+            System.out.println(str);
+        } else System.out.println("Not solved");
+    }
+
+
     public static String executionTimeString (long time_ns)
     {
         final long time_ms = TimeUnit.NANOSECONDS.toMillis(time_ns);
