@@ -39,25 +39,25 @@ public class Main
             ColorGraph graph = new ColorGraph(_gr);
             switch (input[1])
             {
-                case "Objective":
+                case "objective":
                     int per = Integer.valueOf(input[2]);
                     if (per == 0) answer = ObjectiveFirst.objectiveFunctionFirstSearch(graph);
                     else answer = ObjectiveFirst.objectiveFunctionFirstSearch(graph, per);
                     break;
 
-                case "Backjumping":
+                case "backjumping":
                     answer = Solutions.straightforwardBackJumping(graph, true);
                     break;
 
-                case "Forwardchecking":
+                case "forwardchecking":
                     answer = Solutions.arcConsistencyForwardChecking(graph);
                     break;
 
-                case "Feasibility":
+                case "feasibility":
                     answer = FeasibilityFirst.feasibleFirstSearch(graph);
                     break;
 
-                case "Hybrid":
+                case "hybrid":
                     answer = HybridSearch.hybridSearch(graph);
                     break;
 

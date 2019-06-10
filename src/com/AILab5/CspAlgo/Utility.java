@@ -230,21 +230,22 @@ public class Utility
                     }
             }
         if (l > 1)
-            switch (args[1])
+            switch (args[1].toLowerCase())
             {
-                case "Objective":
-                case "Backjumping":
-                case "Forwardchecking":
-                case "Feasibility":
-                case "Hybrid":
+                case "objective":
+                case "backjumping":
+                case "forwardchecking":
+                case "feasibility":
+                case "hybrid":
                     ret[1] = args[1];
                     break;
                 default:
-                    ret[1] = "Feasibility";
+                    ret[1] = "feasibility";
                     break;
             }
         if (l > 2)
-            if (ret[2].equals("Objective"))
+        {
+            if (ret[2].equals("objective"))
             {
                 try
                 {
@@ -255,6 +256,7 @@ public class Utility
                 }
                 ret[2] = String.valueOf(temp);
             }
+        } else ret[2] = "0";
         return ret;
     }
 }
