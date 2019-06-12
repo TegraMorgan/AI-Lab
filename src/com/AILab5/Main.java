@@ -26,6 +26,7 @@ public class Main
         } else
         {
             start = Integer.valueOf(input[0]);
+            if (start>=NO_OF_PROBLEMS) return;
             end = start + 1;
         }
         int file_number = start;
