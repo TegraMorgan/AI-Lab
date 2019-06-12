@@ -211,7 +211,7 @@ public class Utility
     public static String[] parseInput (String[] args)
     {
         final int l = args.length;
-        String[] ret = new String[l];
+        String[] ret = new String[3];
         int temp;
         if (l > 0)
             switch (args[0].toLowerCase())
@@ -222,7 +222,7 @@ public class Utility
                 default:
                     try
                     {
-                        temp = Integer.parseInt(ret[0]);
+                        temp = Integer.parseInt(args[0]);
                         ret[0] = String.valueOf(temp);
                     } catch (NumberFormatException e)
                     {

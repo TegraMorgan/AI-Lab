@@ -53,9 +53,6 @@ public class HybridSearch
                     bestColour = c;
                 }
             }
-            // If there were no legal colours to use - random
-            if (bestColour == graph.getColor(node))
-                bestColour = r.nextInt(MAX_COLOURS);
 
             // Assign colour
             graph.setColor(node, bestColour);
@@ -70,7 +67,6 @@ public class HybridSearch
                 stagnationCounter = 0;
             }
         }
-
         return true;
     }
 
